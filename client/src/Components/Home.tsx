@@ -105,10 +105,6 @@ const Home = ({
   const call = async () => {
     //call related stuff goes here
 
-    // we are not adding tracks so they are visible
-    // in the video tag. We are addign them
-    // to the PC, so they can be sent
-
     initCall("offer");
   };
 
