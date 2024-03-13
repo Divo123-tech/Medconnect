@@ -21,8 +21,6 @@ const CallerVideo = ({
 
   //send back to home if no localStream
   useEffect(() => {
-    console.log("call Status", callStatus);
-    console.log("remote stream", remoteStream);
     if (!localStream) {
       navigate(`/`);
     } else {
