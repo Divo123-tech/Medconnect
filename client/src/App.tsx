@@ -61,12 +61,9 @@ function App() {
               callStatus={callStatus}
               setCallStatus={setCallStatus}
               localStream={localStream}
-              setLocalStream={setLocalStream}
               remoteStream={remoteStream}
-              setRemoteStream={setRemoteStream}
               peerConnection={peerConnection}
               userName={userName}
-              setUserName={setUserName}
               offerData={offerData}
             />
           }
