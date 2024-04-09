@@ -1,6 +1,6 @@
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
-let socket;
+let socket: Socket | null = null;
 const socketConnection = (userName: string) => {
   //check to see if the socket is already connected
   if (socket && socket.connected) {
@@ -18,7 +18,7 @@ const socketConnection = (userName: string) => {
     });
     if (userName == "test") {
       console.log("Testing...");
-      socket.emitWithAck("test").then((resp) => {
+      socket?.emitWithAck("test").then((resp) => {
         console.log(resp);
       });
     }
