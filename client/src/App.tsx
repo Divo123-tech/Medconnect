@@ -1,35 +1,78 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { useState } from "react";
+import CallerVideo from "./Components/CallerVideo";
+import AnswerVideo from "./Components/AnswerVideo";
+import Home from "./Components/Home";
 
 function App() {
-  const [count, setCount] = useState(0)
+  //holds: callStatus, haveMedia, videoEnabled, audioEnabled,
+  // haveOffer
+  const [callStatus, updateCallStatus] = useState({});
+  const [localStream, setLocalStream] = useState(null);
+  const [remoteStream, setRemoteStream] = useState(null);
+  const [peerConnection, setPeerConnection] = useState(null);
+  const [userName, setUserName] = useState("");
+  const [offerData, setOfferData] = useState(null);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Home
+              callStatus={callStatus}
+              updateCallStatus={updateCallStatus}
+              localStream={localStream}
+              setLocalStream={setLocalStream}
+              remoteStream={remoteStream}
+              setRemoteStream={setRemoteStream}
+              peerConnection={peerConnection}
+              setPeerConnection={setPeerConnection}
+              userName={userName}
+              setUserName={setUserName}
+              offerData={offerData}
+              setOfferData={setOfferData}
+            />
+          }
+        />
+        <Route
+          path="/offer"
+          element={
+            <CallerVideo
+              callStatus={callStatus}
+              updateCallStatus={updateCallStatus}
+              localStream={localStream}
+              setLocalStream={setLocalStream}
+              remoteStream={remoteStream}
+              setRemoteStream={setRemoteStream}
+              peerConnection={peerConnection}
+              userName={userName}
+              setUserName={setUserName}
+            />
+          }
+        />
+        <Route
+          path="/answer"
+          element={
+            <AnswerVideo
+              callStatus={callStatus}
+              updateCallStatus={updateCallStatus}
+              localStream={localStream}
+              setLocalStream={setLocalStream}
+              remoteStream={remoteStream}
+              setRemoteStream={setRemoteStream}
+              peerConnection={peerConnection}
+              userName={userName}
+              setUserName={setUserName}
+              offerData={offerData}
+            />
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
