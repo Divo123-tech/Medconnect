@@ -1,18 +1,9 @@
-type Props = {
-  message: string;
-};
+const VideoMessage = ({message}) => {
+    if(message){
+        return <div className="call-info"> <h1>{message}</h1></div>
+    } else{
+        return <></>
+    }
+}
 
-const VideoMessage = ({ message }: Props) => {
-  if (message) {
-    return (
-      <div className="call-info">
-        {" "}
-        <h1>{message}</h1>
-      </div>
-    );
-  } else {
-    return <></>;
-  }
-};
-
-export default VideoMessage;
+export default VideoMessage

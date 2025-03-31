@@ -1,25 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect } from "react";
+import { SetStateAction, useEffect } from "react";
 import prepForCall from "../webrtcUtilities/prepForCall";
 import socketConnection from "../webrtcUtilities/socketConnection";
 import clientSocketListeners from "../webrtcUtilities/clientSocketListeners";
 import { useState } from "react";
 import createPeerConnection from "../webrtcUtilities/createPeerConn";
-import { useNavigate } from "react-router-dom";
-type Props = {
-  remoteStream: any;
-  localStream: any;
-  peerConnection: any;
-  setPeerConnection: any;
-  callStatus: any;
-  updateCallStatus: any;
-  offerData: any;
-  setOfferData: any;
-  userName: any;
-  setUserName: any;
-  setLocalStream: any;
-  setRemoteStream: any;
-};
+import { useSearchParams, useNavigate } from "react-router-dom";
+
 const Home = ({
   callStatus,
   updateCallStatus,
@@ -28,17 +14,19 @@ const Home = ({
   remoteStream,
   peerConnection,
   setPeerConnection,
+  localStream,
   userName,
   setUserName,
+  offerData,
   setOfferData,
-}: Props) => {
+}) => {
   const [typeOfCall, setTypeOfCall] = useState();
   const [joined, setJoined] = useState(false);
   const [availableCalls, setAvailableCalls] = useState([]);
   const navigate = useNavigate();
 
   //called on "Call" or "Answer"
-  const initCall = async (typeOfCall: any) => {
+  const initCall = async (typeOfCall) => {
     // set localStream and GUM
     await prepForCall(callStatus, updateCallStatus, setLocalStream);
     // console.log("gum access granted!")
@@ -59,7 +47,7 @@ const Home = ({
     if (joined) {
       const userName = prompt("Enter username");
       setUserName(userName);
-      const setCalls = (data: any) => {
+      const setCalls = (data: SetStateAction<never[]>) => {
         setAvailableCalls(data);
         console.log(data);
       };
@@ -80,14 +68,7 @@ const Home = ({
       setPeerConnection(peerConnection);
       setRemoteStream(remoteStream);
     }
-  }, [
-    callStatus.haveMedia,
-    peerConnection,
-    setPeerConnection,
-    setRemoteStream,
-    typeOfCall,
-    userName,
-  ]);
+  }, [callStatus.haveMedia]);
 
   //We know which type of client this is and have PC.
   //Add socketlisteners
@@ -102,21 +83,21 @@ const Home = ({
         peerConnection
       );
     }
-  }, [typeOfCall, peerConnection, userName, callStatus, updateCallStatus]);
+  }, [typeOfCall, peerConnection]);
 
   //once remoteStream AND pc are ready, navigate
   useEffect(() => {
     if (remoteStream && peerConnection) {
       navigate(`/${typeOfCall}?token=${Math.random()}`);
     }
-  }, [remoteStream, peerConnection, navigate, typeOfCall]);
+  }, [remoteStream, peerConnection]);
 
   const call = async () => {
     //call related stuff goes here
     initCall("offer");
   };
 
-  const answer = (callData: any) => {
+  const answer = (callData) => {
     //answer related stuff goes here
     initCall("answer");
     setOfferData(callData);
@@ -147,18 +128,19 @@ const Home = ({
         </div>
         <div className="col-6">
           <h2>Available Calls</h2>
-          {availableCalls.map((callData: any, i) => (
-            <div className="col mb-2" key={i}>
-              <button
-                onClick={() => {
-                  answer(callData);
-                }}
-                className="btn btn-lg btn-warning hang-up"
-              >
-                Answer Call From {callData.offererUserName}
-              </button>
-            </div>
-          ))}
+          {availableCalls
+            .filter((callData) => callData.offeringTo === userName) // Only include calls meant for Bobby
+            .map((callData, i) => (
+              <div className="col mb-2" key={i}>
+                <button
+                  onClick={() => answer(callData)}
+                  className="btn btn-lg btn-warning hang-up"
+                >
+                  Answer Call From {callData.offererUserName} for{" "}
+                  {callData.offeringTo}
+                </button>
+              </div>
+            ))}
         </div>
       </div>
     </div>

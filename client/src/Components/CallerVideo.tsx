@@ -1,19 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import "./VideoPage.css";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import socketConnection from "../webrtcUtilities/socketConnection";
 import ActionButtons from "./ActionButtons/ActionButtons";
 import VideoMessageBox from "./VideoMessageBox";
-type Props = {
-  remoteStream: any;
-  localStream: any;
-  peerConnection: any;
-  callStatus: any;
-  updateCallStatus: any;
-  offerData: any;
-  userName: any;
-};
+
 const CallerVideo = ({
   remoteStream,
   localStream,
@@ -21,7 +12,7 @@ const CallerVideo = ({
   callStatus,
   updateCallStatus,
   userName,
-}: Props) => {
+}) => {
   const remoteFeedEl = useRef(null); //this is a React ref to a dom element, so we can interact with it the React way
   const localFeedEl = useRef(null); //this is a React ref to a dom element, so we can interact with it the React way
   const navigate = useNavigate();
@@ -68,7 +59,7 @@ const CallerVideo = ({
       //we can now start collecing ice candidates!
       // we need to emit the offer to the server
       const socket = socketConnection(userName);
-      socket.emit("newOffer", offer);
+      socket.emit("newOffer", { offer, offerTo: "Bobby" });
       setOfferCreated(true); //so that our useEffect doesn't make an offer again
       setVideoMessage("Awaiting answer..."); //update our videoMessage box
       console.log(
