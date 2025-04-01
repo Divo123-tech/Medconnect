@@ -4,7 +4,7 @@
 import socketConnection from "./socketConnection";
 
 const prepForCall = (callStatus, updateCallStatus, setLocalStream) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise<void>(async (resolve, reject) => {
     //can bring constraints in as a param
     const constraints = {
       video: true, //must have one constraint, dont have to show it yet
