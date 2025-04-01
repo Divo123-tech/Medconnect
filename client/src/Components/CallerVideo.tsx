@@ -23,14 +23,18 @@ const CallerVideo = ({
 
   //send back to home if no localStream
   useEffect(() => {
+    console.log("call Status", callStatus);
     if (!localStream) {
       navigate(`/`);
     } else {
-      //set video tags
-      remoteFeedEl.current.srcObject = remoteStream;
       localFeedEl.current.srcObject = localStream;
+
+      if (callStatus.videoEnabled != null) {
+        remoteFeedEl.current.srcObject = remoteStream;
+      }
+      //set video tags
     }
-  }, []);
+  }, [callStatus, localStream, navigate, remoteStream]);
 
   //set video tags
   // useEffect(()=>{
@@ -70,6 +74,10 @@ const CallerVideo = ({
       //CREATE AN OFFER!!
       console.log("We have video and no offer... making offer");
       shareVideoAsync();
+
+      // we are not adding tracks so they are visible
+      // in the video tag. We are addign them
+      // to the PC, so they can be sent
     }
   }, [callStatus.videoEnabled, offerCreated]);
 
@@ -83,6 +91,54 @@ const CallerVideo = ({
     }
   }, [callStatus]);
 
+  if (!offerCreated && callStatus.videoEnabled == null) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          gap: "4rem",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <video
+          id="local-feed"
+          ref={localFeedEl}
+          autoPlay
+          controls
+          playsInline
+          style={{
+            width: "720px",
+            height: "400px",
+            objectFit: "cover",
+          }}
+        ></video>
+        <button
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "#007bff",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            const copyCallStatus = { ...callStatus };
+            copyCallStatus.videoEnabled = true;
+            updateCallStatus(copyCallStatus);
+            localStream.getTracks().forEach((track) => {
+              peerConnection.addTrack(track, localStream);
+            });
+          }}
+        >
+          Join Call
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="videos">
@@ -93,6 +149,13 @@ const CallerVideo = ({
           autoPlay
           controls
           playsInline
+          style={{
+            position: "absolute",
+            zIndex: "2",
+            right: "5%",
+            bottom: "10%",
+            width: "10%",
+          }}
         ></video>
         <video
           id="remote-feed"
