@@ -30,6 +30,7 @@ const Home = ({
     // set localStream and GUM
     await prepForCall(callStatus, updateCallStatus, setLocalStream);
     // console.log("gum access granted!")
+
     setTypeOfCall(typeOfCall); //offer or answer
   };
 
@@ -88,12 +89,21 @@ const Home = ({
   //once remoteStream AND pc are ready, navigate
   useEffect(() => {
     if (remoteStream && peerConnection) {
-      navigate(`/${typeOfCall}?token=${Math.random()}`);
+      if (typeOfCall) {
+        navigate(`/${typeOfCall}?token=${Math.random()}`);
+      } else {
+        navigate("/");
+      }
     }
-  }, [remoteStream, peerConnection]);
+  }, [remoteStream, peerConnection, typeOfCall, navigate]);
 
   const call = async () => {
     //call related stuff goes here
+
+    // we are not adding tracks so they are visible
+    // in the video tag. We are addign them
+    // to the PC, so they can be sent
+
     initCall("offer");
   };
 

@@ -1,5 +1,7 @@
 .videos{
     position: absolute;
+    overflow: hidden;
+
 }
 
 #remote-feed, #local-feed{
@@ -7,17 +9,18 @@
 }
 
 #remote-feed{
-    height: 100vh;
+    height: 90vh;
     width: 100vw;
+    background-color: #222;
 }
 
-#local-feed{
+/* #local-feed{
     position: absolute;
     z-index: 2;
     right: 5%;
     bottom: 10%;
     width: 10%;
-}
+} */
 
 .call-info{
     position: absolute;
