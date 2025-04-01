@@ -146,6 +146,13 @@ const AnswerVideo = ({
           autoPlay
           controls
           playsInline
+          style={{
+            position: "absolute",
+            zIndex: "2",
+            right: "5%",
+            bottom: "10%",
+            width: "10%",
+          }}
         ></video>
         <video
           id="remote-feed"
