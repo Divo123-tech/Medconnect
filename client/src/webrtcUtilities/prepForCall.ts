@@ -10,6 +10,7 @@ const prepForCall = (callStatus, updateCallStatus, setLocalStream) => {
       video: true, //must have one constraint, dont have to show it yet
       audio: false,
     };
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       //update bools

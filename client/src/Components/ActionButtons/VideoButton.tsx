@@ -44,7 +44,7 @@ const VideoButton = ({
       <div className="button camera" onClick={startStopVideo}>
         <i className="fa fa-video"></i>
         <div className="btn-text">
-          {callStatus.video === "enabled" ? "Stop" : "Start"} Video
+          {callStatus.videoEnabled ? "Stop" : "Start"} Video
         </div>
       </div>
     </div>

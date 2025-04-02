@@ -35,6 +35,7 @@ const ActionButtons = ({
       </div>
       <div className="center justify-center text-end col-2 hangup-wrapper">
         <HangupButton
+          localStream={localStream}
           localFeedEl={localFeedEl}
           remoteFeedEl={remoteFeedEl}
           peerConnection={peerConnection}

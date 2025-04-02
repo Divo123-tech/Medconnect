@@ -13,6 +13,7 @@ function App() {
   const [remoteStream, setRemoteStream] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
   const [userName, setUserName] = useState("");
+  const [userOfferTo, setUserOfferTo] = useState("");
   const [offerData, setOfferData] = useState(null);
 
   return (
@@ -23,6 +24,8 @@ function App() {
           element={
             <Home
               callStatus={callStatus}
+              userOfferTo={userOfferTo}
+              setUserOfferTo={setUserOfferTo}
               updateCallStatus={updateCallStatus}
               localStream={localStream}
               setLocalStream={setLocalStream}
@@ -41,15 +44,13 @@ function App() {
           path="/offer"
           element={
             <CallerVideo
+              userOfferTo={userOfferTo}
               callStatus={callStatus}
               updateCallStatus={updateCallStatus}
               localStream={localStream}
-              setLocalStream={setLocalStream}
               remoteStream={remoteStream}
-              setRemoteStream={setRemoteStream}
               peerConnection={peerConnection}
               userName={userName}
-              setUserName={setUserName}
             />
           }
         />
