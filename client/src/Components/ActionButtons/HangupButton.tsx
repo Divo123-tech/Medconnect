@@ -3,7 +3,6 @@ const HangupButton = ({
   remoteFeedEl,
   localFeedEl,
   peerConnection,
-  setPeerConnection,
   callStatus,
   setCallStatus,
   localStream,

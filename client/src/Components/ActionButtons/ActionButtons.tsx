@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import HangupButton from "./HangupButton";
-import socket from "../../webrtcUtilities/socketConnection";
 import VideoButton from "./VideoButton";
 import AudioButton from "./AudioButton";
 
@@ -19,9 +18,8 @@ const ActionButtons = ({
     <div id="menu-buttons" ref={menuButtons} className="row">
       <div className="left col-6">
         <AudioButton
-          localFeedEl={localFeedEl}
           callStatus={callStatus}
-          updateCallStatus={updateCallStatus}
+          setCallStatus={updateCallStatus}
           localStream={localStream}
           peerConnection={peerConnection}
         />
@@ -40,7 +38,7 @@ const ActionButtons = ({
           remoteFeedEl={remoteFeedEl}
           peerConnection={peerConnection}
           callStatus={callStatus}
-          updateCallStatus={updateCallStatus}
+          setCallStatus={updateCallStatus}
         />
       </div>
     </div>
