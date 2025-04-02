@@ -171,7 +171,7 @@ const CallerVideo = ({
         remoteFeedEl={remoteFeedEl}
         callStatus={callStatus}
         localStream={localStream}
-        updateCallStatus={updateCallStatus}
+        setCallStatus={setCallStatus}
         peerConnection={peerConnection}
       />
     </div>

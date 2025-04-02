@@ -84,7 +84,7 @@ const Home = ({
         socket,
         typeOfCall,
         callStatus,
-        updateCallStatus,
+        setCallStatus,
         peerConnection
       );
     }

@@ -7,7 +7,7 @@ const ActionButtons = ({
   callStatus,
   localFeedEl,
   remoteFeedEl,
-  updateCallStatus,
+  setCallStatus,
   localStream,
   peerConnection,
 }) => {
@@ -19,7 +19,7 @@ const ActionButtons = ({
       <div className="left col-6">
         <AudioButton
           callStatus={callStatus}
-          setCallStatus={updateCallStatus}
+          setCallStatus={setCallStatus}
           localStream={localStream}
           peerConnection={peerConnection}
         />
@@ -27,7 +27,7 @@ const ActionButtons = ({
           localFeedEl={localFeedEl}
           callStatus={callStatus}
           localStream={localStream}
-          updateCallStatus={updateCallStatus}
+          setCallStatus={setCallStatus}
           peerConnection={peerConnection}
         />
       </div>
@@ -38,7 +38,7 @@ const ActionButtons = ({
           remoteFeedEl={remoteFeedEl}
           peerConnection={peerConnection}
           callStatus={callStatus}
-          setCallStatus={updateCallStatus}
+          setCallStatus={setCallStatus}
         />
       </div>
     </div>

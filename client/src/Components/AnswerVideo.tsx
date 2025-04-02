@@ -10,7 +10,7 @@ const AnswerVideo = ({
   localStream,
   peerConnection,
   callStatus,
-  updateCallStatus,
+  setCallStatus,
   offerData,
   userName,
 }) => {
@@ -125,7 +125,7 @@ const AnswerVideo = ({
           onClick={() => {
             const copyCallStatus = { ...callStatus };
             copyCallStatus.videoEnabled = true;
-            updateCallStatus(copyCallStatus);
+            setCallStatus(copyCallStatus);
             localStream.getTracks().forEach((track) => {
               peerConnection.addTrack(track, localStream);
             });
@@ -167,7 +167,7 @@ const AnswerVideo = ({
         remoteFeedEl={remoteFeedEl}
         callStatus={callStatus}
         localStream={localStream}
-        updateCallStatus={updateCallStatus}
+        setCallStatus={setCallStatus}
         peerConnection={peerConnection}
       />
     </div>

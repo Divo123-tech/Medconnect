@@ -59,7 +59,7 @@ function App() {
           element={
             <AnswerVideo
               callStatus={callStatus}
-              updateCallStatus={setCallStatus}
+              setCallStatus={setCallStatus}
               localStream={localStream}
               setLocalStream={setLocalStream}
               remoteStream={remoteStream}
