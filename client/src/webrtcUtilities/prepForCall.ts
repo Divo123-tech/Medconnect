@@ -2,7 +2,7 @@
 // because both sides need to do this same thing before
 // we can move forward
 
-const prepForCall = async (callStatus, updateCallStatus, setLocalStream) => {
+const prepForCall = async (callStatus, setCallStatus, setLocalStream) => {
   //can bring constraints in as a param
   const constraints = {
     video: true, //must have one constraint, dont have to show it yet
@@ -11,12 +11,12 @@ const prepForCall = async (callStatus, updateCallStatus, setLocalStream) => {
 
   try {
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    //update bools
+    //set bools
     const copyCallStatus = { ...callStatus };
     copyCallStatus.haveMedia = true; //signals to the app that we have media
     copyCallStatus.videoEnabled = null; //init both to false, you can init to true
     copyCallStatus.audioEnabled = false;
-    updateCallStatus(copyCallStatus);
+    setCallStatus(copyCallStatus);
 
     setLocalStream(stream);
   } catch (err) {

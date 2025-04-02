@@ -11,7 +11,7 @@ const CallerVideo = ({
   localStream,
   peerConnection,
   callStatus,
-  updateCallStatus,
+  setCallStatus,
   userName,
 }) => {
   const remoteFeedEl = useRef(null); //this is a React ref to a dom element, so we can interact with it the React way
@@ -128,7 +128,7 @@ const CallerVideo = ({
           onClick={() => {
             const copyCallStatus = { ...callStatus };
             copyCallStatus.videoEnabled = true;
-            updateCallStatus(copyCallStatus);
+            setCallStatus(copyCallStatus);
             localStream.getTracks().forEach((track) => {
               peerConnection.addTrack(track, localStream);
             });

@@ -4,13 +4,13 @@ import socketConnection from "../webrtcUtilities/socketConnection";
 import clientSocketListeners from "../webrtcUtilities/clientSocketListeners";
 import { useState } from "react";
 import createPeerConnection from "../webrtcUtilities/createPeerConn";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Home = ({
   userOfferTo,
   setUserOfferTo,
   callStatus,
-  updateCallStatus,
+  setCallStatus,
   setLocalStream,
   setRemoteStream,
   remoteStream,
@@ -30,7 +30,7 @@ const Home = ({
   //called on "Call" or "Answer"
   const initCall = async (typeOfCall) => {
     // set localStream and GUM
-    await prepForCall(callStatus, updateCallStatus, setLocalStream);
+    await prepForCall(callStatus, setCallStatus, setLocalStream);
     // console.log("gum access granted!")
 
     setTypeOfCall(typeOfCall); //offer or answer

@@ -8,7 +8,7 @@ import Home from "./Components/Home";
 function App() {
   //holds: callStatus, haveMedia, videoEnabled, audioEnabled,
   // haveOffer
-  const [callStatus, updateCallStatus] = useState({});
+  const [callStatus, setCallStatus] = useState({});
   const [localStream, setLocalStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
@@ -26,7 +26,7 @@ function App() {
               callStatus={callStatus}
               userOfferTo={userOfferTo}
               setUserOfferTo={setUserOfferTo}
-              updateCallStatus={updateCallStatus}
+              setCallStatus={setCallStatus}
               localStream={localStream}
               setLocalStream={setLocalStream}
               remoteStream={remoteStream}
@@ -46,7 +46,7 @@ function App() {
             <CallerVideo
               userOfferTo={userOfferTo}
               callStatus={callStatus}
-              updateCallStatus={updateCallStatus}
+              setCallStatus={setCallStatus}
               localStream={localStream}
               remoteStream={remoteStream}
               peerConnection={peerConnection}
@@ -59,7 +59,7 @@ function App() {
           element={
             <AnswerVideo
               callStatus={callStatus}
-              updateCallStatus={updateCallStatus}
+              updateCallStatus={setCallStatus}
               localStream={localStream}
               setLocalStream={setLocalStream}
               remoteStream={remoteStream}
