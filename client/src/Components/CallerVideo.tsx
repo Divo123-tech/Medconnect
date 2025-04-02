@@ -6,6 +6,7 @@ import ActionButtons from "./ActionButtons/ActionButtons";
 import VideoMessageBox from "./VideoMessageBox";
 
 const CallerVideo = ({
+  userOfferTo,
   remoteStream,
   localStream,
   peerConnection,
@@ -63,7 +64,7 @@ const CallerVideo = ({
       //we can now start collecing ice candidates!
       // we need to emit the offer to the server
       const socket = socketConnection(userName);
-      socket.emit("newOffer", { offer, offerTo: "Bobby" });
+      socket.emit("newOffer", { offer, offerTo: userOfferTo });
       setOfferCreated(true); //so that our useEffect doesn't make an offer again
       setVideoMessage("Awaiting answer..."); //update our videoMessage box
       console.log(
