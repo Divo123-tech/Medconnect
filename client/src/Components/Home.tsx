@@ -64,9 +64,7 @@ const Home = ({
 
   //We have media via GUM. setup the peerConnection w/listeners
   useEffect(() => {
-    console.log("THIS USE EFFECT RUNS");
     if (callStatus.haveMedia && !peerConnection) {
-      console.log("NIGGA");
       // prepForCall has finished running and updated callStatus
       const { peerConnection, remoteStream } = createPeerConnection(
         userName,
