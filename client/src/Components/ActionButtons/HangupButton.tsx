@@ -1,22 +1,25 @@
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 const HangupButton = ({
   remoteFeedEl,
   localFeedEl,
   peerConnection,
+  setPeerConnection,
   callStatus,
   setCallStatus,
+  localStream,
 }) => {
-  const navigate = useNavigate();
   const hangupCall = () => {
     console.log("Before Func");
     if (peerConnection) {
       console.log("begining of func");
-      const copyCallStatus = { ...callStatus };
-      copyCallStatus.current = "complete";
+      setCallStatus((prevCallStatus) => {
+        prevCallStatus.current = "complete";
+        return prevCallStatus;
+      });
       //user has clicked hang up. pc:
       //close it
       //remove listeners
-      //set it to null
+      // //set it to null
       peerConnection.close();
       peerConnection.onicecandidate = null;
       peerConnection.onaddstream = null;
@@ -26,6 +29,13 @@ const HangupButton = ({
       localFeedEl.current.srcObject = null;
       remoteFeedEl.current.srcObject = null;
       console.log("end of func");
+      if (localStream) {
+        localStream.getTracks().forEach((track) => {
+          if (track.kind === "video") {
+            track.stop();
+          }
+        });
+      }
     }
     console.log("after func");
   };
