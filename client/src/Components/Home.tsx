@@ -7,6 +7,8 @@ import createPeerConnection from "../webrtcUtilities/createPeerConn";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
 const Home = ({
+  userOfferTo,
+  setUserOfferTo,
   callStatus,
   updateCallStatus,
   setLocalStream,
@@ -47,6 +49,8 @@ const Home = ({
   useEffect(() => {
     if (joined) {
       const userName = prompt("Enter username");
+      const userToOffer = prompt("Enter username you're offering to");
+      setUserOfferTo(userToOffer);
       setUserName(userName);
       const setCalls = (data: SetStateAction<never[]>) => {
         setAvailableCalls(data);
@@ -54,13 +58,15 @@ const Home = ({
       };
       const socket = socketConnection(userName);
       socket.on("availableOffers", setCalls);
-      socket.on("newOfferWaiting", setCalls);
+      socket.on("newOfferAwaiting", setCalls);
     }
   }, [joined, setUserName]);
 
   //We have media via GUM. setup the peerConnection w/listeners
   useEffect(() => {
+    console.log("THIS USE EFFECT RUNS");
     if (callStatus.haveMedia && !peerConnection) {
+      console.log("NIGGA");
       // prepForCall has finished running and updated callStatus
       const { peerConnection, remoteStream } = createPeerConnection(
         userName,
@@ -69,7 +75,7 @@ const Home = ({
       setPeerConnection(peerConnection);
       setRemoteStream(remoteStream);
     }
-  }, [callStatus.haveMedia]);
+  }, [callStatus, peerConnection]);
 
   //We know which type of client this is and have PC.
   //Add socketlisteners
