@@ -25,6 +25,7 @@ const CallerVideo = ({
   //send back to home if no localStream
   useEffect(() => {
     console.log("call Status", callStatus);
+    console.log("remote stream", remoteStream);
     if (!localStream) {
       navigate(`/`);
     } else {
@@ -70,6 +71,8 @@ const CallerVideo = ({
       console.log(
         "created offer, setLocalDesc, emitted offer, updated videoMessage"
       );
+      console.log("peerconnect: ", peerConnection.remoteDescription);
+      console.log("callstatus.answer: ", callStatus.answer);
     };
     if (!offerCreated && callStatus.videoEnabled) {
       //CREATE AN OFFER!!
@@ -84,13 +87,13 @@ const CallerVideo = ({
 
   useEffect(() => {
     const addAnswerAsync = async () => {
-      await peerConnection.setRemoteDescription(callStatus.answer);
-      console.log("Answer added!!");
+      if (callStatus.answer) {
+        await peerConnection.setRemoteDescription(callStatus.answer);
+        console.log("Answer added!!");
+      }
     };
-    if (callStatus.answer) {
-      addAnswerAsync();
-    }
-  }, [callStatus]);
+    addAnswerAsync();
+  }, [callStatus, peerConnection]);
 
   if (!offerCreated && callStatus.videoEnabled == null) {
     return (
@@ -143,26 +146,41 @@ const CallerVideo = ({
   return (
     <div>
       <div className="videos">
-        <VideoMessageBox message={videoMessage} />
+        {/* <VideoMessageBox message={videoMessage} /> */}
         <video
           id="local-feed"
           ref={localFeedEl}
           autoPlay
           controls
           playsInline
-          style={{
-            position: "absolute",
-            zIndex: "2",
-            right: "5%",
-            bottom: "10%",
-            width: "10%",
-          }}
+          style={
+            remoteStream?.active === false
+              ? {
+                  height: "90vh",
+                  width: "100vw",
+                  backgroundColor: "#222",
+                }
+              : {
+                  position: "absolute",
+                  zIndex: "2",
+                  right: "5%",
+                  bottom: "10%",
+                  width: "10%",
+                  display: "block",
+                }
+          }
         ></video>
         <video
           id="remote-feed"
           ref={remoteFeedEl}
           autoPlay
           controls
+          style={{
+            ...(remoteStream?.active === false ? { visibility: "hidden" } : {}),
+            height: "90vh",
+            width: "100vw",
+            backgroundColor: "#222",
+          }}
           playsInline
         ></video>
       </div>
@@ -173,6 +191,7 @@ const CallerVideo = ({
         localStream={localStream}
         setCallStatus={setCallStatus}
         peerConnection={peerConnection}
+        userOfferTo={userOfferTo}
       />
     </div>
   );

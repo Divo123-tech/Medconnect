@@ -146,19 +146,34 @@ const AnswerVideo = ({
           autoPlay
           controls
           playsInline
-          style={{
-            position: "absolute",
-            zIndex: "2",
-            right: "5%",
-            bottom: "10%",
-            width: "10%",
-          }}
+          style={
+            remoteStream?.active === false
+              ? {
+                  height: "90vh",
+                  width: "100vw",
+                  backgroundColor: "#222",
+                }
+              : {
+                  position: "absolute",
+                  zIndex: "2",
+                  right: "5%",
+                  bottom: "10%",
+                  width: "10%",
+                  display: "block",
+                }
+          }
         ></video>
         <video
           id="remote-feed"
           ref={remoteFeedEl}
           autoPlay
           controls
+          style={{
+            ...(remoteStream?.active === false ? { visibility: "hidden" } : {}),
+            height: "90vh",
+            width: "100vw",
+            backgroundColor: "#222",
+          }}
           playsInline
         ></video>
       </div>
@@ -168,6 +183,7 @@ const AnswerVideo = ({
         callStatus={callStatus}
         localStream={localStream}
         setCallStatus={setCallStatus}
+        userName={userName}
         peerConnection={peerConnection}
       />
     </div>
