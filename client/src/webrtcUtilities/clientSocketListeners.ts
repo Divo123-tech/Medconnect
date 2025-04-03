@@ -3,7 +3,8 @@ const clientSocketListeners = (
   typeOfCall,
   callStatus,
   setCallStatus,
-  peerConnection
+  peerConnection,
+  setRemoteStream
 ) => {
   socket.on("answerResponse", (entireOfferObj) => {
     console.log(entireOfferObj);
@@ -22,6 +23,18 @@ const clientSocketListeners = (
       console.log("Added an iceCandidate to existing page presence");
       // setShowCallInfo(false);
     }
+  });
+
+  socket.on("hangupFromAnswerer", () => {
+    console.log("SOMEONE HUNG UP");
+    setRemoteStream((prevRemoteStream) => {
+      if (!prevRemoteStream) return null; // Ensure it's not null
+
+      // Stop all tracks in the MediaStream
+      prevRemoteStream.getTracks().forEach((track) => track.stop());
+
+      return new MediaStream(); // ✅ Replace with a new empty stream
+    });
   });
 };
 
