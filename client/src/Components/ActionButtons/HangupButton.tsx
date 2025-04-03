@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import socketConnection from "../../webrtcUtilities/socketConnection";
 const HangupButton = ({
   remoteFeedEl,
   localFeedEl,
@@ -6,6 +7,7 @@ const HangupButton = ({
   callStatus,
   setCallStatus,
   localStream,
+  username,
 }) => {
   const hangupCall = () => {
     console.log("Before Func");
@@ -15,6 +17,8 @@ const HangupButton = ({
         prevCallStatus.current = "complete";
         return prevCallStatus;
       });
+      const socket = socketConnection("");
+      socket.emit("hangupFromAnswerer", username);
       //user has clicked hang up. pc:
       //close it
       //remove listeners

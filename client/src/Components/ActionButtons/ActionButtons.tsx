@@ -10,6 +10,7 @@ const ActionButtons = ({
   setCallStatus,
   localStream,
   peerConnection,
+  userName,
 }) => {
   // const callStatus = useSelector(state=>state.callStatus);
   const menuButtons = useRef(null);
@@ -39,6 +40,7 @@ const ActionButtons = ({
           peerConnection={peerConnection}
           callStatus={callStatus}
           setCallStatus={setCallStatus}
+          username={userName}
         />
       </div>
     </div>
