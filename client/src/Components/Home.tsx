@@ -85,7 +85,8 @@ const Home = ({
         typeOfCall,
         callStatus,
         setCallStatus,
-        peerConnection
+        peerConnection,
+        setRemoteStream
       );
     }
   }, [typeOfCall, peerConnection]);
@@ -142,6 +143,7 @@ const Home = ({
         </div>
         <div className="col-6">
           <h2>Available Calls</h2>
+          <p>{availableCalls.length}</p>
           {availableCalls
             .filter((callData) => callData.offeringTo === userName) // Only include calls meant for Bobby
             .map((callData, i) => (
