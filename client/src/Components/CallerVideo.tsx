@@ -191,7 +191,7 @@ const CallerVideo = ({
         localStream={localStream}
         setCallStatus={setCallStatus}
         peerConnection={peerConnection}
-        userOfferTo={userOfferTo}
+        userName={userName}
       />
     </div>
   );
