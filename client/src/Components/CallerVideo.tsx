@@ -17,9 +17,7 @@ const CallerVideo = ({
   const remoteFeedEl = useRef(null); //this is a React ref to a dom element, so we can interact with it the React way
   const localFeedEl = useRef(null); //this is a React ref to a dom element, so we can interact with it the React way
   const navigate = useNavigate();
-  const [videoMessage, setVideoMessage] = useState(
-    "Please enable video to start!"
-  );
+
   const [offerCreated, setOfferCreated] = useState(false);
 
   //send back to home if no localStream
@@ -44,19 +42,6 @@ const CallerVideo = ({
   //     localFeedEl.current.srcObject = localStream
   // },[])
 
-  //if we have tracks, disable the video message
-  useEffect(() => {
-    if (peerConnection) {
-      peerConnection.ontrack = (e) => {
-        if (e?.streams?.length) {
-          setVideoMessage("");
-        } else {
-          setVideoMessage("Disconnected...");
-        }
-      };
-    }
-  }, [peerConnection]);
-
   //once the user has shared video, start WebRTC'ing :)
   useEffect(() => {
     const shareVideoAsync = async () => {
@@ -67,7 +52,6 @@ const CallerVideo = ({
       const socket = socketConnection(userName);
       socket.emit("newOffer", { offer, offerTo: userOfferTo });
       setOfferCreated(true); //so that our useEffect doesn't make an offer again
-      setVideoMessage("Awaiting answer..."); //update our videoMessage box
       console.log(
         "created offer, setLocalDesc, emitted offer, updated videoMessage"
       );
@@ -78,10 +62,6 @@ const CallerVideo = ({
       //CREATE AN OFFER!!
       console.log("We have video and no offer... making offer");
       shareVideoAsync();
-
-      // we are not adding tracks so they are visible
-      // in the video tag. We are addign them
-      // to the PC, so they can be sent
     }
   }, [callStatus.videoEnabled, offerCreated]);
 
@@ -146,7 +126,6 @@ const CallerVideo = ({
   return (
     <div>
       <div className="videos">
-        {/* <VideoMessageBox message={videoMessage} /> */}
         <video
           id="local-feed"
           ref={localFeedEl}
