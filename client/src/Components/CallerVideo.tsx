@@ -3,7 +3,6 @@ import "./VideoPage.css";
 import { useNavigate } from "react-router-dom";
 import socketConnection from "../webrtcUtilities/socketConnection";
 import ActionButtons from "./ActionButtons/ActionButtons";
-import VideoMessageBox from "./VideoMessageBox";
 
 const CallerVideo = ({
   userOfferTo,
