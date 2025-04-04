@@ -53,7 +53,6 @@ io.on("connection", (socket) => {
   // console.log("Someone has connected");
   const userName = socket.handshake.auth.userName;
   const password = socket.handshake.auth.password;
-
   if (password !== "x") {
     socket.disconnect(true);
     return;
@@ -72,12 +71,13 @@ io.on("connection", (socket) => {
   //a new client has joined. If there are any offers available,
   //emit them out
   if (offers.length) {
+    console.log("CONNECTED!!!!!!!");
     socket.emit("availableOffers", offers);
   }
 
   socket.on("newOffer", (newOffer) => {
     console.log("newOffer!");
-    console.log(newOffer);
+    // console.log(newOffer);
     offers.push({
       offererUserName: userName,
       offer: newOffer.offer,
@@ -89,8 +89,14 @@ io.on("connection", (socket) => {
     });
     // console.log(newOffer.sdp.slice(50))
     //send out to all connected sockets EXCEPT the caller
-    console.log("Emmiting newOfferAwaiting");
+    console.log("Emmiting newOfferAwaiting", offers);
     socket.broadcast.emit("newOfferAwaiting", offers.slice(-1));
+  });
+
+  socket.on("getOffers", () => {
+    console.log("get offers triggered");
+    console.log("sending offers: ", offers);
+    socket.emit("availableOffers", offers);
   });
 
   socket.on("newAnswer", (offerObj, ackFunction) => {
@@ -120,6 +126,7 @@ io.on("connection", (socket) => {
     ackFunction(offerToUpdate.offerIceCandidates);
     offerToUpdate.answer = offerObj.answer;
     offerToUpdate.answererUserName = userName;
+    console.log(offerToUpdate);
     //socket has a .to() which allows emiting to a "room"
     //every socket has it's own room
     console.log(socketIdToAnswer);
@@ -173,26 +180,36 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    const offerToClear = offers.findIndex(
-      (o) => o.offererUserName === userName
-    );
-    offers.splice(offerToClear, 1);
+    // const offerToClear = offers.findIndex(
+    //   (o) => o.offererUserName === userName
+    // );
+    // offers.splice(offerToClear, 1);
     socket.emit("availableOffers", offers);
   });
 
   socket.on("hangup", (userName) => {
     let userThatHungUp;
     let otherUser;
+    let offerToUpdate;
     for (const offer of offers) {
       if (offer.offererUserName == userName) {
         userThatHungUp = "offerer";
         otherUser = offer.answererUserName;
+        offerToUpdate = offer;
       }
       if (offer.answererUserName == userName) {
         userThatHungUp = "answerer";
         otherUser = offer.offererUserName;
+        offerToUpdate = offer;
       }
     }
+    if (offerToUpdate.answer == null) {
+      const offerToClear = offers.indexOf(offerToUpdate);
+      offers.splice(offerToClear, 1);
+    } else {
+      offerToUpdate.answer = null;
+    }
+    console.log(offerToUpdate);
     if (!userThatHungUp) {
       return false;
     }
