@@ -18,7 +18,7 @@ const HangupButton = ({
         return prevCallStatus;
       });
       const socket = socketConnection("");
-      socket.emit("hangupFromAnswerer", username);
+      socket.emit("hangup", username);
       //user has clicked hang up. pc:
       //close it
       //remove listeners
