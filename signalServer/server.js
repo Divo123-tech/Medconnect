@@ -203,15 +203,53 @@ io.on("connection", (socket) => {
     console.log("offers", offers);
     console.log("connected sockets", connectedSockets);
     console.log("username", username);
-
-    const offerToSendTo = offers.find((o) => o.offererUserName == username);
+    console.log("offers keys", Object.keys(offers));
+    const offerToSendTo = offers.find((o) => {
+      console.log(o);
+      return o.offererUserName == username;
+    });
     console.log(offerToSendTo);
+
     const socketToSendTo = connectedSockets.find(
       (s) => s.userName === offerToSendTo.answererUserName
     );
     console.log(socketToSendTo);
     if (socketToSendTo) {
       socket.to(socketToSendTo.socketId).emit("hangupFromCaller");
+    }
+  });
+
+  socket.on("hangup", (userName) => {
+    let userThatHungUp;
+    let otherUser;
+    for (const offer of offers) {
+      if (offer.offererUserName == userName) {
+        userThatHungUp = "offerer";
+        otherUser = offer.answererUserName;
+      }
+      if (offer.answererUserName == userName) {
+        userThatHungUp = "answerer";
+        otherUser = offer.offererUserName;
+      }
+    }
+    if (!userThatHungUp) {
+      return false;
+    } else if (userThatHungUp == "offerer") {
+      const socketToSendTo = connectedSockets.find(
+        (s) => s.userName === otherUser
+      );
+      console.log(socketToSendTo);
+      if (socketToSendTo) {
+        socket.to(socketToSendTo.socketId).emit("hangupFromAnswerer");
+      }
+    } else {
+      const socketToSendTo = connectedSockets.find(
+        (s) => s.userName === otherUser
+      );
+      console.log(socketToSendTo);
+      if (socketToSendTo) {
+        socket.to(socketToSendTo.socketId).emit("hangupFromCaller");
+      }
     }
   });
 });
