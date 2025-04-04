@@ -52,15 +52,17 @@ const Home = ({
       const userToOffer = prompt("Enter username you're offering to");
       setUserOfferTo(userToOffer);
       setUserName(userName);
+      const socket = socketConnection(userName);
+
       const setCalls = (data: SetStateAction<never[]>) => {
         setAvailableCalls(data);
         console.log(data);
       };
-      const socket = socketConnection(userName);
+      //emitting get offers
       socket.on("availableOffers", setCalls);
       socket.on("newOfferAwaiting", setCalls);
     }
-  }, [joined, setUserName]);
+  }, [joined, setUserName, setUserOfferTo]);
 
   //We have media via GUM. setup the peerConnection w/listeners
   useEffect(() => {
@@ -141,7 +143,7 @@ const Home = ({
           <h2>Available Calls</h2>
           <p>{availableCalls.length}</p>
           {availableCalls
-            .filter((callData) => callData.offeringTo === userName) // Only include calls meant for Bobby
+            .filter((callData) => callData.offeringTo == userName) // Only include calls meant for Bobby
             .map((callData, i) => (
               <div className="col mb-2" key={i}>
                 <button
