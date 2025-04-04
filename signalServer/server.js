@@ -182,12 +182,11 @@ io.on("connection", (socket) => {
 
   //answer hangsup
   socket.on("hangupFromAnswerer", (username) => {
-    console.log("I HUNG UP");
+    console.log("Answerer HUNG UP");
     console.log("offers", offers);
     console.log("connected sockets", connectedSockets);
     console.log("username", username);
 
-    console.log();
     const offerToSendTo = offers.find((o) => o.answererUserName == username);
     console.log(offerToSendTo);
     const socketToSendTo = connectedSockets.find(
@@ -196,6 +195,23 @@ io.on("connection", (socket) => {
     console.log(socketToSendTo);
     if (socketToSendTo) {
       socket.to(socketToSendTo.socketId).emit("hangupFromAnswerer");
+    }
+  });
+
+  socket.on("hangupFromCaller", (username) => {
+    console.log("Caller HUNG UP");
+    console.log("offers", offers);
+    console.log("connected sockets", connectedSockets);
+    console.log("username", username);
+
+    const offerToSendTo = offers.find((o) => o.offererUserName == username);
+    console.log(offerToSendTo);
+    const socketToSendTo = connectedSockets.find(
+      (s) => s.userName === offerToSendTo.answererUserName
+    );
+    console.log(socketToSendTo);
+    if (socketToSendTo) {
+      socket.to(socketToSendTo.socketId).emit("hangupFromCaller");
     }
   });
 });
