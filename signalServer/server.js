@@ -195,22 +195,13 @@ io.on("connection", (socket) => {
     }
     if (!userThatHungUp) {
       return false;
-    } else if (userThatHungUp == "offerer") {
-      const socketToSendTo = connectedSockets.find(
-        (s) => s.userName === otherUser
-      );
-      console.log(socketToSendTo);
-      if (socketToSendTo) {
-        socket.to(socketToSendTo.socketId).emit("hangupFromAnswerer");
-      }
-    } else {
-      const socketToSendTo = connectedSockets.find(
-        (s) => s.userName === otherUser
-      );
-      console.log(socketToSendTo);
-      if (socketToSendTo) {
-        socket.to(socketToSendTo.socketId).emit("hangupFromCaller");
-      }
+    }
+    const socketToSendTo = connectedSockets.find(
+      (s) => s.userName === otherUser
+    );
+    console.log(socketToSendTo);
+    if (socketToSendTo) {
+      socket.to(socketToSendTo.socketId).emit("hangup");
     }
   });
 });
