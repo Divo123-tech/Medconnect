@@ -180,45 +180,6 @@ io.on("connection", (socket) => {
     socket.emit("availableOffers", offers);
   });
 
-  //answer hangsup
-  socket.on("hangupFromAnswerer", (username) => {
-    console.log("Answerer HUNG UP");
-    console.log("offers", offers);
-    console.log("connected sockets", connectedSockets);
-    console.log("username", username);
-
-    const offerToSendTo = offers.find((o) => o.answererUserName == username);
-    console.log(offerToSendTo);
-    const socketToSendTo = connectedSockets.find(
-      (s) => s.userName === offerToSendTo.offererUserName
-    );
-    console.log(socketToSendTo);
-    if (socketToSendTo) {
-      socket.to(socketToSendTo.socketId).emit("hangupFromAnswerer");
-    }
-  });
-
-  socket.on("hangupFromCaller", (username) => {
-    console.log("Caller HUNG UP");
-    console.log("offers", offers);
-    console.log("connected sockets", connectedSockets);
-    console.log("username", username);
-    console.log("offers keys", Object.keys(offers));
-    const offerToSendTo = offers.find((o) => {
-      console.log(o);
-      return o.offererUserName == username;
-    });
-    console.log(offerToSendTo);
-
-    const socketToSendTo = connectedSockets.find(
-      (s) => s.userName === offerToSendTo.answererUserName
-    );
-    console.log(socketToSendTo);
-    if (socketToSendTo) {
-      socket.to(socketToSendTo.socketId).emit("hangupFromCaller");
-    }
-  });
-
   socket.on("hangup", (userName) => {
     let userThatHungUp;
     let otherUser;
