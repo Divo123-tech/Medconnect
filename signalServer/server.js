@@ -57,11 +57,17 @@ io.on("connection", (socket) => {
     socket.disconnect(true);
     return;
   }
-  connectedSockets.push({
-    socketId: socket.id,
-    userName,
-  });
-  console.log(connectedSockets);
+  const userExists = connectedSockets.some(
+    (connection) => connection.userName === userName
+  );
+  console.log(socket.id);
+  if (!userExists) {
+    connectedSockets.push({
+      socketId: socket.id,
+      userName,
+    });
+  }
+  console.log("connected Sockets", connectedSockets);
 
   //test connectivity
   // socket.on('test',ack=>{
@@ -89,7 +95,7 @@ io.on("connection", (socket) => {
     });
     // console.log(newOffer.sdp.slice(50))
     //send out to all connected sockets EXCEPT the caller
-    console.log("Emmiting newOfferAwaiting", offers);
+    // console.log("Emmiting newOfferAwaiting", offers);
     socket.broadcast.emit("newOfferAwaiting", offers.slice(-1));
   });
 
@@ -165,21 +171,23 @@ io.on("connection", (socket) => {
       const offerInOffers = offers.find(
         (o) => o.answererUserName === iceUserName
       );
-      const socketToSendTo = connectedSockets.find(
-        (s) => s.userName === offerInOffers.offererUserName
-      );
-      if (socketToSendTo) {
-        socket
-          .to(socketToSendTo.socketId)
-          .emit("receivedIceCandidateFromServer", iceCandidate);
-      } else {
-        console.log("Ice candidate recieved but could not find offerer");
+      if (offerInOffers) {
+        const socketToSendTo = connectedSockets.find(
+          (s) => s.userName === offerInOffers.offererUserName
+        );
+        if (socketToSendTo) {
+          socket
+            .to(socketToSendTo.socketId)
+            .emit("receivedIceCandidateFromServer", iceCandidate);
+        } else {
+          console.log("Ice candidate recieved but could not find offerer");
+        }
       }
     }
     // console.log(offers)
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", (userName) => {
     // const offerToClear = offers.findIndex(
     //   (o) => o.offererUserName === userName
     // );
@@ -191,6 +199,40 @@ io.on("connection", (socket) => {
       connectedSockets.splice(socketIdx, 1);
     }
     console.log(connectedSockets);
+    let userThatHungUp;
+    let otherUser;
+    let offerToUpdate;
+    for (const offer of offers) {
+      if (offer.offererUserName == userName) {
+        userThatHungUp = "offerer";
+        otherUser = offer.answererUserName;
+        offerToUpdate = offer;
+      }
+      if (offer.answererUserName == userName) {
+        userThatHungUp = "answerer";
+        otherUser = offer.offererUserName;
+        offerToUpdate = offer;
+      }
+    }
+    if (!userThatHungUp) {
+      return false;
+    }
+    if (offerToUpdate.answer == null) {
+      const offerToClear = offers.indexOf(offerToUpdate);
+      offers.splice(offerToClear, 1);
+    } else {
+      offerToUpdate.answer = null;
+    }
+    console.log(offerToUpdate);
+
+    const socketToSendTo = connectedSockets.find(
+      (s) => s.userName === otherUser
+    );
+    console.log(socketToSendTo);
+    if (socketToSendTo) {
+      socket.to(socketToSendTo.socketId).emit("hangup");
+    }
+
     socket.emit("availableOffers", offers);
   });
 
@@ -210,13 +252,10 @@ io.on("connection", (socket) => {
         offerToUpdate = offer;
       }
     }
-    if (offerToUpdate.answer == null) {
-      const offerToClear = offers.indexOf(offerToUpdate);
-      offers.splice(offerToClear, 1);
-    } else {
-      offerToUpdate.answer = null;
-    }
-    console.log(offerToUpdate);
+    const offerToClear = offers.indexOf(offerToUpdate);
+    offers.splice(offerToClear, 1);
+
+    console.log("this is the offerToUpdate", offerToUpdate);
     if (!userThatHungUp) {
       return false;
     }
