@@ -37,6 +37,7 @@ const HangupButton = ({
         });
       }
     }
+    //reload to clean up socket
     window.location.reload();
   };
 
