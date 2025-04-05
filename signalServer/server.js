@@ -217,12 +217,9 @@ io.on("connection", (socket) => {
     if (!userThatHungUp) {
       return false;
     }
-    if (offerToUpdate.answer == null) {
-      const offerToClear = offers.indexOf(offerToUpdate);
-      offers.splice(offerToClear, 1);
-    } else {
-      offerToUpdate.answer = null;
-    }
+    const offerToClear = offers.indexOf(offerToUpdate);
+    offers.splice(offerToClear, 1);
+
     console.log(offerToUpdate);
 
     const socketToSendTo = connectedSockets.find(
