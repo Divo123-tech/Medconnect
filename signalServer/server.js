@@ -57,11 +57,12 @@ io.on("connection", (socket) => {
     socket.disconnect(true);
     return;
   }
+  //check if user exists in the connected sockets
   const userExists = connectedSockets.some(
     (connection) => connection.userName === userName
   );
-  console.log(socket.id);
   if (!userExists) {
+    //if not then push it to the connected sockets
     connectedSockets.push({
       socketId: socket.id,
       userName,
