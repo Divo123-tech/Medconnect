@@ -61,7 +61,7 @@ io.on("connection", (socket) => {
     socketId: socket.id,
     userName,
   });
-  // console.log(connectedSockets)
+  console.log(connectedSockets);
 
   //test connectivity
   // socket.on('test',ack=>{
@@ -184,6 +184,13 @@ io.on("connection", (socket) => {
     //   (o) => o.offererUserName === userName
     // );
     // offers.splice(offerToClear, 1);
+    const socketIdx = connectedSockets.findIndex(
+      (s) => s.socketId === socket.id
+    );
+    if (socketIdx !== -1) {
+      connectedSockets.splice(socketIdx, 1);
+    }
+    console.log(connectedSockets);
     socket.emit("availableOffers", offers);
   });
 
