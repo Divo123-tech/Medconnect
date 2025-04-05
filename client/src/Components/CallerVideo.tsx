@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import "./VideoPage.css";
 import { useNavigate } from "react-router-dom";
 import socketConnection from "../webrtcUtilities/socketConnection";
@@ -18,7 +18,7 @@ const CallerVideo = ({
   const navigate = useNavigate();
 
   const [offerCreated, setOfferCreated] = useState(false);
-
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
   //send back to home if no localStream
   useEffect(() => {
     if (!localStream) {
@@ -66,7 +66,8 @@ const CallerVideo = ({
     const addAnswerAsync = async () => {
       if (callStatus.answer) {
         await peerConnection.setRemoteDescription(callStatus.answer);
-        console.log("Answer added!!");
+        console.log("Answer added!");
+        setTimeout(forceUpdate, 100);
       }
     };
     addAnswerAsync();
