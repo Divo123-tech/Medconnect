@@ -10,16 +10,13 @@ const HangupButton = ({
   username,
 }) => {
   const hangupCall = () => {
-    console.log("Before Func");
     if (peerConnection) {
-      console.log("begining of func");
       setCallStatus((prevCallStatus) => {
         prevCallStatus.current = "complete";
         return prevCallStatus;
       });
       const socket = socketConnection(username);
       socket.emit("hangup", username);
-      // socket.emit("disconnect")
       //user has clicked hang up. pc:
       //close it
       //remove listeners
@@ -32,7 +29,6 @@ const HangupButton = ({
       //set both video tags to empty
       localFeedEl.current.srcObject = null;
       remoteFeedEl.current.srcObject = null;
-      console.log("end of func");
       if (localStream) {
         localStream.getTracks().forEach((track) => {
           if (track.kind === "video") {
@@ -41,7 +37,6 @@ const HangupButton = ({
         });
       }
     }
-    console.log("after func");
     window.location.reload();
   };
 
