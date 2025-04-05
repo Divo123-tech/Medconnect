@@ -2,10 +2,8 @@ import peerConfiguration from "./stunServers";
 import socketConnection from "./socketConnection";
 
 const createPeerConnection = (userName: string, typeOfCall: string) => {
-  //token for example
-  const token = 123;
   //init socket connection
-  const socket = socketConnection(token);
+  const socket = socketConnection(userName);
   try {
     const peerConnection = new RTCPeerConnection(peerConfiguration);
     //RTCPeerConnection is how WebRTC connects to another browser (peer).

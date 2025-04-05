@@ -17,8 +17,9 @@ const HangupButton = ({
         prevCallStatus.current = "complete";
         return prevCallStatus;
       });
-      const socket = socketConnection("");
+      const socket = socketConnection(username);
       socket.emit("hangup", username);
+      // socket.emit("disconnect")
       //user has clicked hang up. pc:
       //close it
       //remove listeners
@@ -41,6 +42,7 @@ const HangupButton = ({
       }
     }
     console.log("after func");
+    window.location.reload();
   };
 
   if (callStatus.current === "complete") {

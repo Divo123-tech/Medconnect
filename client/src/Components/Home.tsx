@@ -59,6 +59,7 @@ const Home = ({
         console.log(data);
       };
       //emitting get offers
+      socket.emit("getOffers");
       socket.on("availableOffers", setCalls);
       socket.on("newOfferAwaiting", setCalls);
     }
@@ -66,8 +67,13 @@ const Home = ({
 
   //We have media via GUM. setup the peerConnection w/listeners
   useEffect(() => {
-    if (callStatus.haveMedia && !peerConnection) {
+    console.log("signaling state", peerConnection);
+    if (
+      callStatus.haveMedia &&
+      (!peerConnection || peerConnection.signalingState == "closed")
+    ) {
       // prepForCall has finished running and updated callStatus
+      console.log("NEW PEER CONNECTION");
       const { peerConnection, remoteStream } = createPeerConnection(
         userName,
         typeOfCall
@@ -75,7 +81,14 @@ const Home = ({
       setPeerConnection(peerConnection);
       setRemoteStream(remoteStream);
     }
-  }, [callStatus, peerConnection]);
+  }, [
+    callStatus,
+    peerConnection,
+    setPeerConnection,
+    setRemoteStream,
+    typeOfCall,
+    userName,
+  ]);
 
   //We know which type of client this is and have PC.
   //Add socketlisteners
