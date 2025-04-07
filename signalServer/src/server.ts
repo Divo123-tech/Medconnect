@@ -37,7 +37,7 @@ const io = socketio(expressServer, {
 expressServer.listen(8181);
 
 //offers will contain {}
-const offers = [
+const offers: any[] = [
   // offererUserName
   // offer
   // offerIceCandidates
@@ -45,9 +45,15 @@ const offers = [
   // answer
   // answererIceCandidates
 ];
-const connectedSockets = [
+
+const connectedSockets: connectedSockets[] = [
   //username, socketId
 ];
+
+type connectedSockets = {
+  username: string;
+  socketId: string;
+};
 
 io.on("connection", (socket) => {
   // console.log("Someone has connected");
@@ -78,7 +84,6 @@ io.on("connection", (socket) => {
   //a new client has joined. If there are any offers available,
   //emit them out
   if (offers.length) {
-    console.log("CONNECTED!!!!!!!");
     socket.emit("availableOffers", offers);
   }
 
