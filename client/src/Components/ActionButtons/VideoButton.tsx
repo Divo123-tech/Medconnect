@@ -7,7 +7,7 @@ const VideoButton = ({
   setCallStatus,
   peerConnection,
 }) => {
-  const [videoEnabled, setVideoEnabled] = useState(true);
+  const [videoEnabled, setVideoEnabled] = useState<boolean>(true);
   //handle user clicking on video button
   const startStopVideo = () => {
     const copyCallStatus = { ...callStatus };

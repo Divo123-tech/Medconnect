@@ -28,7 +28,6 @@ const clientSocketListeners = (
   });
 
   socket.on("hangup", () => {
-    console.log("SOMEONE HUNG UP");
     setRemoteStream((prevRemoteStream) => {
       if (!prevRemoteStream) return null; // Ensure it's not null
 
