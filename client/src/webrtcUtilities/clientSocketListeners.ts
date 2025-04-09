@@ -1,6 +1,8 @@
+import { Socket } from "socket.io-client";
+
 const clientSocketListeners = (
-  socket,
-  typeOfCall,
+  socket: Socket,
+  typeOfCall: string,
   callStatus,
   setCallStatus,
   peerConnection,
