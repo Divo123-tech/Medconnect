@@ -21,6 +21,7 @@ const Home = ({ setRemoteStream, remoteStream }: Props) => {
     setUserName,
     callStatus,
     setCallStatus,
+    localStream,
     setLocalStream,
     peerConnection,
     setUserOfferTo,
@@ -100,6 +101,7 @@ const Home = ({ setRemoteStream, remoteStream }: Props) => {
       clientSocketListeners(
         socket,
         typeOfCall,
+        localStream,
         callStatus,
         setCallStatus,
         peerConnection,

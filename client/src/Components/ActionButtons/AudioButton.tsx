@@ -4,14 +4,7 @@ const AudioButton = () => {
   const { callStatus, setCallStatus, localStream, peerConnection } =
     useCallStore();
 
-  let micText;
-  if (callStatus.audio === "off") {
-    micText = "Join Audio";
-  } else if (callStatus.audio === "enabled") {
-    micText = "Mute";
-  } else {
-    micText = "Unmute";
-  }
+  const micText = "On";
 
   const startStopAudio = () => {
     const copyCallStatus = { ...callStatus };

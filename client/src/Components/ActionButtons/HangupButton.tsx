@@ -7,28 +7,28 @@ const HangupButton = () => {
   let { peerConnection } = useCallStore();
   const hangupCall = () => {
     if (peerConnection) {
-      setCallStatus((prevCallStatus) => {
-        prevCallStatus.current = "complete";
-        return prevCallStatus;
-      });
+      // setCallStatus((prevCallStatus) => {
+      //   prevCallStatus.current = "complete";
+      //   return prevCallStatus;
+      // });
       const socket = socketConnection(username);
       socket?.emit("hangup", username);
       //user has clicked hang up. pc:
       //close it
       //remove listeners
       // //set it to null
-      peerConnection.close();
-      peerConnection.onicecandidate = null;
-      peerConnection.ontrack = null;
-      peerConnection = null;
+      // peerConnection.close();
+      // peerConnection.onicecandidate = null;
+      // peerConnection.ontrack = null;
+      // peerConnection = null;
 
-      if (localStream) {
-        localStream.getTracks().forEach((track) => {
-          if (track.kind === "video") {
-            track.stop();
-          }
-        });
-      }
+      //   if (localStream) {
+      //     localStream.getTracks().forEach((track) => {
+      //       if (track.kind === "video") {
+      //         track.stop();
+      //       }
+      //     });
+      //   }
     }
     //reload to clean up socket
     window.location.reload();

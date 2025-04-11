@@ -1,8 +1,10 @@
+import { useNavigate } from "react-router";
 import { Socket } from "socket.io-client";
 
 const clientSocketListeners = (
   socket: Socket,
   typeOfCall: string,
+  localStream,
   callStatus,
   setCallStatus,
   peerConnection,
@@ -28,6 +30,21 @@ const clientSocketListeners = (
   });
 
   socket.on("hangup", () => {
+    setCallStatus((prevCallStatus) => {
+      prevCallStatus.current = "complete";
+      return prevCallStatus;
+    });
+    if (localStream) {
+      localStream.getTracks().forEach((track) => {
+        if (track.kind === "video") {
+          track.stop();
+        }
+      });
+    }
+    peerConnection.close();
+    peerConnection.onicecandidate = null;
+    peerConnection.ontrack = null;
+    peerConnection = null;
     setRemoteStream((prevRemoteStream) => {
       if (!prevRemoteStream) return null; // Ensure it's not null
 
@@ -36,6 +53,7 @@ const clientSocketListeners = (
 
       return new MediaStream(); // ✅ Replace with a new empty stream
     });
+    window.location.href = "/";
   });
 };
 
