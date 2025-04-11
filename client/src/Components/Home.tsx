@@ -6,6 +6,7 @@ import { useState } from "react";
 import createPeerConnection from "../webrtcUtilities/createPeerConn";
 import { useNavigate } from "react-router-dom";
 import { useCallStore } from "../store/webrtcStore";
+import { Offer } from "../utils/types";
 type Props = {
   remoteStream: MediaStream | null;
   setRemoteStream: React.Dispatch<React.SetStateAction<MediaStream | null>>;
@@ -156,8 +157,8 @@ const Home = ({ setRemoteStream, remoteStream }: Props) => {
           <h2>Available Calls</h2>
           <p>{availableCalls.length}</p>
           {availableCalls
-            .filter((callData) => callData.offeringTo == username) // Only include calls meant for Bobby
-            .map((callData, i) => (
+            .filter((callData: Offer) => callData.offeringTo == username) // Only include calls meant for Bobby
+            .map((callData: Offer, i) => (
               <div className="col mb-2" key={i}>
                 <button
                   onClick={() => answer(callData)}

@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { Offer } from "../utils/types";
 
 type CallStatus = Record<string, any>; // update to something stricter later
 
@@ -20,8 +21,8 @@ interface CallStore {
   userOfferTo: string;
   setUserOfferTo: (offerTo: string) => void;
 
-  offerData: any;
-  setOfferData: (data: any) => void;
+  offerData: Offer;
+  setOfferData: (data: Offer) => void;
 }
 
 export const useCallStore = create<CallStore>((set) => ({
