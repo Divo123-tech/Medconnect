@@ -4,19 +4,21 @@ import { useNavigate } from "react-router-dom";
 import socketConnection from "../webrtcUtilities/socketConnection";
 import ActionButtons from "./ActionButtons/ActionButtons";
 import { useCallStore } from "../store/webrtcStore";
-
-const CallerVideo = ({
-  userOfferTo,
-  remoteStream,
-  localStream,
-  peerConnection,
-  callStatus,
-  setCallStatus,
-}) => {
-  const remoteFeedEl = useRef(null); //this is a React ref to a dom element, so we can interact with it the React way
-  const localFeedEl = useRef(null); //this is a React ref to a dom element, so we can interact with it the React way
+type Props = {
+  remoteStream: MediaStream | null;
+};
+const CallerVideo = ({ remoteStream }: Props) => {
+  const remoteFeedEl = useRef<HTMLVideoElement>(null); //this is a React ref to a dom element, so we can interact with it the React way
+  const localFeedEl = useRef<HTMLVideoElement>(null); //this is a React ref to a dom element, so we can interact with it the React way
   const navigate = useNavigate();
-  const { username } = useCallStore();
+  const {
+    username,
+    callStatus,
+    setCallStatus,
+    localStream,
+    peerConnection,
+    userOfferTo,
+  } = useCallStore();
   const [offerCreated, setOfferCreated] = useState(false);
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   //send back to home if no localStream
@@ -24,12 +26,20 @@ const CallerVideo = ({
     if (!localStream) {
       navigate(`/`);
     } else {
-      localFeedEl.current.srcObject = localStream;
+      if (localFeedEl.current) {
+        localFeedEl.current.srcObject = localStream;
+      }
 
-      if (callStatus.videoEnabled != null) {
+      console.log("local stream", localStream);
+      console.log("remote stream", remoteStream);
+
+      if (
+        callStatus.videoEnabled != null &&
+        remoteFeedEl.current &&
+        remoteStream
+      ) {
         remoteFeedEl.current.srcObject = remoteStream;
       }
-      //set video tags
     }
   }, [callStatus, localStream, navigate, remoteStream]);
 
@@ -42,8 +52,8 @@ const CallerVideo = ({
   //once the user has shared video, start WebRTC'ing :)
   useEffect(() => {
     const shareVideoAsync = async () => {
-      const offer = await peerConnection.createOffer();
-      peerConnection.setLocalDescription(offer);
+      const offer = await peerConnection?.createOffer();
+      peerConnection?.setLocalDescription(offer);
       //we can now start collecing ice candidates!
       // we need to emit the offer to the server
       const socket = socketConnection(username);
@@ -52,7 +62,7 @@ const CallerVideo = ({
       console.log(
         "created offer, setLocalDesc, emitted offer, updated videoMessage"
       );
-      console.log("peerconnect: ", peerConnection.remoteDescription);
+      console.log("peerconnect: ", peerConnection?.remoteDescription);
       console.log("callstatus.answer: ", callStatus.answer);
     };
     if (!offerCreated && callStatus.videoEnabled) {
@@ -65,7 +75,7 @@ const CallerVideo = ({
   useEffect(() => {
     const addAnswerAsync = async () => {
       if (callStatus.answer) {
-        await peerConnection.setRemoteDescription(callStatus.answer);
+        await peerConnection?.setRemoteDescription(callStatus.answer);
         console.log("Answer added!");
         setTimeout(forceUpdate, 100);
       }
@@ -110,8 +120,8 @@ const CallerVideo = ({
             const copyCallStatus = { ...callStatus };
             copyCallStatus.videoEnabled = true;
             setCallStatus(copyCallStatus);
-            localStream.getTracks().forEach((track) => {
-              peerConnection.addTrack(track, localStream);
+            localStream?.getTracks().forEach((track) => {
+              peerConnection?.addTrack(track, localStream);
             });
           }}
         >
@@ -164,11 +174,6 @@ const CallerVideo = ({
       <ActionButtons
         localFeedEl={localFeedEl}
         remoteFeedEl={remoteFeedEl}
-        callStatus={callStatus}
-        localStream={localStream}
-        setCallStatus={setCallStatus}
-        peerConnection={peerConnection}
-        userName={username}
       />
     </div>
   );

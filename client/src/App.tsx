@@ -8,12 +8,7 @@ import Home from "./Components/Home";
 function App() {
   //holds: callStatus, haveMedia, videoEnabled, audioEnabled,
   // haveOffer
-  const [callStatus, setCallStatus] = useState({});
-  const [localStream, setLocalStream] = useState(null);
-  const [remoteStream, setRemoteStream] = useState(null);
-  const [peerConnection, setPeerConnection] = useState(null);
-  const [userOfferTo, setUserOfferTo] = useState("");
-  const [offerData, setOfferData] = useState(null);
+  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
 
   return (
     <BrowserRouter>
@@ -22,46 +17,18 @@ function App() {
           path="/"
           element={
             <Home
-              callStatus={callStatus}
-              userOfferTo={userOfferTo}
-              setUserOfferTo={setUserOfferTo}
-              setCallStatus={setCallStatus}
-              localStream={localStream}
-              setLocalStream={setLocalStream}
               remoteStream={remoteStream}
               setRemoteStream={setRemoteStream}
-              peerConnection={peerConnection}
-              setPeerConnection={setPeerConnection}
-              offerData={offerData}
-              setOfferData={setOfferData}
             />
           }
         />
         <Route
           path="/offer"
-          element={
-            <CallerVideo
-              userOfferTo={userOfferTo}
-              callStatus={callStatus}
-              setCallStatus={setCallStatus}
-              localStream={localStream}
-              remoteStream={remoteStream}
-              peerConnection={peerConnection}
-            />
-          }
+          element={<CallerVideo remoteStream={remoteStream} />}
         />
         <Route
           path="/answer"
-          element={
-            <AnswerVideo
-              callStatus={callStatus}
-              setCallStatus={setCallStatus}
-              localStream={localStream}
-              remoteStream={remoteStream}
-              peerConnection={peerConnection}
-              offerData={offerData}
-            />
-          }
+          element={<AnswerVideo remoteStream={remoteStream} />}
         />
       </Routes>
     </BrowserRouter>

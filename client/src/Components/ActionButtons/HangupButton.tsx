@@ -2,15 +2,9 @@ import { Link } from "react-router";
 import socketConnection from "../../webrtcUtilities/socketConnection";
 import { useCallStore } from "../../store/webrtcStore";
 
-const HangupButton = ({
-  remoteFeedEl,
-  localFeedEl,
-  peerConnection,
-  callStatus,
-  setCallStatus,
-  localStream,
-}) => {
-  const { username } = useCallStore();
+const HangupButton = ({ remoteFeedEl, localFeedEl }) => {
+  const { username, callStatus, setCallStatus, localStream } = useCallStore();
+  let { peerConnection } = useCallStore();
   const hangupCall = () => {
     if (peerConnection) {
       setCallStatus((prevCallStatus) => {
@@ -25,7 +19,7 @@ const HangupButton = ({
       // //set it to null
       peerConnection.close();
       peerConnection.onicecandidate = null;
-      peerConnection.onaddstream = null;
+      peerConnection.ontrack = null;
       peerConnection = null;
 
       //set both video tags to empty

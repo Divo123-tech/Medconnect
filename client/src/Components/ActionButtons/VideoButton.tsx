@@ -1,12 +1,9 @@
 import { useState } from "react";
+import { useCallStore } from "../../store/webrtcStore";
 
-const VideoButton = ({
-  localFeedEl,
-  callStatus,
-  localStream,
-  setCallStatus,
-  peerConnection,
-}) => {
+const VideoButton = () => {
+  const { callStatus, setCallStatus, localStream } = useCallStore();
+
   const [videoEnabled, setVideoEnabled] = useState<boolean>(true);
   //handle user clicking on video button
   const startStopVideo = () => {
@@ -18,15 +15,15 @@ const VideoButton = ({
       copyCallStatus.videoEnabled = false;
       setCallStatus(copyCallStatus);
       setVideoEnabled(false);
-      const tracks = localStream.getVideoTracks();
-      tracks.forEach((track) => (track.enabled = false));
+      const tracks = localStream?.getVideoTracks();
+      tracks?.forEach((track) => (track.enabled = false));
     } else {
       // 2. Video is disabled, so we need to enable
       copyCallStatus.videoEnabled = true;
       setCallStatus(copyCallStatus);
       setVideoEnabled(true);
-      const tracks = localStream.getVideoTracks();
-      tracks.forEach((track) => (track.enabled = true));
+      const tracks = localStream?.getVideoTracks();
+      tracks?.forEach((track) => (track.enabled = true));
     }
   };
 

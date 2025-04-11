@@ -6,33 +6,42 @@ import ActionButtons from "./ActionButtons/ActionButtons";
 import VideoMessageBox from "./VideoMessageBox";
 import { useCallStore } from "../store/webrtcStore";
 
-const AnswerVideo = ({
-  remoteStream,
-  localStream,
-  peerConnection,
-  callStatus,
-  setCallStatus,
-  offerData,
-}) => {
-  const remoteFeedEl = useRef(null); //this is a React ref to a dom element, so we can interact with it the React way
-  const localFeedEl = useRef(null); //this is a React ref to a dom element, so we can interact with it the React way
+type Props = {
+  remoteStream: MediaStream | null;
+};
+const AnswerVideo = ({ remoteStream }: Props) => {
+  const remoteFeedEl = useRef<HTMLVideoElement>(null); //this is a React ref to a dom element, so we can interact with it the React way
+  const localFeedEl = useRef<HTMLVideoElement>(null); //this is a React ref to a dom element, so we can interact with it the React way
   const navigate = useNavigate();
   const [videoMessage, setVideoMessage] = useState(
     "Please enable video to start!"
   );
   const [answerCreated, setAnswerCreated] = useState(false);
-  const { username } = useCallStore();
+  const {
+    username,
+    callStatus,
+    setCallStatus,
+    localStream,
+    peerConnection,
+    offerData,
+  } = useCallStore();
   //send back to home if no localStream
   useEffect(() => {
     if (!localStream) {
       navigate(`/`);
     } else {
-      //   //set video tags
-      //   remoteFeedEl.current.srcObject = remoteStream;
-      //   localFeedEl.current.srcObject = localStream;
-      localFeedEl.current.srcObject = localStream;
+      if (localFeedEl.current) {
+        localFeedEl.current.srcObject = localStream;
+      }
 
-      if (callStatus.videoEnabled != null) {
+      console.log("local stream", localStream);
+      console.log("remote stream", remoteStream);
+
+      if (
+        callStatus.videoEnabled != null &&
+        remoteFeedEl.current &&
+        remoteStream
+      ) {
         remoteFeedEl.current.srcObject = remoteStream;
       }
     }
@@ -61,22 +70,22 @@ const AnswerVideo = ({
   useEffect(() => {
     const addOfferAndCreateAnswerAsync = async () => {
       //add the offer
-      await peerConnection.setRemoteDescription(offerData.offer);
-      console.log(peerConnection.signalingState); //have remote-offer
+      await peerConnection?.setRemoteDescription(offerData.offer);
+      console.log(peerConnection?.signalingState); //have remote-offer
       //now that we have the offer set, make our answer
       console.log("Creating answer...");
-      const answer = await peerConnection.createAnswer();
-      peerConnection.setLocalDescription(answer);
+      const answer = await peerConnection?.createAnswer();
+      peerConnection?.setLocalDescription(answer);
       const copyOfferData = { ...offerData };
       copyOfferData.answer = answer;
       copyOfferData.answerUserName = username;
       const socket = socketConnection(username);
-      const offerIceCandidates = await socket.emitWithAck(
+      const offerIceCandidates = await socket?.emitWithAck(
         "newAnswer",
         copyOfferData
       );
       offerIceCandidates.forEach((c) => {
-        peerConnection.addIceCandidate(c);
+        peerConnection?.addIceCandidate(c);
         console.log("==Added ice candidate from offerer==");
       });
       setAnswerCreated(true);
@@ -88,7 +97,6 @@ const AnswerVideo = ({
   }, [callStatus.videoEnabled, answerCreated]);
 
   //
-  const shareVideo = async () => {};
   if (!answerCreated && callStatus.videoEnabled == null) {
     return (
       <div
@@ -126,8 +134,8 @@ const AnswerVideo = ({
             const copyCallStatus = { ...callStatus };
             copyCallStatus.videoEnabled = true;
             setCallStatus(copyCallStatus);
-            localStream.getTracks().forEach((track) => {
-              peerConnection.addTrack(track, localStream);
+            localStream?.getTracks().forEach((track) => {
+              peerConnection?.addTrack(track, localStream);
             });
           }}
         >
@@ -177,14 +185,7 @@ const AnswerVideo = ({
           playsInline
         ></video>
       </div>
-      <ActionButtons
-        localFeedEl={localFeedEl}
-        remoteFeedEl={remoteFeedEl}
-        callStatus={callStatus}
-        localStream={localStream}
-        setCallStatus={setCallStatus}
-        peerConnection={peerConnection}
-      />
+      <ActionButtons localFeedEl={localFeedEl} remoteFeedEl={remoteFeedEl} />
     </div>
   );
 };

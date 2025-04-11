@@ -1,9 +1,9 @@
-const AudioButton = ({
-  callStatus,
-  setCallStatus,
-  localStream,
-  peerConnection,
-}) => {
+import { useCallStore } from "../../store/webrtcStore";
+
+const AudioButton = () => {
+  const { callStatus, setCallStatus, localStream, peerConnection } =
+    useCallStore();
+
   let micText;
   if (callStatus.audio === "off") {
     micText = "Join Audio";
@@ -21,21 +21,21 @@ const AudioButton = ({
       copyCallStatus.audioEnabled = false;
       setCallStatus(copyCallStatus);
       //set the stream to disabled
-      const tracks = localStream.getAudioTracks();
-      tracks.forEach((t) => (t.enabled = false));
+      const tracks = localStream?.getAudioTracks();
+      tracks?.forEach((t) => (t.enabled = false));
     } else if (callStatus.audioEnabled === false) {
       //second, check if the audio is disabled, if so enable
       //update redux callStatus
       copyCallStatus.audioEnabled = true;
       setCallStatus(copyCallStatus);
-      const tracks = localStream.getAudioTracks();
-      tracks.forEach((t) => (t.enabled = true));
+      const tracks = localStream?.getAudioTracks();
+      tracks?.forEach((t) => (t.enabled = true));
     } else {
       //audio is "off" What do we do?
       // changeAudioDevice({target:{value:"inputdefault"}})
       //add the tracks
-      localStream.getAudioTracks().forEach((t) => {
-        peerConnection.addTrack(t, localStream);
+      localStream?.getAudioTracks().forEach((t) => {
+        peerConnection?.addTrack(t, localStream);
       });
     }
   };

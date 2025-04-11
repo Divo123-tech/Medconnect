@@ -6,26 +6,26 @@ import { useState } from "react";
 import createPeerConnection from "../webrtcUtilities/createPeerConn";
 import { useNavigate } from "react-router-dom";
 import { useCallStore } from "../store/webrtcStore";
-
-const Home = ({
-  userOfferTo,
-  setUserOfferTo,
-  callStatus,
-  setCallStatus,
-  setLocalStream,
-  setRemoteStream,
-  remoteStream,
-  peerConnection,
-  setPeerConnection,
-  localStream,
-  offerData,
-  setOfferData,
-}) => {
+type Props = {
+  remoteStream: MediaStream | null;
+  setRemoteStream: React.Dispatch<React.SetStateAction<MediaStream | null>>;
+};
+const Home = ({ setRemoteStream, remoteStream }: Props) => {
   const [typeOfCall, setTypeOfCall] = useState();
   const [joined, setJoined] = useState(false);
   const [availableCalls, setAvailableCalls] = useState([]);
   const navigate = useNavigate();
-  const { username, setUserName } = useCallStore();
+  const {
+    username,
+    setUserName,
+    callStatus,
+    setCallStatus,
+    setLocalStream,
+    peerConnection,
+    setUserOfferTo,
+    setOfferData,
+    setPeerConnection,
+  } = useCallStore();
 
   //called on "Call" or "Answer"
   const initCall = async (typeOfCall) => {
