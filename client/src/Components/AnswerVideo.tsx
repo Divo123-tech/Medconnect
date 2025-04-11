@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import socketConnection from "../webrtcUtilities/socketConnection";
 import ActionButtons from "./ActionButtons/ActionButtons";
 import VideoMessageBox from "./VideoMessageBox";
+import { useCallStore } from "../store/webrtcStore";
 
 const AnswerVideo = ({
   remoteStream,
@@ -12,7 +13,6 @@ const AnswerVideo = ({
   callStatus,
   setCallStatus,
   offerData,
-  userName,
 }) => {
   const remoteFeedEl = useRef(null); //this is a React ref to a dom element, so we can interact with it the React way
   const localFeedEl = useRef(null); //this is a React ref to a dom element, so we can interact with it the React way
@@ -21,7 +21,7 @@ const AnswerVideo = ({
     "Please enable video to start!"
   );
   const [answerCreated, setAnswerCreated] = useState(false);
-
+  const { username } = useCallStore();
   //send back to home if no localStream
   useEffect(() => {
     if (!localStream) {
@@ -69,8 +69,8 @@ const AnswerVideo = ({
       peerConnection.setLocalDescription(answer);
       const copyOfferData = { ...offerData };
       copyOfferData.answer = answer;
-      copyOfferData.answerUserName = userName;
-      const socket = socketConnection(userName);
+      copyOfferData.answerUserName = username;
+      const socket = socketConnection(username);
       const offerIceCandidates = await socket.emitWithAck(
         "newAnswer",
         copyOfferData
@@ -183,7 +183,6 @@ const AnswerVideo = ({
         callStatus={callStatus}
         localStream={localStream}
         setCallStatus={setCallStatus}
-        userName={userName}
         peerConnection={peerConnection}
       />
     </div>

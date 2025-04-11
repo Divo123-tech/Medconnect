@@ -5,6 +5,7 @@ import clientSocketListeners from "../webrtcUtilities/clientSocketListeners";
 import { useState } from "react";
 import createPeerConnection from "../webrtcUtilities/createPeerConn";
 import { useNavigate } from "react-router-dom";
+import { useCallStore } from "../store/webrtcStore";
 
 const Home = ({
   userOfferTo,
@@ -17,8 +18,6 @@ const Home = ({
   peerConnection,
   setPeerConnection,
   localStream,
-  userName,
-  setUserName,
   offerData,
   setOfferData,
 }) => {
@@ -26,6 +25,7 @@ const Home = ({
   const [joined, setJoined] = useState(false);
   const [availableCalls, setAvailableCalls] = useState([]);
   const navigate = useNavigate();
+  const { username, setUserName } = useCallStore();
 
   //called on "Call" or "Answer"
   const initCall = async (typeOfCall) => {
@@ -51,17 +51,17 @@ const Home = ({
       const userName = prompt("Enter username");
       const userToOffer = prompt("Enter username you're offering to");
       setUserOfferTo(userToOffer);
-      setUserName(userName);
-      const socket = socketConnection(userName);
+      setUserName(userName || "");
+      const socket = socketConnection(userName || "");
 
       const setCalls = (data: SetStateAction<never[]>) => {
         setAvailableCalls(data);
         console.log(data);
       };
       //emitting get offers
-      socket.emit("getOffers");
-      socket.on("availableOffers", setCalls);
-      socket.on("newOfferAwaiting", setCalls);
+      socket?.emit("getOffers");
+      socket?.on("availableOffers", setCalls);
+      socket?.on("newOfferAwaiting", setCalls);
     }
   }, [joined, setUserName, setUserOfferTo]);
 
@@ -75,7 +75,7 @@ const Home = ({
       // prepForCall has finished running and updated callStatus
       console.log("NEW PEER CONNECTION");
       const { peerConnection, remoteStream } = createPeerConnection(
-        userName,
+        username,
         typeOfCall
       );
       setPeerConnection(peerConnection);
@@ -87,14 +87,14 @@ const Home = ({
     setPeerConnection,
     setRemoteStream,
     typeOfCall,
-    userName,
+    username,
   ]);
 
   //We know which type of client this is and have PC.
   //Add socketlisteners
   useEffect(() => {
     if (typeOfCall && peerConnection) {
-      const socket = socketConnection(userName);
+      const socket = socketConnection(username);
       clientSocketListeners(
         socket,
         typeOfCall,
@@ -145,7 +145,7 @@ const Home = ({
   return (
     <div className="container">
       <div className="row">
-        <h1>{userName}</h1>
+        <h1>{username}</h1>
         <div className="col-6">
           <h2>Make a call</h2>
           <button onClick={call} className="btn btn-success btn-lg hang-up">
@@ -156,7 +156,7 @@ const Home = ({
           <h2>Available Calls</h2>
           <p>{availableCalls.length}</p>
           {availableCalls
-            .filter((callData) => callData.offeringTo == userName) // Only include calls meant for Bobby
+            .filter((callData) => callData.offeringTo == username) // Only include calls meant for Bobby
             .map((callData, i) => (
               <div className="col mb-2" key={i}>
                 <button

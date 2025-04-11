@@ -12,7 +12,6 @@ function App() {
   const [localStream, setLocalStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
   const [peerConnection, setPeerConnection] = useState(null);
-  const [userName, setUserName] = useState("");
   const [userOfferTo, setUserOfferTo] = useState("");
   const [offerData, setOfferData] = useState(null);
 
@@ -33,8 +32,6 @@ function App() {
               setRemoteStream={setRemoteStream}
               peerConnection={peerConnection}
               setPeerConnection={setPeerConnection}
-              userName={userName}
-              setUserName={setUserName}
               offerData={offerData}
               setOfferData={setOfferData}
             />
@@ -50,7 +47,6 @@ function App() {
               localStream={localStream}
               remoteStream={remoteStream}
               peerConnection={peerConnection}
-              userName={userName}
             />
           }
         />
@@ -63,7 +59,6 @@ function App() {
               localStream={localStream}
               remoteStream={remoteStream}
               peerConnection={peerConnection}
-              userName={userName}
               offerData={offerData}
             />
           }

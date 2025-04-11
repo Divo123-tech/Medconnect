@@ -1,5 +1,7 @@
 import { Link } from "react-router";
 import socketConnection from "../../webrtcUtilities/socketConnection";
+import { useCallStore } from "../../store/webrtcStore";
+
 const HangupButton = ({
   remoteFeedEl,
   localFeedEl,
@@ -7,8 +9,8 @@ const HangupButton = ({
   callStatus,
   setCallStatus,
   localStream,
-  username,
 }) => {
+  const { username } = useCallStore();
   const hangupCall = () => {
     if (peerConnection) {
       setCallStatus((prevCallStatus) => {
@@ -16,7 +18,7 @@ const HangupButton = ({
         return prevCallStatus;
       });
       const socket = socketConnection(username);
-      socket.emit("hangup", username);
+      socket?.emit("hangup", username);
       //user has clicked hang up. pc:
       //close it
       //remove listeners
