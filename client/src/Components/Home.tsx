@@ -50,7 +50,7 @@ const Home = ({ setRemoteStream, remoteStream }: Props) => {
     if (joined) {
       const userName = prompt("Enter username");
       const userToOffer = prompt("Enter username you're offering to");
-      setUserOfferTo(userToOffer);
+      setUserOfferTo(userToOffer || "");
       setUserName(userName || "");
       const socket = socketConnection(userName || "");
 
