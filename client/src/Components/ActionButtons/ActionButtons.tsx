@@ -3,7 +3,7 @@ import HangupButton from "./HangupButton";
 import VideoButton from "./VideoButton";
 import AudioButton from "./AudioButton";
 
-const ActionButtons = ({ localFeedEl, remoteFeedEl }) => {
+const ActionButtons = () => {
   // const callStatus = useSelector(state=>state.callStatus);
 
   const menuButtons = useRef(null);
@@ -14,7 +14,7 @@ const ActionButtons = ({ localFeedEl, remoteFeedEl }) => {
         <VideoButton />
       </div>
       <div className="center justify-center text-end col-2 hangup-wrapper">
-        <HangupButton localFeedEl={localFeedEl} remoteFeedEl={remoteFeedEl} />
+        <HangupButton />
       </div>
     </div>
   );

@@ -3,7 +3,6 @@ import "./VideoPage.css";
 import { useNavigate } from "react-router-dom";
 import socketConnection from "../webrtcUtilities/socketConnection";
 import ActionButtons from "./ActionButtons/ActionButtons";
-import VideoMessageBox from "./VideoMessageBox";
 import { useCallStore } from "../store/webrtcStore";
 
 type Props = {
@@ -13,9 +12,7 @@ const AnswerVideo = ({ remoteStream }: Props) => {
   const remoteFeedEl = useRef<HTMLVideoElement>(null); //this is a React ref to a dom element, so we can interact with it the React way
   const localFeedEl = useRef<HTMLVideoElement>(null); //this is a React ref to a dom element, so we can interact with it the React way
   const navigate = useNavigate();
-  const [videoMessage, setVideoMessage] = useState(
-    "Please enable video to start!"
-  );
+
   const [answerCreated, setAnswerCreated] = useState(false);
   const {
     username,
@@ -52,19 +49,6 @@ const AnswerVideo = ({ remoteStream }: Props) => {
   //     remoteFeedEl.current.srcObject = remoteStream
   //     localFeedEl.current.srcObject = localStream
   // },[])
-
-  //if we have tracks, disable the video message
-  useEffect(() => {
-    if (peerConnection) {
-      peerConnection.ontrack = (e) => {
-        if (e?.streams?.length) {
-          setVideoMessage("");
-        } else {
-          setVideoMessage("Disconnected...");
-        }
-      };
-    }
-  }, [peerConnection]);
 
   //User has enabled video, but not made answer
   useEffect(() => {
@@ -150,7 +134,6 @@ const AnswerVideo = ({ remoteStream }: Props) => {
   return (
     <div>
       <div className="videos">
-        <VideoMessageBox message={videoMessage} />
         <video
           id="local-feed"
           ref={localFeedEl}
