@@ -1,5 +1,9 @@
 export type SDP = { sdp: string; type: string };
-
+export type CallStatus = {
+  audioEnabled: boolean;
+  haveMedia: boolean;
+  videoEnabled: boolean | null;
+};
 export type IceCandidate = {
   candidate: string;
   sdpMid: string | null;

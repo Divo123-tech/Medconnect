@@ -69,6 +69,7 @@ const Home = ({ setRemoteStream, remoteStream }: Props) => {
   //We have media via GUM. setup the peerConnection w/listeners
   useEffect(() => {
     console.log("signaling state", peerConnection);
+    console.log("Call status", callStatus);
     if (
       callStatus.haveMedia &&
       (!peerConnection || peerConnection.signalingState == "closed")
@@ -124,7 +125,7 @@ const Home = ({ setRemoteStream, remoteStream }: Props) => {
     initCall("offer");
   };
 
-  const answer = (callData) => {
+  const answer = (callData: Offer) => {
     //answer related stuff goes here
     initCall("answer");
     setOfferData(callData);
