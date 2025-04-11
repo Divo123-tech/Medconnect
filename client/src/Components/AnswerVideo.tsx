@@ -70,7 +70,10 @@ const AnswerVideo = ({ remoteStream }: Props) => {
   useEffect(() => {
     const addOfferAndCreateAnswerAsync = async () => {
       //add the offer
-      await peerConnection?.setRemoteDescription(offerData.offer);
+      console.log("offer data", offerData);
+      if (offerData?.offer) {
+        await peerConnection?.setRemoteDescription(offerData.offer);
+      }
       console.log(peerConnection?.signalingState); //have remote-offer
       //now that we have the offer set, make our answer
       console.log("Creating answer...");
@@ -78,7 +81,7 @@ const AnswerVideo = ({ remoteStream }: Props) => {
       peerConnection?.setLocalDescription(answer);
       const copyOfferData = { ...offerData };
       copyOfferData.answer = answer;
-      copyOfferData.answerUserName = username;
+      copyOfferData.answererUserName = username;
       const socket = socketConnection(username);
       const offerIceCandidates = await socket?.emitWithAck(
         "newAnswer",

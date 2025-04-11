@@ -1,7 +1,5 @@
 import { create } from "zustand";
-import { Offer } from "../utils/types";
-
-type CallStatus = Record<string, any>; // update to something stricter later
+import { CallStatus, Offer } from "../utils/types";
 
 interface CallStore {
   username: string;
@@ -21,7 +19,7 @@ interface CallStore {
   userOfferTo: string;
   setUserOfferTo: (offerTo: string) => void;
 
-  offerData: Offer;
+  offerData: Offer | null;
   setOfferData: (data: Offer) => void;
 }
 
@@ -29,7 +27,12 @@ export const useCallStore = create<CallStore>((set) => ({
   username: "",
   setUserName: (name) => set({ username: name }),
 
-  callStatus: {},
+  callStatus: {
+    audioEnabled: false,
+    haveMedia: false,
+    videoEnabled: false,
+    answer: null,
+  },
   setCallStatus: (status) => set({ callStatus: status }),
 
   localStream: null,

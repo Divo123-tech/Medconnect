@@ -63,7 +63,7 @@ const CallerVideo = ({ remoteStream }: Props) => {
         "created offer, setLocalDesc, emitted offer, updated videoMessage"
       );
       console.log("peerconnect: ", peerConnection?.remoteDescription);
-      console.log("callstatus.answer: ", callStatus.answer);
+      console.log("callstatus.answer: ", callStatus);
     };
     if (!offerCreated && callStatus.videoEnabled) {
       //CREATE AN OFFER!!

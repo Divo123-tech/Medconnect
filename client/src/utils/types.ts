@@ -3,6 +3,7 @@ export type CallStatus = {
   audioEnabled: boolean;
   haveMedia: boolean;
   videoEnabled: boolean | null;
+  answer: RTCSessionDescriptionInit | null;
 };
 export type IceCandidate = {
   candidate: string;
@@ -12,10 +13,10 @@ export type IceCandidate = {
 
 export type Offer = {
   offererUserName: string;
-  offer: SDP;
+  offer: RTCSessionDescriptionInit | undefined;
   offerIceCandidates: IceCandidate[];
   answererUserName: string | null;
-  answer: SDP | null;
+  answer: RTCSessionDescriptionInit | undefined;
   answererIceCandidates: IceCandidate[];
   offeringTo: string;
 };
