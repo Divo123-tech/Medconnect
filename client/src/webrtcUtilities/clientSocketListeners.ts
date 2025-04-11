@@ -1,13 +1,14 @@
 import { Socket } from "socket.io-client";
+import { CallStatus } from "../utils/types";
 
 const clientSocketListeners = (
   socket: Socket,
   typeOfCall: string,
-  localStream,
+  localStream: MediaStream | null,
   callStatus,
   setCallStatus,
   peerConnection,
-  setRemoteStream
+  setRemoteStream: React.Dispatch<React.SetStateAction<MediaStream | null>>
 ) => {
   socket.on("answerResponse", (entireOfferObj) => {
     console.log(entireOfferObj);
