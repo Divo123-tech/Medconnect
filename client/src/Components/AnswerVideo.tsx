@@ -81,7 +81,13 @@ const AnswerVideo = ({ remoteStream }: Props) => {
     if (!answerCreated && callStatus.videoEnabled) {
       addOfferAndCreateAnswerAsync();
     }
-  }, [callStatus.videoEnabled, answerCreated]);
+  }, [
+    callStatus.videoEnabled,
+    answerCreated,
+    offerData,
+    peerConnection,
+    username,
+  ]);
 
   //
   if (!answerCreated && callStatus.videoEnabled == null) {
