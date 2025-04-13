@@ -177,7 +177,7 @@ const AnswerVideo = ({ remoteStream }: Props) => {
           playsInline
         ></video>
       </div>
-      <ActionButtons localFeedEl={localFeedEl} remoteFeedEl={remoteFeedEl} />
+      <ActionButtons />
     </div>
   );
 };
