@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import socketConnection from "../webrtcUtilities/socketConnection";
 import ActionButtons from "./ActionButtons/ActionButtons";
 import { useCallStore } from "../store/webrtcStore";
+import { IceCandidate } from "../utils/types";
 
 type Props = {
   remoteStream: MediaStream | null;
@@ -71,7 +72,7 @@ const AnswerVideo = ({ remoteStream }: Props) => {
         "newAnswer",
         copyOfferData
       );
-      offerIceCandidates.forEach((c) => {
+      offerIceCandidates.forEach((c: IceCandidate) => {
         peerConnection?.addIceCandidate(c);
         console.log("==Added ice candidate from offerer==");
       });
