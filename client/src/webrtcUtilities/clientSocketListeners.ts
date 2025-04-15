@@ -2,15 +2,15 @@ import { Socket } from "socket.io-client";
 import { CallStatus } from "../utils/types";
 
 const clientSocketListeners = (
-  socket: Socket,
+  socket: Socket | null,
   typeOfCall: string,
   localStream: MediaStream | null,
   callStatus: CallStatus,
-  setCallStatus: React.Dispatch<React.SetStateAction<CallStatus>>,
+  setCallStatus: (status: CallStatus) => void,
   peerConnection: RTCPeerConnection,
   setRemoteStream: React.Dispatch<React.SetStateAction<MediaStream | null>>
 ) => {
-  socket.on("answerResponse", (entireOfferObj) => {
+  socket?.on("answerResponse", (entireOfferObj) => {
     console.log(entireOfferObj);
     const copyCallStatus = { ...callStatus };
     copyCallStatus.answer = entireOfferObj.answer;
@@ -18,7 +18,7 @@ const clientSocketListeners = (
     setCallStatus(copyCallStatus);
   });
 
-  socket.on("receivedIceCandidateFromServer", (iceC) => {
+  socket?.on("receivedIceCandidateFromServer", (iceC) => {
     if (iceC) {
       peerConnection.addIceCandidate(iceC).catch(() => {
         console.log("Chrome thinks there is an error. There isn't...");
@@ -28,11 +28,14 @@ const clientSocketListeners = (
     }
   });
 
-  socket.on("hangup", () => {
-    setCallStatus((prevCallStatus: CallStatus) => {
-      prevCallStatus.current = "complete";
-      return prevCallStatus;
-    });
+  socket?.on("hangup", () => {
+    const prevCallStatus = callStatus;
+    prevCallStatus.current = "complete";
+    setCallStatus(prevCallStatus);
+    // setCallStatus((prevCallStatus: CallStatus) => {
+    //   prevCallStatus.current = "complete";
+    //   return prevCallStatus;
+    // });
     if (localStream) {
       localStream.getTracks().forEach((track) => {
         if (track.kind === "video") {

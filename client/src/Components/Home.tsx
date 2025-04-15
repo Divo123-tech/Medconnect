@@ -77,12 +77,14 @@ const Home = ({ setRemoteStream, remoteStream }: Props) => {
     ) {
       // prepForCall has finished running and updated callStatus
       console.log("NEW PEER CONNECTION");
-      const { peerConnection, remoteStream } = createPeerConnection(
-        username,
-        typeOfCall
-      );
-      setPeerConnection(peerConnection);
-      setRemoteStream(remoteStream);
+      const createdPeerConnection = createPeerConnection(username, typeOfCall);
+      if (createdPeerConnection == undefined) {
+        return;
+      } else {
+        const { peerConnection, remoteStream } = createdPeerConnection;
+        setPeerConnection(peerConnection);
+        setRemoteStream(remoteStream);
+      }
     }
   }, [
     callStatus,
