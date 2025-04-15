@@ -12,7 +12,7 @@ type Props = {
   setRemoteStream: React.Dispatch<React.SetStateAction<MediaStream | null>>;
 };
 const Home = ({ setRemoteStream, remoteStream }: Props) => {
-  const [typeOfCall, setTypeOfCall] = useState();
+  const [typeOfCall, setTypeOfCall] = useState<string>("");
   const [joined, setJoined] = useState(false);
   const [availableCalls, setAvailableCalls] = useState([]);
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ const Home = ({ setRemoteStream, remoteStream }: Props) => {
   } = useCallStore();
 
   //called on "Call" or "Answer"
-  const initCall = async (typeOfCall) => {
+  const initCall = async (typeOfCall: string) => {
     // set localStream and GUM
     await prepForCall(callStatus, setCallStatus, setLocalStream);
     // console.log("gum access granted!")
@@ -108,7 +108,15 @@ const Home = ({ setRemoteStream, remoteStream }: Props) => {
         setRemoteStream
       );
     }
-  }, [typeOfCall, peerConnection]);
+  }, [
+    typeOfCall,
+    peerConnection,
+    username,
+    localStream,
+    callStatus,
+    setCallStatus,
+    setRemoteStream,
+  ]);
 
   //once remoteStream AND pc are ready, navigate
   useEffect(() => {
