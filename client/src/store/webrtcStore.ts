@@ -32,6 +32,8 @@ export const useCallStore = create<CallStore>((set) => ({
     haveMedia: false,
     videoEnabled: false,
     answer: null,
+    myRole: "",
+    current: "",
   },
   setCallStatus: (status) => set({ callStatus: status }),
 

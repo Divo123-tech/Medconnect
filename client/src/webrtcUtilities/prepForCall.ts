@@ -2,7 +2,13 @@
 // because both sides need to do this same thing before
 // we can move forward
 
-const prepForCall = async (callStatus, setCallStatus, setLocalStream) => {
+import { CallStatus } from "../utils/types";
+
+const prepForCall = async (
+  callStatus: CallStatus,
+  setCallStatus: (status: CallStatus) => void,
+  setLocalStream: (localStream: MediaStream) => void
+) => {
   //can bring constraints in as a param
   const constraints = {
     video: true, //must have one constraint, dont have to show it yet
