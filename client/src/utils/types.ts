@@ -4,6 +4,8 @@ export type CallStatus = {
   haveMedia: boolean;
   videoEnabled: boolean | null;
   answer: RTCSessionDescriptionInit | null;
+  myRole: string;
+  current: string;
 };
 export type IceCandidate = {
   candidate: string;

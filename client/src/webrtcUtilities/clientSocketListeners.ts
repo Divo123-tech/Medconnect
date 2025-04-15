@@ -5,9 +5,9 @@ const clientSocketListeners = (
   socket: Socket,
   typeOfCall: string,
   localStream: MediaStream | null,
-  callStatus,
-  setCallStatus,
-  peerConnection,
+  callStatus: CallStatus,
+  setCallStatus: (status: CallStatus) => void,
+  peerConnection: RTCPeerConnection,
   setRemoteStream: React.Dispatch<React.SetStateAction<MediaStream | null>>
 ) => {
   socket.on("answerResponse", (entireOfferObj) => {
@@ -20,17 +20,16 @@ const clientSocketListeners = (
 
   socket.on("receivedIceCandidateFromServer", (iceC) => {
     if (iceC) {
-      peerConnection.addIceCandidate(iceC).catch((err) => {
+      peerConnection.addIceCandidate(iceC).catch(() => {
         console.log("Chrome thinks there is an error. There isn't...");
       });
       console.log(iceC);
       console.log("Added an iceCandidate to existing page presence");
-      // setShowCallInfo(false);
     }
   });
 
   socket.on("hangup", () => {
-    setCallStatus((prevCallStatus) => {
+    setCallStatus((prevCallStatus: CallStatus) => {
       prevCallStatus.current = "complete";
       return prevCallStatus;
     });
