@@ -6,7 +6,7 @@ const clientSocketListeners = (
   typeOfCall: string,
   localStream: MediaStream | null,
   callStatus: CallStatus,
-  setCallStatus: (status: CallStatus) => void,
+  setCallStatus: React.Dispatch<React.SetStateAction<CallStatus>>,
   peerConnection: RTCPeerConnection,
   setRemoteStream: React.Dispatch<React.SetStateAction<MediaStream | null>>
 ) => {
@@ -43,6 +43,7 @@ const clientSocketListeners = (
     peerConnection.close();
     peerConnection.onicecandidate = null;
     peerConnection.ontrack = null;
+    // @ts-expect-error - reassigning to null, allowed for cleanup
     peerConnection = null;
     setRemoteStream((prevRemoteStream) => {
       if (!prevRemoteStream) return null; // Ensure it's not null
