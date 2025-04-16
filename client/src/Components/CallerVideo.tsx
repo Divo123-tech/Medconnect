@@ -70,7 +70,14 @@ const CallerVideo = ({ remoteStream }: Props) => {
       console.log("We have video and no offer... making offer");
       shareVideoAsync();
     }
-  }, [callStatus.videoEnabled, offerCreated]);
+  }, [
+    callStatus,
+    callStatus.videoEnabled,
+    offerCreated,
+    peerConnection,
+    userOfferTo,
+    username,
+  ]);
 
   useEffect(() => {
     const addAnswerAsync = async () => {
