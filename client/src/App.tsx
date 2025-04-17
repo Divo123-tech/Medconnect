@@ -6,8 +6,6 @@ import AnswerVideo from "./Components/AnswerVideo";
 import Home from "./Components/Home";
 
 function App() {
-  //holds: callStatus, haveMedia, videoEnabled, audioEnabled,
-  // haveOffer
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
 
   return (
