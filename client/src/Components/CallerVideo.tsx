@@ -178,10 +178,7 @@ const CallerVideo = ({ remoteStream }: Props) => {
           playsInline
         ></video>
       </div>
-      <ActionButtons
-        localFeedEl={localFeedEl}
-        remoteFeedEl={remoteFeedEl}
-      />
+      <ActionButtons />
     </div>
   );
 };
