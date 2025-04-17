@@ -4,8 +4,6 @@ import VideoButton from "./VideoButton";
 import AudioButton from "./AudioButton";
 
 const ActionButtons = () => {
-  // const callStatus = useSelector(state=>state.callStatus);
-
   const menuButtons = useRef(null);
   return (
     <div id="menu-buttons" ref={menuButtons} className="row">

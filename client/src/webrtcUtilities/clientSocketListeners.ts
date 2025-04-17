@@ -32,10 +32,6 @@ const clientSocketListeners = (
     const prevCallStatus = callStatus;
     prevCallStatus.current = "complete";
     setCallStatus(prevCallStatus);
-    // setCallStatus((prevCallStatus: CallStatus) => {
-    //   prevCallStatus.current = "complete";
-    //   return prevCallStatus;
-    // });
     if (localStream) {
       localStream.getTracks().forEach((track) => {
         if (track.kind === "video") {
