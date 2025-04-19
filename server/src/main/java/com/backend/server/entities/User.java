@@ -8,20 +8,23 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "users")
-@Data
+@Data //getter and setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class User {
+
     public enum Role {
         PATIENT,
         DOCTOR
     }
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    private Integer id;
 
-    private String fullName;
+    private String firstName;
+
+    private String lastName;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -30,4 +33,5 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
 }
