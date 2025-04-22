@@ -25,8 +25,8 @@ public class AuthController {
         return ResponseEntity.ok(service.register(request));
     }
     //for accounts to get the jwt token
-    @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> register(
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationResponse> login(
             @RequestBody AuthenticationRequest request
     ){
         return ResponseEntity.ok(service.authenticate(request));
