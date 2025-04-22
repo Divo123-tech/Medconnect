@@ -1,5 +1,6 @@
 package com.backend.server.controllers;
 
+import com.backend.server.DTO.UserDTO;
 import com.backend.server.entities.User;
 import com.backend.server.services.AuthService;
 import com.backend.server.services.JwtService;
@@ -18,9 +19,16 @@ public class UserController {
     private final JwtService jwtService;
 
     @GetMapping
-    public ResponseEntity<User> getMyProfile(Authentication auth){
+    public ResponseEntity<UserDTO.UserGetProfileDTO> getMyProfile(Authentication auth){
         User user = (User) auth.getPrincipal(); // if your User implements UserDetails
-        return ResponseEntity.ok(user);
+        UserDTO.UserGetProfileDTO userDto = new UserDTO.UserGetProfileDTO(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getRole()
+        );
+        return ResponseEntity.ok(userDto);
     }
 
 }
