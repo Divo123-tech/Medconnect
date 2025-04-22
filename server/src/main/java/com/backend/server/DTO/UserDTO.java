@@ -17,4 +17,12 @@ public class UserDTO {
         private Role role;
     }
 
+    @Data
+    public static class UserUpdateProfileDTO {
+        private String firstName;
+        private String lastName;
+        private String password;
+        private String email;
+    }
+
 }
