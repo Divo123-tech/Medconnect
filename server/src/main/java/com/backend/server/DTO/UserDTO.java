@@ -51,11 +51,12 @@ public class UserDTO {
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class DoctorGetProfileDTO{
         private Integer id;
         private String firstName;
         private String lastName;
-        private String email;
         private Role role;
         private String specialization;
         private LocalDate startedPracticingAt;

@@ -1,5 +1,6 @@
 package com.backend.server.controllers;
 
+import com.backend.server.DTO.UserDTO;
 import com.backend.server.entities.Doctor;
 import com.backend.server.services.DoctorService;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,20 @@ public class DoctorController {
             @RequestParam(defaultValue = "10") int size
     ) {
         return ResponseEntity.ok(doctorService.findAllDoctors(search, page, size));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO.DoctorGetProfileDTO> getDoctorById(@PathVariable int id) {
+        Doctor doctor = doctorService.getDoctorById(id);
+        return ResponseEntity.ok(new UserDTO.DoctorGetProfileDTO(
+                doctor.getId(),
+                doctor.getFirstName(),
+                doctor.getLastName(),
+                doctor.getRole(),
+                doctor.getSpecialization(),
+                doctor.getStartedPracticingAt(),
+                doctor.getEducation(),
+                doctor.getBio()
+        ));
     }
 }
