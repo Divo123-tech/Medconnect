@@ -3,6 +3,7 @@ package com.backend.server.services;
 import com.backend.server.auth.AuthenticationResponse;
 import com.backend.server.auth.DoctorRegisterRequest;
 import com.backend.server.entities.Doctor;
+import com.backend.server.entities.Patient;
 import com.backend.server.entities.User;
 import com.backend.server.repositories.DoctorRepository;
 import com.backend.server.repositories.UserRepository;
@@ -11,14 +12,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.print.Doc;
 
 
 @Service
 @RequiredArgsConstructor
 public class DoctorService {
-    private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -49,6 +52,11 @@ public class DoctorService {
         } else {
             return doctorRepository.findAll(pageable);
         }
+    }
+
+    public Doctor getDoctorById(int id) {
+        return doctorRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("Doctor with id " + id + " not found"));
     }
 
 }

@@ -2,9 +2,12 @@ package com.backend.server.DTO;
 
 import com.backend.server.entities.Patient;
 import com.backend.server.entities.User.Role;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 public class UserDTO {
     @Data
@@ -45,6 +48,19 @@ public class UserDTO {
         private Double weight;
         private Patient.BloodType bloodType;
         private String conditions;
+    }
+
+    @Data
+    public static class DoctorGetProfileDTO{
+        private Integer id;
+        private String firstName;
+        private String lastName;
+        private String email;
+        private Role role;
+        private String specialization;
+        private LocalDate startedPracticingAt;
+        private String education;
+        private String bio;
     }
 
 }
