@@ -3,7 +3,7 @@ package com.backend.server.services;
 
 import com.backend.server.auth.AuthenticationRequest;
 import com.backend.server.auth.AuthenticationResponse;
-import com.backend.server.auth.RegisterRequest;
+import com.backend.server.auth.PatientRegisterRequest;
 import com.backend.server.entities.Patient;
 import com.backend.server.entities.User;
 import com.backend.server.repositories.PatientRepository;
@@ -24,7 +24,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(PatientRegisterRequest request) {
         //assume that if they're using the basic register route they're not an admin
         //and only patients can be registered in this route
         Patient patient = Patient.builder()

@@ -2,7 +2,7 @@ package com.backend.server.controllers;
 
 import com.backend.server.auth.AuthenticationRequest;
 import com.backend.server.auth.AuthenticationResponse;
-import com.backend.server.auth.RegisterRequest;
+import com.backend.server.auth.PatientRegisterRequest;
 import com.backend.server.services.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class AuthController {
     //for new accounts
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody RegisterRequest request
+            @RequestBody PatientRegisterRequest request
     ){
         return ResponseEntity.ok(service.register(request));
     }
