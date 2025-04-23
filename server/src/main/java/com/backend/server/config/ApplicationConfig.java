@@ -1,6 +1,8 @@
 package com.backend.server.config;
 
+import com.backend.server.repositories.PatientRepository;
 import com.backend.server.repositories.UserRepository;
+import com.backend.server.services.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +21,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
 
     private final UserRepository userRepository;
+    private final PatientRepository patientRepository;
 
     @Bean
     public UserDetailsService userDetailsService(){
         return username -> userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
+
+//    @Bean
+//    public PatientService patientService(){
+//        return id -> patientRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+//    }
 
 
     @Bean
