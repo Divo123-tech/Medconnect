@@ -1,5 +1,6 @@
 package com.backend.server.repositories;
 
+import com.backend.server.entities.Patient;
 import com.backend.server.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,3 +11,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     long deleteByEmail(String email);
 }
+

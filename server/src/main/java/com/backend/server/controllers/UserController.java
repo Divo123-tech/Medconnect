@@ -1,12 +1,11 @@
 package com.backend.server.controllers;
 
 import com.backend.server.DTO.UserDTO;
+import com.backend.server.entities.Patient;
 import com.backend.server.entities.User;
-import com.backend.server.services.AuthService;
-import com.backend.server.services.JwtService;
+import com.backend.server.services.PatientService;
 import com.backend.server.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,13 +17,29 @@ import java.security.Principal;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/my-profile")
 public class UserController {
-    private final AuthService authService;
-    private final JwtService jwtService;
     private final UserService userService;
-
+    private final PatientService patientService;
     @GetMapping
-    public ResponseEntity<UserDTO.UserGetProfileDTO> getMyProfile(Authentication auth){
-        User user = (User) auth.getPrincipal(); // if your User implements UserDetails
+    public ResponseEntity<?> getMyProfile(Authentication auth) {
+        User user = (User) auth.getPrincipal(); // this is safe
+
+        if (user.getRole() == User.Role.PATIENT) {
+            Patient patient = patientService.getPatientById(user.getId());
+
+            return ResponseEntity.ok(new UserDTO.PatientGetProfileDTO(
+                    user.getId(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    user.getRole(),
+                    patient.getPhoneNumber(),
+                    patient.getHeight(),
+                    patient.getWeight(),
+                    patient.getBloodType(),
+                    patient.getConditions()
+            ));
+        }
+
         return ResponseEntity.ok(new UserDTO.UserGetProfileDTO(
                 user.getId(),
                 user.getFirstName(),
@@ -34,11 +49,24 @@ public class UserController {
         ));
     }
 
-
     @PatchMapping
     //use Principal here instead of Authentication object because its more lightweight
-    public ResponseEntity<UserDTO.UserGetProfileDTO> updateUser(@RequestBody UserDTO.UserUpdateProfileDTO request, Principal principal) {
+    public ResponseEntity<?> updateUser(@RequestBody UserDTO.UserUpdateProfileDTO request, Principal principal) {
         User updatedUser = userService.updateUser(principal.getName(), request);
+        if (updatedUser instanceof Patient patient) {
+            return ResponseEntity.ok(new UserDTO.PatientGetProfileDTO(
+                    updatedUser.getId(),
+                    updatedUser.getFirstName(),
+                    updatedUser.getLastName(),
+                    updatedUser.getEmail(),
+                    updatedUser.getRole(),
+                    patient.getPhoneNumber(),
+                    patient.getHeight(),
+                    patient.getWeight(),
+                    patient.getBloodType(),
+                    patient.getConditions()
+            ));
+        }
         return ResponseEntity.ok(new UserDTO.UserGetProfileDTO(
                 updatedUser.getId(),
                 updatedUser.getFirstName(),
