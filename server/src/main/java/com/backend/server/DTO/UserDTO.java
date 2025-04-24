@@ -35,6 +35,8 @@ public class UserDTO {
         private Double weight;
         private Patient.BloodType bloodType;
         private String conditions;
+        private String profilePictureURL;
+
     }
 
     @Data
@@ -48,6 +50,12 @@ public class UserDTO {
         private Double weight;
         private Patient.BloodType bloodType;
         private String conditions;
+        private String specialization;
+        private LocalDate startedPracticingAt;
+        private String education;
+        private String bio;
+        private String profilePictureURL;
+
     }
 
     @Data
@@ -62,6 +70,7 @@ public class UserDTO {
         private LocalDate startedPracticingAt;
         private String education;
         private String bio;
+        private String profilePictureURL;
     }
 
 }

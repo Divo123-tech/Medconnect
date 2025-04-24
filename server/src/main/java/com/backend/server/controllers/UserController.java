@@ -1,8 +1,10 @@
 package com.backend.server.controllers;
 
 import com.backend.server.DTO.UserDTO;
+import com.backend.server.entities.Doctor;
 import com.backend.server.entities.Patient;
 import com.backend.server.entities.User;
+import com.backend.server.services.DoctorService;
 import com.backend.server.services.PatientService;
 import com.backend.server.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.security.Principal;
 public class UserController {
     private final UserService userService;
     private final PatientService patientService;
+    private final DoctorService doctorService;
     @GetMapping
     public ResponseEntity<?> getMyProfile(Authentication auth) {
         User user = (User) auth.getPrincipal(); // this is safe
@@ -36,7 +39,22 @@ public class UserController {
                     patient.getHeight(),
                     patient.getWeight(),
                     patient.getBloodType(),
-                    patient.getConditions()
+                    patient.getConditions(),
+                    patient.getProfilePictureUrl()
+            ));
+        }
+        else if(user.getRole() == User.Role.DOCTOR){
+            Doctor doctor = doctorService.getDoctorById(user.getId());
+            return ResponseEntity.ok(new UserDTO.DoctorGetProfileDTO(
+                    doctor.getId(),
+                    doctor.getFirstName(),
+                    doctor.getLastName(),
+                    doctor.getRole(),
+                    doctor.getSpecialization(),
+                    doctor.getStartedPracticingAt(),
+                    doctor.getEducation(),
+                    doctor.getBio(),
+                    doctor.getProfilePictureUrl()
             ));
         }
 
@@ -64,7 +82,21 @@ public class UserController {
                     patient.getHeight(),
                     patient.getWeight(),
                     patient.getBloodType(),
-                    patient.getConditions()
+                    patient.getConditions(),
+                    patient.getProfilePictureUrl()
+            ));
+        }
+        else if (updatedUser instanceof Doctor doctor){
+            return ResponseEntity.ok(new UserDTO.DoctorGetProfileDTO(
+                    doctor.getId(),
+                    doctor.getFirstName(),
+                    doctor.getLastName(),
+                    doctor.getRole(),
+                    doctor.getSpecialization(),
+                    doctor.getStartedPracticingAt(),
+                    doctor.getEducation(),
+                    doctor.getBio(),
+                    doctor.getProfilePictureUrl()
             ));
         }
         return ResponseEntity.ok(new UserDTO.UserGetProfileDTO(

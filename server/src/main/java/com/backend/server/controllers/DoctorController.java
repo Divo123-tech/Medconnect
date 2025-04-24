@@ -37,7 +37,8 @@ public class DoctorController {
                 doctor.getSpecialization(),
                 doctor.getStartedPracticingAt(),
                 doctor.getEducation(),
-                doctor.getBio()
+                doctor.getBio(),
+                doctor.getProfilePictureUrl()
         ));
     }
 }

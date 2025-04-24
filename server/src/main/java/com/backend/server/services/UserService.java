@@ -1,8 +1,10 @@
 package com.backend.server.services;
 
 import com.backend.server.DTO.UserDTO;
+import com.backend.server.entities.Doctor;
 import com.backend.server.entities.Patient;
 import com.backend.server.entities.User;
+import com.backend.server.repositories.DoctorRepository;
 import com.backend.server.repositories.PatientRepository;
 import com.backend.server.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +20,12 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+
     @Autowired
     private final PatientRepository patientRepository;
+
+    @Autowired
+    private final DoctorRepository doctorRepository;
 
     public User updateUser(String email, UserDTO.UserUpdateProfileDTO request) {
         User user = userRepository.findByEmail(email)
@@ -60,8 +66,22 @@ public class UserService {
             System.out.println(patient);
             return patientRepository.save(patient); // 🔁 Save and return as Patient
         }
-
-        return userRepository.save(user);
+        else if(user instanceof Doctor doctor){
+            if (request.getSpecialization() != null) {
+                doctor.setSpecialization(request.getSpecialization());
+            }
+            if (request.getStartedPracticingAt() != null) {
+                doctor.setStartedPracticingAt(request.getStartedPracticingAt());
+            }
+            if (request.getEducation() != null) {
+                doctor.setEducation(request.getEducation());
+            }
+            if (request.getBio() != null) {
+                doctor.setBio(request.getBio());
+            }
+            return doctorRepository.save(doctor); // 🔁 Save and return as Doctor
+        }
+    return userRepository.save(user);
     }
 
     @Transactional
@@ -76,6 +96,10 @@ public class UserService {
         // If the user is a patient, delete from the patients table first
         if (user instanceof Patient patient) {
             patientRepository.deleteById(patient.getId());
+        }
+
+        else if(user instanceof Doctor doctor){
+            doctorRepository.deleteById(doctor.getId());
         }
 
         // Now delete the user

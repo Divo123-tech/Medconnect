@@ -29,7 +29,8 @@ public class PatientController {
                 patient.getHeight(),
                 patient.getWeight(),
                 patient.getBloodType(),
-                patient.getConditions()
+                patient.getConditions(),
+                patient.getProfilePictureUrl()
         ));
     }
 }
