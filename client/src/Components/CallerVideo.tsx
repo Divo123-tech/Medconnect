@@ -92,37 +92,18 @@ const CallerVideo = ({ remoteStream }: Props) => {
 
   if (!offerCreated && callStatus.videoEnabled == null) {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          gap: "4rem",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
+      <div className="flex flex-col justify-center items-center gap-16">
         <video
           id="local-feed"
           ref={localFeedEl}
           autoPlay
           controls
           playsInline
-          style={{
-            width: "720px",
-            height: "400px",
-            objectFit: "cover",
-          }}
-        ></video>
+          className="w-[720px] h-[400px] object-cover"
+        />
+
         <button
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#007bff",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
+          className="px-5 py-2 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700 transition-colors"
           onClick={() => {
             const copyCallStatus = { ...callStatus };
             copyCallStatus.videoEnabled = true;
@@ -147,36 +128,23 @@ const CallerVideo = ({ remoteStream }: Props) => {
           autoPlay
           controls
           playsInline
-          style={
+          className={
             remoteStream?.active === false
-              ? {
-                  height: "90vh",
-                  width: "100vw",
-                  backgroundColor: "#222",
-                }
-              : {
-                  position: "absolute",
-                  zIndex: "2",
-                  right: "5%",
-                  bottom: "10%",
-                  width: "10%",
-                  display: "block",
-                }
+              ? "h-[90vh] w-screen bg-[#222]"
+              : "absolute z-20 right-[5%] bottom-[10%] w-[10%] block"
           }
-        ></video>
+        />
+
         <video
           id="remote-feed"
           ref={remoteFeedEl}
           autoPlay
           controls
-          style={{
-            ...(remoteStream?.active === false ? { visibility: "hidden" } : {}),
-            height: "90vh",
-            width: "100vw",
-            backgroundColor: "#222",
-          }}
           playsInline
-        ></video>
+          className={`h-[90vh] w-screen bg-[#222] ${
+            remoteStream?.active === false ? "invisible" : ""
+          }`}
+        />
       </div>
       <ActionButtons />
     </div>
