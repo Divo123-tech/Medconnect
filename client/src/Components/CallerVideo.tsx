@@ -1,5 +1,4 @@
 import { useEffect, useReducer, useRef, useState } from "react";
-import "./VideoPage.css";
 import { useNavigate } from "react-router-dom";
 import socketConnection from "../webrtcUtilities/socketConnection";
 import ActionButtons from "./ActionButtons/ActionButtons";
@@ -121,7 +120,7 @@ const CallerVideo = ({ remoteStream }: Props) => {
 
   return (
     <div>
-      <div className="videos">
+      <div className="absolute overflow-hidden">
         <video
           id="local-feed"
           ref={localFeedEl}

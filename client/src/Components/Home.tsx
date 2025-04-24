@@ -145,10 +145,10 @@ const Home = ({ setRemoteStream, remoteStream }: Props) => {
 
   if (!joined) {
     return (
-      <div className="container d-flex align-items-center justify-content-center min-vh-100">
+      <div className="min-h-screen flex items-center justify-center">
         <button
           onClick={() => setJoined(true)}
-          className="btn btn-primary btn-lg"
+          className="bg-blue-600 text-white text-lg px-6 py-3 rounded hover:bg-blue-700 transition-colors"
         >
           Join
         </button>
@@ -157,25 +157,33 @@ const Home = ({ setRemoteStream, remoteStream }: Props) => {
   }
 
   return (
-    <div className="container">
-      <div className="row">
-        <h1>{username}</h1>
-        <div className="col-6">
-          <h2>Make a call</h2>
-          <button onClick={call} className="btn btn-success btn-lg hang-up">
+    <div className="px-4">
+      <div className="flex flex-col md:flex-row gap-8">
+        <h1 className="text-2xl font-bold">{username}</h1>
+
+        {/* Make a Call */}
+        <div className="w-full md:w-1/2">
+          <h2 className="text-xl font-semibold mb-4">Make a call</h2>
+          <button
+            onClick={call}
+            className="bg-green-600 text-white text-lg px-6 py-3 rounded hover:bg-green-700 transition-colors"
+          >
             Start Call
           </button>
         </div>
-        <div className="col-6">
-          <h2>Available Calls</h2>
-          <p>{availableCalls.length}</p>
+
+        {/* Available Calls */}
+        <div className="w-full md:w-1/2">
+          <h2 className="text-xl font-semibold mb-2">Available Calls</h2>
+          <p className="mb-4">{availableCalls.length}</p>
+
           {availableCalls
-            .filter((callData: Offer) => callData.offeringTo == username) // Only include calls meant for Bobby
+            .filter((callData: Offer) => callData.offeringTo == username)
             .map((callData: Offer, i) => (
-              <div className="col mb-2" key={i}>
+              <div className="mb-2" key={i}>
                 <button
                   onClick={() => answer(callData)}
-                  className="btn btn-lg btn-warning hang-up"
+                  className="bg-yellow-500 text-black text-lg px-6 py-3 rounded hover:bg-yellow-600 transition-colors"
                 >
                   Answer Call From {callData.offererUserName} for{" "}
                   {callData.offeringTo}

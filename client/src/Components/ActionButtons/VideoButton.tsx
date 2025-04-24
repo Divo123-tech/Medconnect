@@ -28,11 +28,13 @@ const VideoButton = () => {
   };
 
   return (
-    <div className="button-wrapper video-button d-inline-block">
-      <i className="fa fa-caret-up choose-video"></i>
-      <div className="button camera" onClick={startStopVideo}>
-        <i className="fa fa-video"></i>
-        <div className="btn-text">{videoEnabled ? "Stop" : "Start"} Video</div>
+    <div className="inline-block relative">
+      <div
+        className=" text-white flex flex-col items-center justify-center px-4 py-4 rounded cursor-pointer hover:bg-gray-400 hover:bg-opacity-20 transition"
+        onClick={startStopVideo}
+      >
+        <i className="fa fa-video text-[32px] mb-1"></i>
+        <div className="text-sm">{videoEnabled ? "Stop" : "Start"} Video</div>
       </div>
     </div>
   );
