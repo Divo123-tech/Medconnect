@@ -2,8 +2,11 @@ package com.backend.server.controllers;
 
 import com.backend.server.DTO.UserDTO;
 import com.backend.server.entities.Patient;
+import com.backend.server.entities.User;
 import com.backend.server.services.PatientService;
+import com.backend.server.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,10 +18,19 @@ public class PatientController {
 
     private final PatientService patientService;
 
+    private final UserService userService;
+
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO.PatientGetProfileDTO> getPatientById(@PathVariable int id) {
-        //when the doctor is added make sure that this is only possible if the person checking is a doctor
+    public ResponseEntity<?> getPatientById(@PathVariable int id) {
+        User currentUser = userService.getUserById(id);
+
+        // Ensure only doctors can access patient profiles
+        if (currentUser.getRole() != User.Role.DOCTOR) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied. Only doctors can view patient profiles.");
+        }
+
         Patient patient = patientService.getPatientById(id);
+
         return ResponseEntity.ok(new UserDTO.PatientGetProfileDTO(
                 patient.getId(),
                 patient.getFirstName(),

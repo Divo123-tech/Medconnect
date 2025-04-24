@@ -32,6 +32,11 @@ public class UserService {
     @Autowired
     private final DoctorRepository doctorRepository;
 
+    public User getUserById(int id){
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
     public User updateUser(String email, UserDTO.UserUpdateProfileDTO request, MultipartFile profilePicture) throws IOException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
