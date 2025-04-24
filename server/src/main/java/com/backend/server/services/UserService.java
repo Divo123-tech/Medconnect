@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -25,9 +27,12 @@ public class UserService {
     private final PatientRepository patientRepository;
 
     @Autowired
+    private final FileService fileService;
+
+    @Autowired
     private final DoctorRepository doctorRepository;
 
-    public User updateUser(String email, UserDTO.UserUpdateProfileDTO request) {
+    public User updateUser(String email, UserDTO.UserUpdateProfileDTO request, MultipartFile profilePicture) throws IOException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
@@ -45,6 +50,10 @@ public class UserService {
 
         if (request.getPassword() != null) {
             user.setPassword(request.getPassword());
+        }
+        if (profilePicture != null && !profilePicture.isEmpty()) {
+            String profilePictureUrl = fileService.saveProfilePicture(profilePicture);
+            user.setProfilePictureUrl(profilePictureUrl);
         }
         // If the user is a patient, update patient-specific fields
         if (user instanceof Patient patient) {
@@ -93,7 +102,7 @@ public class UserService {
 
         User user = optionalUser.get();
 
-        // If the user is a patient, delete from the patients table first
+        // If the user is a patient or a doctor, delete from the respective table first
         if (user instanceof Patient patient) {
             patientRepository.deleteById(patient.getId());
         }

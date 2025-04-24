@@ -9,10 +9,13 @@ import com.backend.server.services.PatientService;
 import com.backend.server.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 
 @RestController
@@ -67,10 +70,12 @@ public class UserController {
         ));
     }
 
-    @PatchMapping
+    @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     //use Principal here instead of Authentication object because its more lightweight
-    public ResponseEntity<?> updateUser(@RequestBody UserDTO.UserUpdateProfileDTO request, Principal principal) {
-        User updatedUser = userService.updateUser(principal.getName(), request);
+    public ResponseEntity<?> updateUser( Principal principal,
+                                         @RequestPart("user") UserDTO.UserUpdateProfileDTO request,
+                                         @RequestPart(value = "profilePicture", required = false) MultipartFile profilePicture) throws IOException {
+        User updatedUser = userService.updateUser(principal.getName(), request, profilePicture);
         if (updatedUser instanceof Patient patient) {
             return ResponseEntity.ok(new UserDTO.PatientGetProfileDTO(
                     updatedUser.getId(),
