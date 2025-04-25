@@ -13,20 +13,27 @@ import { Link, useNavigate } from "react-router";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
+import { RegisterRequest } from "@/utils/types";
+import { register } from "@/services/authService";
 
 const Register = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordsMatch, setPasswordsMatch] = useState(true);
+  const [registerRequest, setRegisterRequest] = useState<RegisterRequest>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
   const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
+    if (registerRequest.password !== confirmPassword) {
       setPasswordsMatch(false);
       return;
     }
@@ -34,10 +41,26 @@ const Register = () => {
     setIsSubmitting(true);
 
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const jwtToken = await register(registerRequest);
+      console.log(jwtToken);
+    } catch (err) {
+      const error = err as Error;
+      console.log(error.message);
+    }
 
     setIsSubmitting(false);
     setIsSuccess(true);
+  };
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    // Update the state dynamically based on input name
+    setRegisterRequest((prev) => ({
+      ...prev,
+      [name]: value, // Update the corresponding key in the state
+    }));
   };
 
   const containerVariants = {
@@ -118,7 +141,9 @@ const Register = () => {
                       id="firstName"
                       placeholder="Enter your first name"
                       required
+                      name="firstName"
                       className="h-12 border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-all"
+                      onChange={handleInput}
                     />
                   </motion.div>
 
@@ -130,6 +155,8 @@ const Register = () => {
                       id="lastName"
                       placeholder="Enter your last name"
                       required
+                      name="lastName"
+                      onChange={handleInput}
                       className="h-12 border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-all"
                     />
                   </motion.div>
@@ -144,6 +171,8 @@ const Register = () => {
                     type="email"
                     placeholder="Enter your email"
                     required
+                    onChange={handleInput}
+                    name="email"
                     className="h-12 border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-all"
                   />
                 </motion.div>
@@ -158,8 +187,8 @@ const Register = () => {
                       type={showPassword ? "text" : "password"}
                       placeholder="Create a password"
                       required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      name="password"
+                      onChange={handleInput}
                       className="h-12 border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-all pr-10"
                     />
                     <button
@@ -189,7 +218,8 @@ const Register = () => {
                       onChange={(e) => {
                         setConfirmPassword(e.target.value);
                         setPasswordsMatch(
-                          e.target.value === password || e.target.value === ""
+                          e.target.value === registerRequest.password ||
+                            e.target.value === ""
                         );
                       }}
                       className={`h-12 border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-all pr-10 ${
