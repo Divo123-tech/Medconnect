@@ -1,4 +1,4 @@
-import { RegisterRequest } from "@/utils/types";
+import { LoginRequest, RegisterRequest } from "@/utils/types";
 import axios from "axios";
 
 export const register = async ({
@@ -30,5 +30,29 @@ export const register = async ({
 
     // Fallback error
     throw new Error("Something went wrong during registration.");
+  }
+};
+
+export const login = async ({ email, password }: LoginRequest) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:8080/api/v1/auth/login",
+      {
+        email,
+        password,
+      }
+    );
+    return response.data.token;
+  } catch (error) {
+    // Optional: check if it's an Axios error
+    if (axios.isAxiosError(error)) {
+      const message =
+        error.response?.data?.message || "Login failed. Please try again.";
+      // Useful for UI feedback
+      throw new Error(message);
+    }
+
+    // Fallback error
+    throw new Error("Something went wrong during Login.");
   }
 };

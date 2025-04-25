@@ -1,27 +1,43 @@
+"use client";
+
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  ArrowRight,
-  CheckCircle2,
-  Eye,
-  EyeOff,
-  Stethoscope,
-} from "lucide-react";
-import { Link } from "react-router";
+import { ArrowRight, Eye, EyeOff, Stethoscope } from "lucide-react";
+import { Link, useNavigate } from "react-router";
 
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
+import { LoginRequest } from "@/utils/types";
+import { login } from "@/services/authService";
+import { useAuthStore } from "@/store/authStore";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
+  const [loginRequest, setLoginRequest] = useState<LoginRequest>({
+    email: "",
+    password: "",
+  });
+  // Animation states
+  const [checkmarkAnimationComplete, setCheckmarkAnimationComplete] =
+    useState(false);
+  const { setToken } = useAuthStore();
+  useEffect(() => {
+    // Navigate to dashboard after the checkmark animation completes
+    if (checkmarkAnimationComplete) {
+      const timer = setTimeout(() => {
+        navigate("/");
+      }, 1000); // Wait 1 second after animation completes before navigating
+
+      return () => clearTimeout(timer);
+    }
+  }, [checkmarkAnimationComplete, navigate]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,29 +47,21 @@ export default function LoginPage() {
 
     setIsSubmitting(true);
 
+    // Simulate API call
     try {
-      // Simulate API call
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // Simulate a random error for demonstration purposes
-          // In a real app, this would be your actual API call
-          const shouldFail = Math.random() < 0.3;
-          if (shouldFail) {
-            reject(new Error("Invalid email or password. Please try again."));
-          } else {
-            resolve(true);
-          }
-        }, 1500);
-      });
-
+      const jwtToken = await login(loginRequest);
+      console.log(jwtToken);
+      setToken(jwtToken);
       setIsSubmitting(false);
       setIsSuccess(true);
-    } catch (error) {
+    } catch (err) {
+      const error = err as Error;
+      console.log(error.message);
       setIsSubmitting(false);
       setFormError(
         error instanceof Error
           ? error.message
-          : "Login failed. Please try again."
+          : "Registration failed. Please try again."
       );
     }
   };
@@ -64,6 +72,13 @@ export default function LoginPage() {
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
+      },
+    },
+    exit: {
+      opacity: 0,
+      y: 20,
+      transition: {
+        duration: 0.3,
       },
     },
   };
@@ -80,6 +95,54 @@ export default function LoginPage() {
     },
   };
 
+  const circleVariants = {
+    hidden: { scale: 0 },
+    visible: {
+      scale: [0, 1.2, 1],
+      transition: {
+        duration: 0.6,
+        times: [0, 0.6, 1],
+        type: "tween",
+        ease: "easeOut",
+      },
+    },
+  };
+
+  const checkVariants = {
+    hidden: { pathLength: 0, opacity: 0 },
+    visible: {
+      pathLength: 1,
+      opacity: 1,
+      transition: {
+        delay: 0.3,
+        duration: 0.5,
+        ease: "easeInOut",
+      },
+    },
+  };
+
+  const successTextVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: 0.7,
+        duration: 0.5,
+      },
+    },
+  };
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    // Update the state dynamically based on input name
+    setLoginRequest((prev) => ({
+      ...prev,
+      [name]: value, // Update the corresponding key in the state
+    }));
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
       <motion.div
@@ -89,42 +152,42 @@ export default function LoginPage() {
         className="w-full max-w-md"
       >
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="p-8">
-            <div className="flex justify-center mb-6">
+          {!isSuccess ? (
+            <div className="p-8">
+              <div className="flex justify-center mb-6">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 20,
+                    delay: 0.2,
+                  }}
+                  className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center text-teal-600"
+                >
+                  <Stethoscope size={32} />
+                </motion.div>
+              </div>
+
               <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 260,
-                  damping: 20,
-                  delay: 0.2,
-                }}
-                className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center text-teal-600"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="text-center mb-8"
               >
-                <Stethoscope size={32} />
+                <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                  Welcome back
+                </h1>
+                <p className="text-gray-600">
+                  Sign in to access your appointments
+                </p>
               </motion.div>
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-center mb-8"
-            >
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                Welcome back
-              </h1>
-              <p className="text-gray-600">
-                Sign in to access your appointments
-              </p>
-            </motion.div>
-
-            {!isSuccess ? (
               <motion.form
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
+                exit="exit"
                 onSubmit={handleSubmit}
                 className="space-y-5"
               >
@@ -161,8 +224,8 @@ export default function LoginPage() {
                     type="email"
                     placeholder="Enter your email"
                     required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    name="email"
+                    onChange={handleInput}
                     className="h-12 border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-all"
                   />
                 </motion.div>
@@ -176,11 +239,11 @@ export default function LoginPage() {
                   <div className="relative">
                     <Input
                       id="password"
+                      name="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
                       required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={handleInput}
                       className="h-12 border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition-all pr-10"
                     />
                     <button
@@ -295,39 +358,54 @@ export default function LoginPage() {
                   </Link>
                 </motion.p>
               </motion.form>
-            ) : (
+            </div>
+          ) : (
+            <motion.div className="flex flex-col items-center justify-center py-10">
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-8"
+                className="relative w-24 h-24"
+                initial="hidden"
+                animate="visible"
+                onAnimationComplete={() => setCheckmarkAnimationComplete(true)}
               >
+                {/* Circle background */}
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 260,
-                    damping: 20,
-                  }}
-                  className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-green-600 mx-auto mb-6"
+                  variants={circleVariants}
+                  className="absolute inset-0 bg-green-100 rounded-full"
+                />
+
+                {/* Checkmark SVG */}
+                <svg
+                  className="absolute inset-0 w-full h-full"
+                  viewBox="0 0 100 100"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <CheckCircle2 size={40} />
-                </motion.div>
+                  <motion.path
+                    d="M28 50L45 67L72 33"
+                    stroke="#10B981"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    variants={checkVariants}
+                  />
+                </svg>
+              </motion.div>
+
+              <motion.div
+                variants={successTextVariants}
+                initial="hidden"
+                animate="visible"
+                className="text-center mt-6"
+              >
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">
                   Login Successful!
                 </h2>
-                <p className="text-gray-600 mb-6">
-                  You are now signed in to your account.
+                <p className="text-gray-600">
+                  Redirecting to your dashboard...
                 </p>
-                <Button
-                  className="bg-teal-600 hover:bg-teal-700 text-white"
-                  onClick={() => (window.location.href = "/dashboard")}
-                >
-                  Go to Dashboard
-                </Button>
               </motion.div>
-            )}
-          </div>
+            </motion.div>
+          )}
         </div>
       </motion.div>
     </div>

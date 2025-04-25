@@ -15,7 +15,6 @@ import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { RegisterRequest } from "@/utils/types";
 import { register } from "@/services/authService";
-import { useAuthStore } from "@/store/authStore";
 
 const Register = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,7 +31,6 @@ const Register = () => {
     password: "",
   });
 
-  const { setToken } = useAuthStore();
   const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,7 +49,6 @@ const Register = () => {
     try {
       const jwtToken = await register(registerRequest);
       console.log(jwtToken);
-      setToken(jwtToken);
       setIsSubmitting(false);
       setIsSuccess(true);
     } catch (err) {
