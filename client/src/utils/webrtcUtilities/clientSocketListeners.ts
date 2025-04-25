@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import { CallStatus } from "../utils/types";
+import { CallStatus } from "../types";
 
 const clientSocketListeners = (
   socket: Socket | null,

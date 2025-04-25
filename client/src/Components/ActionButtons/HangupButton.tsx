@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import socketConnection from "../../webrtcUtilities/socketConnection";
+import socketConnection from "../../utils/webrtcUtilities/socketConnection";
 import { useCallStore } from "../../store/webrtcStore";
 
 const HangupButton = () => {

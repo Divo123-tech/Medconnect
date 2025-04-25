@@ -1,8 +1,8 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import socketConnection from "../webrtcUtilities/socketConnection";
-import ActionButtons from "./ActionButtons/ActionButtons";
-import { useCallStore } from "../store/webrtcStore";
+import socketConnection from "../../utils/webrtcUtilities/socketConnection";
+import ActionButtons from "../ActionButtons/ActionButtons";
+import { useCallStore } from "../../store/webrtcStore";
 type Props = {
   remoteStream: MediaStream | null;
 };

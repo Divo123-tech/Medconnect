@@ -2,7 +2,7 @@
 // because both sides need to do this same thing before
 // we can move forward
 
-import { CallStatus } from "../utils/types";
+import { CallStatus } from "../types";
 
 const prepForCall = async (
   callStatus: CallStatus,

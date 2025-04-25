@@ -1,8 +1,8 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
-import CallerVideo from "./Components/CallerVideo";
-import AnswerVideo from "./Components/AnswerVideo";
+import CallerVideo from "./Components/VideoConference/CallerVideo";
+import AnswerVideo from "./Components/VideoConference/AnswerVideo";
 import Home from "./Components/Home";
 
 function App() {

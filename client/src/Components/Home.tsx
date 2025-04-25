@@ -1,9 +1,9 @@
 import { SetStateAction, useEffect } from "react";
-import prepForCall from "../webrtcUtilities/prepForCall";
-import socketConnection from "../webrtcUtilities/socketConnection";
-import clientSocketListeners from "../webrtcUtilities/clientSocketListeners";
+import prepForCall from "../utils/webrtcUtilities/prepForCall";
+import socketConnection from "../utils/webrtcUtilities/socketConnection";
+import clientSocketListeners from "../utils/webrtcUtilities/clientSocketListeners";
 import { useState } from "react";
-import createPeerConnection from "../webrtcUtilities/createPeerConn";
+import createPeerConnection from "../utils/webrtcUtilities/createPeerConn";
 import { useNavigate } from "react-router-dom";
 import { useCallStore } from "../store/webrtcStore";
 import { Offer } from "../utils/types";
