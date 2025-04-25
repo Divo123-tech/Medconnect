@@ -5,6 +5,7 @@ import CallerVideo from "./Components/VideoConference/CallerVideo";
 import AnswerVideo from "./Components/VideoConference/AnswerVideo";
 import Home from "./Components/Home";
 import Register from "./Components/Auth/Register";
+import LoginPage from "./Components/Auth/Login";
 
 function App() {
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -30,6 +31,7 @@ function App() {
           element={<AnswerVideo remoteStream={remoteStream} />}
         />
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
     </BrowserRouter>
   );
