@@ -4,6 +4,7 @@ import { useState } from "react";
 import CallerVideo from "./Components/VideoConference/CallerVideo";
 import AnswerVideo from "./Components/VideoConference/AnswerVideo";
 import Home from "./Components/Home";
+import Register from "./Components/Auth/Register";
 
 function App() {
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -28,6 +29,7 @@ function App() {
           path="/answer"
           element={<AnswerVideo remoteStream={remoteStream} />}
         />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   );
