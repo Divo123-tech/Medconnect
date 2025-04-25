@@ -9,7 +9,7 @@ interface AuthStore {
   setToken: (token: string) => void;
 }
 
-export const authStore = create<AuthStore>((set) => ({
+export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
   setUser: (user: Patient | Doctor) => set({ user }),
 
