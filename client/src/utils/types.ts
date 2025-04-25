@@ -29,3 +29,30 @@ export type RegisterRequest = {
   email: string;
   password: string;
 };
+
+
+export type Patient = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  phoneNumber: string;
+  height: number;
+  weight: number;
+  bloodType: string;
+  conditions: string;
+  profilePictureURL: string;
+};
+
+export type Doctor = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  role: string;
+  specialization: string;
+  startedPracticingAt: string; // ISO date string like "2020-04-25"
+  education: string;
+  bio: string;
+  profilePictureURL: string;
+};
