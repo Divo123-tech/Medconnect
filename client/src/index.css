@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@import "react-phone-number-input/style.css";
 @layer base {
   :root {
     --background: 0 0% 100%;
