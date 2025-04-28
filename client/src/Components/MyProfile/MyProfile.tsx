@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router";
 
@@ -24,7 +24,7 @@ type Patient = {
 
 export default function ProfilePage() {
   // Mock patient data - in a real app, this would come from your API
-  const [user, setUser] = useState<Patient | Doctor | null>(null);
+  const { user, setUser } = useAuthStore();
   const { token } = useAuthStore();
 
   useEffect(() => {
@@ -36,9 +36,10 @@ export default function ProfilePage() {
         console.log(err);
       }
     };
-
-    fetchProfile();
-  }, [token]);
+    if (!user) {
+      fetchProfile();
+    }
+  }, [setUser, token, user]);
   // Type guard function to check if user is a Patient
   function isPatient(user: Patient | Doctor): user is Patient {
     return (user as Patient).height !== undefined;
