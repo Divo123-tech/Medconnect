@@ -353,7 +353,7 @@ const PatientProfile = ({ user }: Props) => {
                             value={phoneValue}
                             onChange={(value) => setPhoneValue(value || "")}
                             defaultCountry="US"
-                            className="w-full"
+                            className="w-full border p-2 rounded-sm border-teal-200 focus:border-teal-400 focus:ring-teal-300"
                             inputclassname="border-teal-200 focus:border-teal-400 focus:ring-teal-300"
                           />
                         </div>
