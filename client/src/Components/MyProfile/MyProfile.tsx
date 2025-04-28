@@ -1,5 +1,3 @@
-"use client";
-
 import type React from "react";
 
 import { useState, useRef, type ChangeEvent, useEffect } from "react";
@@ -37,7 +35,7 @@ import {
 } from "@/Components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import PhoneInput from "./PhoneInput";
-import { getMyProfile } from "@/services/myProfileService";
+import { getMyProfile, updateMyProfile } from "@/services/myProfileService";
 import { useAuthStore } from "@/store/authStore";
 // Define the Patient type
 type Patient = {
@@ -76,12 +74,23 @@ export default function ProfilePage() {
   const [tempProfilePicture, setTempProfilePicture] = useState<string | null>(
     null
   );
+  const [selectedProfilePictureFile, setSelectedProfilePictureFile] =
+    useState<File | null>(null);
   const [phoneValue, setPhoneValue] = useState<string>(
     patient.phoneNumber || ""
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+  const bloodTypes = [
+    { type: "A+", value: "A_POS" },
+    { type: "A-", value: "A_NEG" },
+    { type: "B+", value: "B_POS" },
+    { type: "B-", value: "B_NEG" },
+    { type: "AB+", value: "AB_POS" },
+    { type: "AB-", value: "AB_NEG" },
+    { type: "O+", value: "O_POS" },
+    { type: "O-", value: "O_NEG" },
+  ];
 
   // Update patient phone number when phoneValue changes
   useEffect(() => {
@@ -106,9 +115,11 @@ export default function ProfilePage() {
   const handleProfilePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setSelectedProfilePictureFile(file); // store the real file
+
       const reader = new FileReader();
       reader.onload = (event) => {
-        setTempProfilePicture(event.target?.result as string);
+        setTempProfilePicture(event.target?.result as string); // still setting the preview
       };
       reader.readAsDataURL(file);
     }
@@ -120,8 +131,22 @@ export default function ProfilePage() {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const formData = new FormData();
+      for (const key of Object.keys(patient)) {
+        console.log(key);
+      }
+
+      const userBlob = new Blob([JSON.stringify(patient)], {
+        type: "application/json",
+      });
+
+      formData.append("user", userBlob);
+      // Append profile picture only if user selected a new one
+      if (selectedProfilePictureFile) {
+        formData.append("profilePicture", selectedProfilePictureFile); // must be a File object
+      }
+      // Call your PATCH API
+      await updateMyProfile(token, formData);
 
       // Update profile picture if a new one was selected
       if (tempProfilePicture) {
@@ -170,7 +195,7 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
       <div className="flex items-center px-16 pt-2">
         <Link
-          to="/dashboard"
+          to="/login"
           className="flex items-center text-teal-800 mr-4 text-lg hover:border-b hover:opacity-80"
         >
           <ArrowLeft size={20} className="mr-1" />
@@ -199,11 +224,14 @@ export default function ProfilePage() {
                       Update your profile photo
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="pt-6">
+                  <CardContent>
                     <div className="flex flex-col items-center sm:flex-row sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
                       <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-teal-100 to-blue-100 border-4 border-teal-300 shadow-md">
                         <img
-                          src={tempProfilePicture || patient.profilePictureURL}
+                          src={
+                            tempProfilePicture ||
+                            `http://localhost:8080${patient.profilePictureURL}`
+                          }
                           alt="Profile"
                           className="object-cover"
                         />
@@ -264,6 +292,42 @@ export default function ProfilePage() {
                   </TabsList>
 
                   <TabsContent value="personal" className="mt-4">
+                    {isSuccess && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="p-3 mb-4 bg-emerald-50 border border-emerald-300 rounded-lg text-emerald-600"
+                      >
+                        <div className="flex items-start">
+                          <CheckCircle2 className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <span>Profile updated successfully!</span>
+                        </div>
+                      </motion.div>
+                    )}
+                    {formError && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-3 mb-4 bg-red-50 border border-red-300 rounded-lg text-red-600"
+                      >
+                        <div className="flex items-start">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          <span>{formError}</span>
+                        </div>
+                      </motion.div>
+                    )}
                     <Card className="border-teal-200 shadow-lg overflow-hidden pt-0">
                       <CardHeader className="bg-gradient-to-r from-teal-100 to-teal-50 border-teal-200 py-4">
                         <CardTitle className="text-teal-800 flex items-center">
@@ -274,45 +338,7 @@ export default function ProfilePage() {
                           Update your personal details
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="space-y-4 pt-6">
-                        {formError && (
-                          <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="p-3 mb-4 bg-red-50 border border-red-300 rounded-lg text-red-600"
-                          >
-                            <div className="flex items-start">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                              <span>{formError}</span>
-                            </div>
-                          </motion.div>
-                        )}
-
-                        {isSuccess && (
-                          <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            className="p-3 mb-4 bg-emerald-50 border border-emerald-300 rounded-lg text-emerald-600"
-                          >
-                            <div className="flex items-start">
-                              <CheckCircle2 className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
-                              <span>Profile updated successfully!</span>
-                            </div>
-                          </motion.div>
-                        )}
-
+                      <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label
@@ -390,6 +416,42 @@ export default function ProfilePage() {
                   </TabsContent>
 
                   <TabsContent value="medical" className="mt-4">
+                    {isSuccess && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="p-3 mb-4 bg-emerald-50 border border-emerald-300 rounded-lg text-emerald-600"
+                      >
+                        <div className="flex items-start">
+                          <CheckCircle2 className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <span>Profile updated successfully!</span>
+                        </div>
+                      </motion.div>
+                    )}
+                    {formError && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-3 mb-4 bg-red-50 border border-red-300 rounded-lg text-red-600"
+                      >
+                        <div className="flex items-start">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          <span>{formError}</span>
+                        </div>
+                      </motion.div>
+                    )}
                     <Card className="border-teal-200 shadow-lg overflow-hidden pt-0">
                       <CardHeader className="bg-gradient-to-r from-teal-100 to-teal-50 py-4">
                         <CardTitle className="text-teal-800 flex items-center">
@@ -400,7 +462,7 @@ export default function ProfilePage() {
                           Update your medical details
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="space-y-4 pt-6">
+                      <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label htmlFor="height" className="text-teal-800">
@@ -455,17 +517,18 @@ export default function ProfilePage() {
                               <SelectValue placeholder="Select blood type" />
                             </SelectTrigger>
                             <SelectContent className="bg-white">
-                              {bloodTypes.map((type) => (
+                              {bloodTypes.map((bloodType) => (
                                 <SelectItem
-                                  key={type}
-                                  value={type}
+                                  key={bloodType.type}
+                                  value={bloodType.value}
                                   className={`hover:bg-gray-100 cursor-pointer ${
-                                    type == patient.bloodType && "bg-gray-100"
+                                    bloodType.value == patient.bloodType &&
+                                    "bg-gray-100"
                                   }`}
                                 >
                                   <span className="flex items-center">
                                     <Heart className="mr-2 h-4 w-4 text-red-500" />
-                                    {type}
+                                    {bloodType.type}
                                   </span>
                                 </SelectItem>
                               ))}

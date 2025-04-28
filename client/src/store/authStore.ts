@@ -1,5 +1,6 @@
 import { Doctor, Patient } from "@/utils/types";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface AuthStore {
   user: null | Patient | Doctor;
@@ -7,12 +8,24 @@ interface AuthStore {
 
   token: null | string;
   setToken: (token: string) => void;
+
+  logout: () => void;
 }
 
-export const useAuthStore = create<AuthStore>((set) => ({
-  user: null,
-  setUser: (user: Patient | Doctor) => set({ user }),
+export const useAuthStore = create<AuthStore>()(
+  persist(
+    (set) => ({
+      user: null,
+      setUser: (user) => set({ user }),
 
-  token: null,
-  setToken: (token: string) => set({ token }),
-}));
+      token: null,
+      setToken: (token) => set({ token }),
+
+      logout: () => set({ user: null, token: null }),
+    }),
+    {
+      name: "auth-storage", // localStorage key
+      partialize: (state) => ({ user: state.user, token: state.token }), // only persist user and token
+    }
+  )
+);
