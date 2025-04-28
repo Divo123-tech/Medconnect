@@ -37,6 +37,8 @@ import {
 } from "@/Components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import PhoneInput from "./PhoneInput";
+import { getMyProfile } from "@/services/myProfileService";
+import { useAuthStore } from "@/store/authStore";
 // Define the Patient type
 type Patient = {
   id: number;
@@ -67,14 +69,16 @@ export default function ProfilePage() {
     conditions: "Mild asthma, seasonal allergies",
     profilePictureURL: "/placeholder.svg?height=200&width=200",
   });
-
+  const { token } = useAuthStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [tempProfilePicture, setTempProfilePicture] = useState<string | null>(
     null
   );
-  const [phoneValue, setPhoneValue] = useState<string>(patient.phoneNumber);
+  const [phoneValue, setPhoneValue] = useState<string>(
+    patient.phoneNumber || ""
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
@@ -85,6 +89,19 @@ export default function ProfilePage() {
       setPatient((prev) => ({ ...prev, phoneNumber: phoneValue }));
     }
   }, [phoneValue]);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await getMyProfile(token);
+        setPatient(data);
+      } catch (err: any) {
+        setFormError(err.message || "Something went wrong");
+      }
+    };
+
+    fetchProfile();
+  }, [token]);
 
   const handleProfilePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
