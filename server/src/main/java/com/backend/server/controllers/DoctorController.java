@@ -18,12 +18,28 @@ public class DoctorController {
     private DoctorService doctorService;
 
     @GetMapping
-    public ResponseEntity<Page<Doctor>> getDoctors(
+    public ResponseEntity<Page<UserDTO.DoctorGetProfileDTO>> getDoctors(
             @RequestParam(defaultValue = "") String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(doctorService.findAllDoctors(search, page, size));
+        // Fetch the paginated list of doctors
+        Page<Doctor> doctorsPage = doctorService.findAllDoctors(search, page, size);
+
+        // Map each Doctor to DoctorGetProfileDTO
+        Page<UserDTO.DoctorGetProfileDTO> doctorDtos = doctorsPage.map(doctor -> new UserDTO.DoctorGetProfileDTO(
+                doctor.getId(),
+                doctor.getFirstName(),
+                doctor.getLastName(),
+                doctor.getRole(),
+                doctor.getSpecialization(),
+                doctor.getStartedPracticingAt(),
+                doctor.getEducation(),
+                doctor.getBio(),
+                doctor.getProfilePictureUrl()
+        ));
+
+        return ResponseEntity.ok(doctorDtos);
     }
 
     @GetMapping("/{id}")
