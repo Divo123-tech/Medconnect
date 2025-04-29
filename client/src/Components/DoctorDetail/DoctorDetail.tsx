@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
+  Activity,
   ArrowLeft,
   Award,
   BookOpen,
   Calendar,
   Clock,
   MapPin,
-  MessageSquare,
   Phone,
   Star,
   Stethoscope,
@@ -25,8 +25,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/Components/ui/card";
-import { Skeleton } from "@/Components/ui/skeleton";
 import { Badge } from "@/Components/ui/badge";
+import { getSingleDoctor } from "@/services/doctorService";
 
 // Using the exact Doctor type as provided
 export type Doctor = {
@@ -61,37 +61,18 @@ export default function DoctorProfilePage() {
       setError(null);
 
       try {
-        // In a real app, this would be an API call
-        // For demo purposes, we'll simulate an API call with a timeout
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        // Mock data for the doctor
-        const mockDoctor: Doctor = {
-          id: Number(params.id),
-          firstName: "Sarah",
-          lastName: "Johnson",
-          role: "DOCTOR",
-          specialization: "Cardiology",
-          startedPracticingAt: "2010-06-15",
-          education:
-            "MD, Harvard Medical School\nResidency, Massachusetts General Hospital\nFellowship in Cardiology, Cleveland Clinic",
-          bio: "Dr. Sarah Johnson is a board-certified cardiologist with over 12 years of experience in treating cardiovascular diseases. She specializes in preventive cardiology, heart health management, and interventional procedures. Dr. Johnson takes a patient-centered approach to care, focusing on lifestyle modifications alongside medical interventions to achieve optimal heart health outcomes. She has published numerous research papers on cardiovascular health and regularly speaks at medical conferences.",
-          profilePictureURL: "/placeholder.svg?height=400&width=400",
-        };
-
-        setDoctor(mockDoctor);
+        const result = await getSingleDoctor(params.id);
+        setDoctor(result);
       } catch (err) {
         console.error("Error fetching doctor:", err);
         setError("Failed to load doctor profile. Please try again.");
-      } finally {
-        setIsLoading(false);
       }
     };
 
     if (params.id) {
       fetchDoctor();
     }
-  }, [params.id]);
+  }, [params, params.id]);
 
   // Animation variants
   const containerVariants = {
@@ -129,49 +110,211 @@ export default function DoctorProfilePage() {
               <ArrowLeft size={20} className="mr-1" />
               <span className="text-sm">Back to Doctors</span>
             </Link>
-            <Skeleton className="h-8 w-48 bg-white/20" />
+            <h1 className="text-xl font-semibold text-white">
+              Loading Doctor Profile...
+            </h1>
           </div>
         </header>
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
+          {/* Cool medical loading animation overlay */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+            <div className="bg-white/80 backdrop-blur-sm p-12 rounded-2xl shadow-xl flex flex-col items-center">
+              <div className="relative w-32 h-32 mb-6">
+                {/* Animated stethoscope */}
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{
+                    scale: [0.8, 1.1, 0.9, 1],
+                    opacity: 1,
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatType: "reverse",
+                  }}
+                  className="absolute inset-0 flex items-center justify-center"
+                >
+                  <div className="w-24 h-24 bg-teal-100 rounded-full flex items-center justify-center">
+                    <Stethoscope className="h-12 w-12 text-teal-600" />
+                  </div>
+                </motion.div>
+
+                {/* Animated pulse rings */}
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0.8 }}
+                  animate={{ scale: 1.5, opacity: 0 }}
+                  transition={{
+                    duration: 2,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeOut",
+                  }}
+                  className="absolute inset-0 rounded-full border-4 border-teal-300"
+                />
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0.8 }}
+                  animate={{ scale: 1.8, opacity: 0 }}
+                  transition={{
+                    duration: 2,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeOut",
+                    delay: 0.5,
+                  }}
+                  className="absolute inset-0 rounded-full border-4 border-teal-200"
+                />
+              </div>
+
+              {/* Heartbeat line */}
+              <div className="relative h-16 w-80 mb-6">
+                <svg viewBox="0 0 400 100" className="w-full h-full">
+                  <motion.path
+                    d="M0,50 Q50,50 70,50 T100,50 120,20 140,90 160,50 180,50 200,50 220,50 240,20 260,90 280,50 300,50 320,50 340,50 360,50 380,50 400,50"
+                    fill="transparent"
+                    stroke="#0d9488"
+                    strokeWidth="3"
+                    initial={{ pathLength: 0, pathOffset: 0 }}
+                    animate={{ pathLength: 1, pathOffset: 0 }}
+                    transition={{
+                      duration: 1.5,
+                      ease: "easeInOut",
+                    }}
+                    onAnimationComplete={() => setIsLoading(false)}
+                  />
+                </svg>
+              </div>
+
+              {/* Animated medical icons */}
+              <div className="flex justify-center space-x-8 mb-6">
+                <motion.div
+                  animate={{
+                    y: [0, -10, 0],
+                    rotate: [0, 5, 0, -5, 0],
+                  }}
+                  transition={{
+                    duration: 1,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatType: "reverse",
+                  }}
+                  className="bg-blue-100 p-3 rounded-full"
+                >
+                  <Activity className="h-6 w-6 text-blue-600" />
+                </motion.div>
+                <motion.div
+                  animate={{
+                    y: [0, -10, 0],
+                    rotate: [0, -5, 0, 5, 0],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatType: "reverse",
+                    delay: 0.5,
+                  }}
+                  className="bg-teal-100 p-3 rounded-full"
+                >
+                  <User className="h-6 w-6 text-teal-600" />
+                </motion.div>
+                <motion.div
+                  animate={{
+                    y: [0, -10, 0],
+                    rotate: [0, 5, 0, -5, 0],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatType: "reverse",
+                    delay: 1,
+                  }}
+                  className="bg-red-100 p-3 rounded-full"
+                >
+                  <Award className="h-6 w-6 text-red-600" />
+                </motion.div>
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="text-teal-700 font-medium text-xl text-center"
+              >
+                Loading Doctor Profile
+                <motion.span
+                  animate={{ opacity: [0, 1, 0] }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Number.POSITIVE_INFINITY,
+                  }}
+                >
+                  ...
+                </motion.span>
+              </motion.div>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                className="text-gray-500 mt-2 text-center max-w-sm"
+              >
+                We're gathering all the information about this healthcare
+                professional for you
+              </motion.p>
+            </div>
+          </div>
+
+          {/* Blurred background layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 filter blur-[4px] opacity-30">
+            {/* Left column - Doctor info */}
             <div className="lg:col-span-1">
               <Card className="border-teal-100 shadow-md">
-                <CardContent className="p-6 flex flex-col items-center">
-                  <Skeleton className="h-48 w-48 rounded-full mb-6" />
-                  <Skeleton className="h-8 w-3/4 mb-2" />
-                  <Skeleton className="h-6 w-1/2 mb-4" />
-                  <Skeleton className="h-10 w-full mb-4" />
-                  <Skeleton className="h-4 w-full mb-2" />
-                  <Skeleton className="h-4 w-5/6 mb-2" />
-                  <Skeleton className="h-4 w-4/6" />
+                <CardContent className="p-6">
+                  <div className="flex flex-col items-center text-center mb-6">
+                    <div className="w-48 h-48 rounded-full bg-gray-200 mb-4"></div>
+                    <div className="h-8 w-3/4 bg-gray-200 mb-2 rounded"></div>
+                    <div className="h-6 w-1/2 bg-gray-200 mb-4 rounded"></div>
+                    <div className="h-10 w-full bg-gray-200 mb-4 rounded"></div>
+                  </div>
+
+                  <div className="space-y-4 border-t border-teal-100 pt-4">
+                    {[1, 2, 3, 4, 5, 6].map((item) => (
+                      <div key={item} className="flex items-center">
+                        <div className="w-8 h-8 rounded-full bg-gray-200 mr-3"></div>
+                        <div className="flex-1">
+                          <div className="h-4 w-1/3 bg-gray-200 mb-2 rounded"></div>
+                          <div className="h-4 w-2/3 bg-gray-200 rounded"></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             </div>
 
+            {/* Right column - About and Reviews */}
             <div className="lg:col-span-2">
               <Card className="border-teal-100 shadow-md mb-6">
                 <CardHeader>
-                  <Skeleton className="h-8 w-1/3 mb-2" />
-                  <Skeleton className="h-4 w-1/2" />
+                  <div className="h-8 w-1/3 bg-gray-200 mb-2 rounded"></div>
+                  <div className="h-4 w-1/2 bg-gray-200 rounded"></div>
                 </CardHeader>
                 <CardContent>
-                  <Skeleton className="h-4 w-full mb-2" />
-                  <Skeleton className="h-4 w-full mb-2" />
-                  <Skeleton className="h-4 w-full mb-2" />
-                  <Skeleton className="h-4 w-4/5" />
+                  <div className="space-y-2">
+                    <div className="h-4 w-full bg-gray-200 rounded"></div>
+                    <div className="h-4 w-full bg-gray-200 rounded"></div>
+                    <div className="h-4 w-full bg-gray-200 rounded"></div>
+                    <div className="h-4 w-4/5 bg-gray-200 rounded"></div>
+                  </div>
                 </CardContent>
               </Card>
 
               <Card className="border-teal-100 shadow-md">
                 <CardHeader>
-                  <Skeleton className="h-8 w-1/3 mb-2" />
-                  <Skeleton className="h-4 w-1/2" />
+                  <div className="h-8 w-1/3 bg-gray-200 mb-2 rounded"></div>
+                  <div className="h-4 w-1/2 bg-gray-200 rounded"></div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <Skeleton className="h-24 w-full" />
-                    <Skeleton className="h-24 w-full" />
+                    <div className="h-24 w-full bg-gray-200 rounded"></div>
+                    <div className="h-24 w-full bg-gray-200 rounded"></div>
                   </div>
                 </CardContent>
               </Card>
