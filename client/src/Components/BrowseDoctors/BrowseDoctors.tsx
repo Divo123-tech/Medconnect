@@ -64,7 +64,7 @@ export default function DoctorsPage() {
   const [filteredDoctors, setFilteredDoctors] = useState<Doctor[] | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
-  const doctorsPerPage = 6;
+  const doctorsPerPage = 10;
 
   const [totalPages, setTotalPages] = useState(1);
   useEffect(() => {
@@ -447,72 +447,78 @@ export default function DoctorsPage() {
         )}
 
         {/* Pagination */}
-        {!isLoading && filteredDoctors?.length && (
-          <div className="mt-8 flex justify-center">
-            <nav className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => paginate(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="border-teal-200 text-teal-700 hover:bg-teal-50 disabled:opacity-50"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
+        {!isLoading &&
+          filteredDoctors?.length != undefined &&
+          filteredDoctors?.length > 0 && (
+            <div className="mt-8 flex justify-center">
+              <nav className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => paginate(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="border-teal-200 text-teal-700 hover:bg-teal-50 disabled:opacity-50"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
 
-              <div className="flex items-center space-x-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (number) => {
-                    // Show first page, last page, current page, and pages around current
-                    const shouldShow =
-                      number === 1 ||
-                      number === totalPages ||
-                      Math.abs(number - currentPage) <= 1;
+                <div className="flex items-center space-x-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (number) => {
+                      // Show first page, last page, current page, and pages around current
+                      const shouldShow =
+                        number === 1 ||
+                        number === totalPages ||
+                        Math.abs(number - currentPage) <= 1;
 
-                    // Show ellipsis for gaps
-                    if (!shouldShow) {
-                      // Only show one ellipsis between gaps
-                      if (number === 2 || number === totalPages - 1) {
-                        return (
-                          <span key={number} className="px-2 text-gray-400">
-                            ...
-                          </span>
-                        );
-                      }
-                      return null;
-                    }
-
-                    return (
-                      <Button
-                        key={number}
-                        variant={currentPage === number ? "default" : "outline"}
-                        size="icon"
-                        onClick={() => paginate(number)}
-                        className={
-                          currentPage === number
-                            ? "bg-teal-600 hover:bg-teal-700 text-white"
-                            : "border-teal-200 text-teal-700 hover:bg-teal-50"
+                      // Show ellipsis for gaps
+                      if (!shouldShow) {
+                        // Only show one ellipsis between gaps
+                        if (number === 2 || number === totalPages - 1) {
+                          return (
+                            <span key={number} className="px-2 text-gray-400">
+                              ...
+                            </span>
+                          );
                         }
-                      >
-                        {number}
-                      </Button>
-                    );
-                  }
-                )}
-              </div>
+                        return null;
+                      }
 
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
-                className="border-teal-200 text-teal-700 hover:bg-teal-50 disabled:opacity-50"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </nav>
-          </div>
-        )}
+                      return (
+                        <Button
+                          key={number}
+                          variant={
+                            currentPage === number ? "default" : "outline"
+                          }
+                          size="icon"
+                          onClick={() => paginate(number)}
+                          className={
+                            currentPage === number
+                              ? "bg-teal-600 hover:bg-teal-700 text-white"
+                              : "border-teal-200 text-teal-700 hover:bg-teal-50"
+                          }
+                        >
+                          {number}
+                        </Button>
+                      );
+                    }
+                  )}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() =>
+                    paginate(Math.min(totalPages, currentPage + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="border-teal-200 text-teal-700 hover:bg-teal-50 disabled:opacity-50"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </nav>
+            </div>
+          )}
       </div>
     </div>
   );
