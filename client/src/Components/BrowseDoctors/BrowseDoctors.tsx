@@ -5,7 +5,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Stethoscope,
-  Filter,
+  // Filter,
   X,
 } from "lucide-react";
 import { Link } from "react-router";
@@ -62,7 +62,8 @@ export default function DoctorsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [filteredDoctors, setFilteredDoctors] = useState<Doctor[] | null>(null);
-  const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState<string>("firstName");
+  // const [showFilters, setShowFilters] = useState(false);
 
   const doctorsPerPage = 10;
 
@@ -80,7 +81,7 @@ export default function DoctorsPage() {
             selectedSpecialization === "All Specializations"
               ? ""
               : selectedSpecialization,
-          sortBy: "firstName", // You can make this dynamic if needed
+          sortBy, // You can make this dynamic if needed
         });
 
         setDoctors(data.content);
@@ -92,7 +93,7 @@ export default function DoctorsPage() {
     };
 
     fetchDoctorsData();
-  }, [currentPage, searchTerm, selectedSpecialization]);
+  }, [currentPage, searchTerm, selectedSpecialization, sortBy]);
 
   // Get current doctors for pagination
   const indexOfLastDoctor = currentPage * doctorsPerPage;
@@ -131,14 +132,14 @@ export default function DoctorsPage() {
               </p>
             </div>
             <div className="flex items-center space-x-2">
-              <Button
+              {/* <Button
                 onClick={() => setShowFilters(!showFilters)}
                 variant="outline"
                 className="bg-white/10 border-white/20 text-white hover:bg-white/20"
               >
                 <Filter className="mr-2 h-4 w-4" />
                 Filters
-              </Button>
+              </Button> */}
               <Link to="/">
                 <Button
                   variant="outline"
@@ -205,7 +206,7 @@ export default function DoctorsPage() {
           </div>
 
           {/* Additional filters - shown when filter button is clicked */}
-          <AnimatePresence>
+          {/* <AnimatePresence>
             {showFilters && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
@@ -257,7 +258,7 @@ export default function DoctorsPage() {
                 </div>
               </motion.div>
             )}
-          </AnimatePresence>
+          </AnimatePresence> */}
         </div>
 
         {/* Results count and sorting */}
@@ -290,14 +291,21 @@ export default function DoctorsPage() {
           </div>
           <div className="flex items-center">
             <span className="text-sm text-gray-600 mr-2">Sort by:</span>
-            <Select defaultValue="recommended">
-              <SelectTrigger className="w-[180px] border-teal-200 focus:ring-teal-300">
+            <Select
+              defaultValue="recommended"
+              value={sortBy}
+              onValueChange={setSortBy}
+            >
+              <SelectTrigger className="w-[180px] border-teal-200 focus:ring-teal-300 bg-white">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="recommended">Recommended</SelectItem>
-                <SelectItem value="experience">Most Experienced</SelectItem>
-                <SelectItem value="name">Name (A-Z)</SelectItem>
+              <SelectContent className="bg-white">
+                <SelectItem value="firstName" className="hover:bg-teal-100">
+                  First Name
+                </SelectItem>
+                <SelectItem value="lastName" className="hover:bg-teal-100">
+                  Last Name
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
