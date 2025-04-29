@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/Components/ui/select";
 import DoctorCard from "./DoctorCard";
+import { getDoctors } from "@/services/doctorService";
 
 // Define the Doctor type as provided
 type Doctor = {
@@ -37,146 +38,7 @@ type Doctor = {
 };
 
 export default function DoctorsPage() {
-  const [doctors, setDoctors] = useState<Doctor[]>([
-    {
-      id: 1,
-      firstName: "Sarah",
-      lastName: "Johnson",
-      role: "DOCTOR",
-      specialization: "Cardiology",
-      startedPracticingAt: "2010-06-15",
-      education:
-        "MD, Harvard Medical School\nResidency, Massachusetts General Hospital",
-      bio: "Dr. Sarah Johnson is a board-certified cardiologist with over 12 years of experience in treating cardiovascular diseases. She specializes in preventive cardiology and heart health management.",
-      profilePictureURL: "/placeholder.svg?height=400&width=400",
-    },
-    {
-      id: 2,
-      firstName: "Michael",
-      lastName: "Chen",
-      role: "DOCTOR",
-      specialization: "Dermatology",
-      startedPracticingAt: "2014-03-22",
-      education: "MD, Stanford University\nResidency, UCSF Medical Center",
-      bio: "Dr. Michael Chen specializes in medical and cosmetic dermatology, with particular expertise in treating skin conditions and performing minimally invasive cosmetic procedures.",
-      profilePictureURL: "/placeholder.svg?height=400&width=400",
-    },
-    {
-      id: 3,
-      firstName: "Jessica",
-      lastName: "Williams",
-      role: "DOCTOR",
-      specialization: "Pediatrics",
-      startedPracticingAt: "2007-09-10",
-      education:
-        "MD, Johns Hopkins University\nResidency, Children's Hospital of Philadelphia",
-      bio: "Dr. Jessica Williams is a compassionate pediatrician dedicated to providing comprehensive care for children of all ages, from newborns to adolescents.",
-      profilePictureURL: "/placeholder.svg?height=400&width=400",
-    },
-    {
-      id: 4,
-      firstName: "David",
-      lastName: "Rodriguez",
-      role: "DOCTOR",
-      specialization: "Orthopedics",
-      startedPracticingAt: "2012-05-18",
-      education:
-        "MD, University of Chicago\nFellowship, Hospital for Special Surgery",
-      bio: "Dr. David Rodriguez specializes in sports medicine and joint replacement surgery with a focus on minimally invasive techniques to promote faster recovery times.",
-      profilePictureURL: "/placeholder.svg?height=400&width=400",
-    },
-    {
-      id: 5,
-      firstName: "Emily",
-      lastName: "Taylor",
-      role: "DOCTOR",
-      specialization: "Neurology",
-      startedPracticingAt: "2008-11-30",
-      education: "MD, University of Washington\nResidency, Mayo Clinic",
-      bio: "Dr. Emily Taylor is a neurologist specializing in the diagnosis and treatment of complex neurological disorders, including stroke, epilepsy, and neurodegenerative diseases.",
-      profilePictureURL: "/placeholder.svg?height=400&width=400",
-    },
-    {
-      id: 6,
-      firstName: "James",
-      lastName: "Wilson",
-      role: "DOCTOR",
-      specialization: "Psychiatry",
-      startedPracticingAt: "2011-08-05",
-      education: "MD, Baylor College of Medicine\nResidency, McLean Hospital",
-      bio: "Dr. James Wilson is dedicated to providing compassionate mental health care with a focus on anxiety, depression, and mood disorders using evidence-based approaches.",
-      profilePictureURL: "/placeholder.svg?height=400&width=400",
-    },
-    {
-      id: 7,
-      firstName: "Sophia",
-      lastName: "Garcia",
-      role: "DOCTOR",
-      specialization: "Obstetrics and Gynecology",
-      startedPracticingAt: "2013-02-14",
-      education:
-        "MD, University of Miami\nResidency, Brigham and Women's Hospital",
-      bio: "Dr. Sophia Garcia provides comprehensive women's health care with a focus on prenatal care, reproductive health, and minimally invasive gynecological procedures.",
-      profilePictureURL: "/placeholder.svg?height=400&width=400",
-    },
-    {
-      id: 8,
-      firstName: "Robert",
-      lastName: "Kim",
-      role: "DOCTOR",
-      specialization: "Ophthalmology",
-      startedPracticingAt: "2009-07-22",
-      education: "MD, UCLA School of Medicine\nResidency, Wills Eye Hospital",
-      bio: "Dr. Robert Kim specializes in cataract surgery and treatment of retinal diseases with the latest technologies and approaches to preserve and improve vision.",
-      profilePictureURL: "/placeholder.svg?height=400&width=400",
-    },
-    {
-      id: 9,
-      firstName: "Olivia",
-      lastName: "Martinez",
-      role: "DOCTOR",
-      specialization: "Endocrinology",
-      startedPracticingAt: "2015-05-03",
-      education: "MD, University of Colorado\nFellowship, Cleveland Clinic",
-      bio: "Dr. Olivia Martinez specializes in diabetes management and thyroid disorders with a holistic approach to treatment that emphasizes lifestyle modifications alongside medical interventions.",
-      profilePictureURL: "/placeholder.svg?height=400&width=400",
-    },
-    {
-      id: 10,
-      firstName: "William",
-      lastName: "Thompson",
-      role: "DOCTOR",
-      specialization: "Gastroenterology",
-      startedPracticingAt: "2006-11-12",
-      education:
-        "MD, University of Pennsylvania\nFellowship, Massachusetts General Hospital",
-      bio: "Dr. William Thompson is an experienced gastroenterologist specializing in digestive disorders, inflammatory bowel disease, and colorectal cancer screening and prevention.",
-      profilePictureURL: "/placeholder.svg?height=400&width=400",
-    },
-    {
-      id: 11,
-      firstName: "Ava",
-      lastName: "Brown",
-      role: "DOCTOR",
-      specialization: "Dermatology",
-      startedPracticingAt: "2016-09-28",
-      education:
-        "MD, Oregon Health & Science University\nResidency, NYU Langone",
-      bio: "Dr. Ava Brown provides comprehensive dermatological care with expertise in acne treatment, skin cancer screening, and cosmetic procedures to help patients feel confident in their skin.",
-      profilePictureURL: "/placeholder.svg?height=400&width=400",
-    },
-    {
-      id: 12,
-      firstName: "Daniel",
-      lastName: "Lee",
-      role: "DOCTOR",
-      specialization: "Cardiology",
-      startedPracticingAt: "2004-03-17",
-      education: "MD, Baylor College of Medicine\nFellowship, Cleveland Clinic",
-      bio: "Dr. Daniel Lee is a highly experienced cardiologist specializing in interventional procedures and heart disease prevention with a patient-centered approach to care.",
-      profilePictureURL: "/placeholder.svg?height=400&width=400",
-    },
-  ]);
+  const [doctors, setDoctors] = useState<Doctor[] | null>(null);
   // Mock data for doctors using the provided type
 
   const specializations = [
@@ -199,56 +61,43 @@ export default function DoctorsPage() {
   );
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
+  const [filteredDoctors, setFilteredDoctors] = useState<Doctor[] | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
   const doctorsPerPage = 6;
-  const totalPages = Math.ceil(filteredDoctors.length / doctorsPerPage);
 
-  //   // Calculate years of experience based on startedPracticingAt
-  //   const calculateYearsExperience = (startDate: string) => {
-  //     const start = new Date(startDate);
-  //     const now = new Date();
-  //     return now.getFullYear() - start.getFullYear();
-  //   };
-
-  // Filter doctors based on search term and specialization
+  const [totalPages, setTotalPages] = useState(1);
   useEffect(() => {
-    setIsLoading(true);
+    const fetchDoctorsData = async () => {
+      setIsLoading(true);
+      setDoctors(null);
+      try {
+        const data = await getDoctors({
+          page: currentPage - 1,
+          size: doctorsPerPage,
+          name: searchTerm.trim(),
+          specialization:
+            selectedSpecialization === "All Specializations"
+              ? ""
+              : selectedSpecialization,
+          sortBy: "firstName", // You can make this dynamic if needed
+        });
 
-    // Simulate API call delay
-    const timer = setTimeout(() => {
-      let results = doctors;
-
-      // Filter by name
-      if (searchTerm) {
-        const term = searchTerm.toLowerCase();
-        results = results.filter(
-          (doctor) =>
-            doctor.firstName.toLowerCase().includes(term) ||
-            doctor.lastName.toLowerCase().includes(term)
-        );
+        setDoctors(data.content);
+        setTotalPages(data.totalPages);
+        console.log(data.content);
+      } catch (err) {
+        console.error(err);
       }
+    };
 
-      // Filter by specialization
-      if (selectedSpecialization !== "All Specializations") {
-        results = results.filter(
-          (doctor) => doctor.specialization === selectedSpecialization
-        );
-      }
-
-      setFilteredDoctors(results);
-      setCurrentPage(1); // Reset to first page when filters change
-      setIsLoading(false);
-    }, 500); // Simulate loading delay
-
-    return () => clearTimeout(timer);
-  }, [searchTerm, selectedSpecialization]);
+    fetchDoctorsData();
+  }, [currentPage, searchTerm, selectedSpecialization]);
 
   // Get current doctors for pagination
   const indexOfLastDoctor = currentPage * doctorsPerPage;
   const indexOfFirstDoctor = indexOfLastDoctor - doctorsPerPage;
-  const currentDoctors = filteredDoctors.slice(
+  const currentDoctors = filteredDoctors?.slice(
     indexOfFirstDoctor,
     indexOfLastDoctor
   );
@@ -334,12 +183,19 @@ export default function DoctorsPage() {
                 value={selectedSpecialization}
                 onValueChange={setSelectedSpecialization}
               >
-                <SelectTrigger className="border-teal-200 focus:ring-teal-300">
+                <SelectTrigger className="border-teal-200 focus:ring-teal-300 w-full">
                   <SelectValue placeholder="Select specialization" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white">
                   {specializations.map((specialization) => (
-                    <SelectItem key={specialization} value={specialization}>
+                    <SelectItem
+                      key={specialization}
+                      value={specialization}
+                      className={`${
+                        specialization == selectedSpecialization &&
+                        "bg-teal-100"
+                      } hover:bg-teal-100 cursor-pointer`}
+                    >
                       {specialization}
                     </SelectItem>
                   ))}
@@ -364,7 +220,7 @@ export default function DoctorsPage() {
                       Experience
                     </label>
                     <Select defaultValue="any">
-                      <SelectTrigger className="border-teal-200 focus:ring-teal-300">
+                      <SelectTrigger className="border-teal-200 focus:ring-teal-300 w-3/4">
                         <SelectValue placeholder="Any experience" />
                       </SelectTrigger>
                       <SelectContent>
@@ -381,7 +237,7 @@ export default function DoctorsPage() {
                       Education
                     </label>
                     <Select defaultValue="any">
-                      <SelectTrigger className="border-teal-200 focus:ring-teal-300">
+                      <SelectTrigger className="border-teal-200 focus:ring-teal-300 w-3/4">
                         <SelectValue placeholder="Any education" />
                       </SelectTrigger>
                       <SelectContent>
@@ -412,7 +268,7 @@ export default function DoctorsPage() {
             ) : (
               <p>
                 Showing{" "}
-                <span className="font-medium">{filteredDoctors.length}</span>{" "}
+                <span className="font-medium">{filteredDoctors?.length}</span>{" "}
                 doctors
                 {searchTerm && (
                   <span>
@@ -556,7 +412,7 @@ export default function DoctorsPage() {
               ))}
             </div>
           </div>
-        ) : filteredDoctors.length === 0 ? (
+        ) : filteredDoctors?.length === 0 ? (
           <div className="text-center py-12">
             <div className="bg-white rounded-xl shadow-md p-8 max-w-md mx-auto border border-teal-100">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-teal-100 text-teal-600 mb-4">
@@ -583,15 +439,15 @@ export default function DoctorsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <AnimatePresence mode="popLayout">
-              {currentDoctors.map((doctor) => {
-                return <DoctorCard doctor={doctor} />;
+              {currentDoctors?.map((doctor) => {
+                return <DoctorCard doctor={doctor} key={doctor.id} />;
               })}
             </AnimatePresence>
           </div>
         )}
 
         {/* Pagination */}
-        {!isLoading && filteredDoctors.length > 0 && (
+        {!isLoading && filteredDoctors?.length && (
           <div className="mt-8 flex justify-center">
             <nav className="flex items-center space-x-2">
               <Button

@@ -26,7 +26,7 @@ const DoctorCard = ({ doctor }: Props) => {
       transition={{ duration: 0.3 }}
       layout
     >
-      <Card className="overflow-hidden cursor-pointer border-teal-100 hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+      <Card className="bg-white overflow-hidden cursor-pointer border-teal-100 hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
         <div className="p-6 flex-1">
           <div className="flex items-start">
             <div className="relative h-20 w-20 rounded-full overflow-hidden bg-gradient-to-br from-teal-100 to-blue-100 border-2 border-teal-200">

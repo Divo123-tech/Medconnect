@@ -60,3 +60,34 @@ export type Doctor = {
   bio: string;
   profilePictureURL: string;
 };
+
+type Pageable = {
+  pageNumber: number;
+  pageSize: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  offset: number;
+  paged: boolean;
+  unpaged: boolean;
+};
+
+export type GetAllDoctorsResponse = {
+  content: Doctor[];
+  pageable: Pageable;
+  last: boolean;
+  totalPages: number;
+  totalElements: number;
+  numberOfElements: number;
+  first: boolean;
+  size: number;
+  number: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  empty: boolean;
+};
