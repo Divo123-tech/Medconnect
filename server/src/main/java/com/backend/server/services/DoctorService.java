@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,15 +45,29 @@ public class DoctorService {
         return doctor;
     }
 
-    public Page<Doctor> findAllDoctors(String search, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<Doctor> findAllDoctors(String name, String specialization, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 
-        if (search != null && !search.trim().isEmpty()) {
-            return doctorRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(search, search, pageable);
+        if (specialization != null && !specialization.isBlank()) {
+            // First filter by specialization
+            if (name != null && !name.isBlank()) {
+                // Filter by specialization AND THEN name
+                return doctorRepository.findBySpecializationAndName(specialization, name, pageable);
+            } else {
+                // Only specialization filter
+                return doctorRepository.findBySpecializationContainingIgnoreCase(specialization, pageable);
+            }
         } else {
-            return doctorRepository.findAll(pageable);
+            if (name != null && !name.isBlank()) {
+                // No specialization, only name search
+                return doctorRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(name, name, pageable);
+            } else {
+                // No filters at all
+                return doctorRepository.findAll(pageable);
+            }
         }
     }
+
 
     public Doctor getDoctorById(int id) {
         return doctorRepository.findById(id)

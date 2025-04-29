@@ -19,15 +19,15 @@ public class DoctorController {
 
     @GetMapping
     public ResponseEntity<Page<UserDTO.DoctorGetProfileDTO>> getDoctors(
-            @RequestParam(defaultValue = "") String search,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String specialization,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "firstName") String sortBy
     ) {
-        // Fetch the paginated list of doctors
-        Page<Doctor> doctorsPage = doctorService.findAllDoctors(search, page, size);
+        Page<Doctor> doctorsPage = doctorService.findAllDoctors(name, specialization, page, size, sortBy);
 
-        // Map each Doctor to DoctorGetProfileDTO
-        Page<UserDTO.DoctorGetProfileDTO> doctorDtos = doctorsPage.map(doctor -> new UserDTO.DoctorGetProfileDTO(
+        Page<UserDTO.DoctorGetProfileDTO> dtoPage = doctorsPage.map(doctor -> new UserDTO.DoctorGetProfileDTO(
                 doctor.getId(),
                 doctor.getFirstName(),
                 doctor.getLastName(),
@@ -39,9 +39,8 @@ public class DoctorController {
                 doctor.getProfilePictureUrl()
         ));
 
-        return ResponseEntity.ok(doctorDtos);
+        return ResponseEntity.ok(dtoPage);
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO.DoctorGetProfileDTO> getDoctorById(@PathVariable int id) {
         Doctor doctor = doctorService.getDoctorById(id);
