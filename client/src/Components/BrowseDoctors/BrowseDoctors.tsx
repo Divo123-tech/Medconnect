@@ -184,7 +184,7 @@ export default function DoctorsPage() {
                 value={selectedSpecialization}
                 onValueChange={setSelectedSpecialization}
               >
-                <SelectTrigger className="border-teal-200 focus:ring-teal-300 w-full">
+                <SelectTrigger className="border-teal-200 focus:ring-teal-300 w-full cursor-pointer">
                   <SelectValue placeholder="Select specialization" />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
@@ -296,14 +296,24 @@ export default function DoctorsPage() {
               value={sortBy}
               onValueChange={setSortBy}
             >
-              <SelectTrigger className="w-[180px] border-teal-200 focus:ring-teal-300 bg-white">
+              <SelectTrigger className="w-[180px] border-teal-200 focus:ring-teal-300 bg-white cursor-pointer">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent className="bg-white">
-                <SelectItem value="firstName" className="hover:bg-teal-100">
+                <SelectItem
+                  value="firstName"
+                  className={`${
+                    sortBy == "firstName" && "bg-teal-100"
+                  } hover:bg-teal-100 cursor-pointer `}
+                >
                   First Name
                 </SelectItem>
-                <SelectItem value="lastName" className="hover:bg-teal-100">
+                <SelectItem
+                  value="lastName"
+                  className={`${
+                    sortBy == "lastName" && "bg-teal-100"
+                  } hover:bg-teal-100 cursor-pointer`}
+                >
                   Last Name
                 </SelectItem>
               </SelectContent>
