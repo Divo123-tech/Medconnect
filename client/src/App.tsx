@@ -11,6 +11,7 @@ import ProtectedRoute from "./Components/ProtectedRoute";
 import BrowseDoctors from "./Components/BrowseDoctors";
 import DoctorDetail from "./Components/DoctorDetail";
 import PatientDetail from "./Components/PatientDetail";
+import LandingPage from "./Components/LandingPage";
 
 function App() {
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -19,7 +20,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"
+          path="/home"
           element={
             <Home
               remoteStream={remoteStream}
@@ -47,6 +48,7 @@ function App() {
           path="/patient/:id"
           element={<ProtectedRoute element={<PatientDetail />} />}
         />
+        <Route path="/" Component={LandingPage} />
       </Routes>
     </BrowserRouter>
   );
