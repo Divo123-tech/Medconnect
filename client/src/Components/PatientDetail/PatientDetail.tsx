@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
-  ArrowLeft,
   User,
   Mail,
   Phone,
@@ -29,6 +28,7 @@ import { Badge } from "@/Components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { getPatient } from "@/services/patientService";
 import { useAuthStore } from "@/store/authStore";
+import { BloodType } from "@/utils/types";
 
 // Using the exact Patient type as provided
 export type Patient = {
@@ -51,8 +51,8 @@ export default function PatientDetail() {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isDoctor, setIsDoctor] = useState(true); // In a real app, this would be determined by authentication
-  const { token } = useAuthStore();
+  const [isDoctor, setIsDoctor] = useState(false); // In a real app, this would be determined by authentication
+  const { token, user } = useAuthStore();
   useEffect(() => {
     const fetchPatient = async () => {
       setIsLoading(true);
@@ -74,6 +74,10 @@ export default function PatientDetail() {
       fetchPatient();
     }
   }, [params.id, token]);
+
+  useEffect(() => {
+    setIsDoctor(user?.role == "DOCTOR");
+  }, [user?.role]);
 
   // Animation variants
   const containerVariants = {
@@ -98,6 +102,16 @@ export default function PatientDetail() {
     },
   };
 
+  const bloodTypesMap: Record<BloodType, string> = {
+    A_POS: "A+",
+    A_NEG: "A-",
+    B_POS: "B+",
+    B_NEG: "B-",
+    AB_POS: "AB+",
+    AB_NEG: "AB-",
+    O_POS: "O+",
+    O_NEG: "O-",
+  };
   // Calculate BMI
   const calculateBMI = (height: number, weight: number) => {
     // Height in meters (convert from cm)
@@ -131,7 +145,7 @@ export default function PatientDetail() {
   };
 
   // Access control - only doctors should see this page
-  if (!isDoctor && !isLoading) {
+  if (!isDoctor) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white flex items-center justify-center">
         <Card className="border-red-200 shadow-md max-w-md mx-auto">
@@ -162,18 +176,11 @@ export default function PatientDetail() {
   }
 
   // Loading state
-  if (isLoading) {
+  if (isLoading && isDoctor) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
         <header className="bg-gradient-to-r from-teal-500 to-teal-600 shadow-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center">
-            <Link
-              to="/patients"
-              className="flex items-center text-white hover:text-teal-100 mr-4"
-            >
-              <ArrowLeft size={20} className="mr-1" />
-              <span className="text-sm">Back to Patients</span>
-            </Link>
             <h1 className="text-xl font-semibold text-white">
               Loading Patient Profile...
             </h1>
@@ -423,18 +430,19 @@ export default function PatientDetail() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
       <header className="bg-gradient-to-r from-teal-500 to-teal-600 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center">
-          <Link
-            to="/patients"
-            className="flex items-center text-white hover:text-teal-100 mr-4"
-          >
-            <ArrowLeft size={20} className="mr-1" />
-            <span className="text-sm">Back to Patients</span>
-          </Link>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex gap-8 items-center">
           <h1 className="text-xl font-semibold text-white">Patient Profile</h1>
-          <Badge className="ml-auto bg-red-500 hover:bg-red-600">
+          <Badge className="ml-auto bg-red-500  text-white py-1 px-1">
             Doctor View Only
           </Badge>
+          <Link to="/">
+            <Button
+              variant="outline"
+              className="bg-white text-teal-600 border-white hover:bg-teal-100 cursor-pointer"
+            >
+              Back to Dashboard
+            </Button>
+          </Link>
         </div>
       </header>
 
@@ -577,7 +585,7 @@ export default function PatientDetail() {
                             <div className="flex items-center">
                               <Droplet className="h-4 w-4 text-red-500 mr-1" />
                               <span className="font-medium">
-                                {patient.bloodType}
+                                {bloodTypesMap[patient.bloodType as BloodType]}
                               </span>
                             </div>
                           </div>

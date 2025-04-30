@@ -34,7 +34,15 @@ export type LoginRequest = {
   email: string;
   password: string;
 };
-
+export type BloodType =
+  | "A_POS"
+  | "A_NEG"
+  | "B_POS"
+  | "B_NEG"
+  | "AB_POS"
+  | "AB_NEG"
+  | "O_POS"
+  | "O_NEG";
 export type Patient = {
   id: number;
   firstName: string;
@@ -44,7 +52,7 @@ export type Patient = {
   phoneNumber: string;
   height: number;
   weight: number;
-  bloodType: string;
+  bloodType: BloodType;
   conditions: string;
   profilePictureURL: string;
 };

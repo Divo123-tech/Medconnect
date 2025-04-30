@@ -8,7 +8,7 @@ import {
 } from "@/Components/ui/card";
 import { updateMyProfile } from "@/services/myProfileService";
 import { useAuthStore } from "@/store/authStore";
-import { Patient } from "@/utils/types";
+import { BloodType, Patient } from "@/utils/types";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import {
@@ -455,7 +455,7 @@ const PatientProfile = ({ user }: Props) => {
                           </Label>
                           <Select
                             value={patient.bloodType}
-                            onValueChange={(value) =>
+                            onValueChange={(value: BloodType) =>
                               setPatient({ ...patient, bloodType: value })
                             }
                           >
