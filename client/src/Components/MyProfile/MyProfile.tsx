@@ -10,22 +10,20 @@ import { isDoctor, isPatient } from "@/utils/typeGuards";
 
 export default function ProfilePage() {
   // Mock patient data - in a real app, this would come from your API
-  const { user, setUser } = useAuthStore();
-  const { token } = useAuthStore();
+  const { token, user, setUser } = useAuthStore();
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const data = await getMyProfile(token);
         setUser(data);
+        console.log(data);
       } catch (err) {
         console.log(err);
       }
     };
-    if (!user) {
-      fetchProfile();
-    }
-  }, [setUser, token, user]);
+    fetchProfile();
+  }, [setUser, token]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
@@ -38,6 +36,7 @@ export default function ProfilePage() {
           <span>Back</span>
         </Link>
       </div>
+
       {user?.role == "PATIENT" && isPatient(user) && (
         <PatientProfile user={user} />
       )}
