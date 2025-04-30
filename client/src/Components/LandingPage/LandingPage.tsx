@@ -1152,14 +1152,6 @@ export default function LandingPage() {
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="#pricing"
-                    className="text-gray-400 hover:text-teal-400"
-                  >
-                    Pricing
-                  </a>
-                </li>
-                <li>
                   <a href="#" className="text-gray-400 hover:text-teal-400">
                     Security
                   </a>
