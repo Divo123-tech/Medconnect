@@ -8,7 +8,10 @@ import com.backend.server.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 
 @RestController
@@ -21,11 +24,11 @@ public class PatientController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPatientById(@PathVariable int id) {
+    public ResponseEntity<?> getPatientById(@PathVariable int id, Authentication auth) {
         User currentUser = userService.getUserById(id);
-
+        User userRequesting = (User) auth.getPrincipal(); // this is safe
         // Ensure only doctors can access patient profiles
-        if (currentUser.getRole() != User.Role.DOCTOR) {
+        if (userRequesting.getRole() != User.Role.DOCTOR && userRequesting.getRole() != User.Role.ADMIN) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied. Only doctors can view patient profiles.");
         }
 

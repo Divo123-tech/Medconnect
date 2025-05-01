@@ -21,7 +21,8 @@ public class User implements UserDetails {
 
     public enum Role {
         PATIENT,
-        DOCTOR
+        DOCTOR,
+        ADMIN
     }
 
     @Id
