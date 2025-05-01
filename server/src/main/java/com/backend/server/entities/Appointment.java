@@ -37,7 +37,7 @@ public class Appointment {
 
 
     @Column(length = 1000)
-    private String notes;
+    private String reason;
 
     @Enumerated(EnumType.STRING)
     private Status status;
