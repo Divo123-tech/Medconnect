@@ -18,10 +18,12 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    // Patient who booked the appointment
     @ManyToOne(optional = false)
     @JoinColumn(name = "patient_id")
     private Patient patient;
 
+    // Doctor for the appointment
     @ManyToOne(optional = false)
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
