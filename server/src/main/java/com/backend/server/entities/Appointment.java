@@ -26,8 +26,12 @@ public class Appointment {
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 
-    private LocalDate appointmentDate;
-    private LocalTime appointmentTime;
+
+    // Stores the date of the appointment (e.g. 2025-05-01)
+    private LocalDate date;
+
+    // Stores the time (e.g. 14:00 for 2 PM)
+    private LocalTime time;
 
 
     @Column(length = 1000)
