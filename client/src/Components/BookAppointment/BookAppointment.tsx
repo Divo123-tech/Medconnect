@@ -1,0 +1,653 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Search,
+  Calendar,
+  Clock,
+  FileText,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+} from "lucide-react";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Textarea } from "@/Components/ui/textarea";
+import { Avatar } from "@/Components/ui/avatar";
+import { Badge } from "@/Components/ui/badge";
+import { format } from "date-fns";
+import { Calendar as CalendarComponent } from "@/Components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/Components/ui/button";
+import { Doctor } from "@/utils/types";
+
+const doctors: Doctor[] = [
+  {
+    id: 1,
+    firstName: "Alice",
+    lastName: "Nguyen",
+    role: "General Practitioner",
+    specialization: "Family Medicine",
+    startedPracticingAt: "2015-06-15",
+    education: "Harvard Medical School",
+    bio: "Dr. Alice Nguyen focuses on preventive care and wellness for families.",
+    profilePictureURL: "https://randomuser.me/api/portraits/women/45.jpg",
+  },
+  {
+    id: 2,
+    firstName: "David",
+    lastName: "Kim",
+    role: "Cardiologist",
+    specialization: "Cardiology",
+    startedPracticingAt: "2012-09-01",
+    education: "Johns Hopkins University School of Medicine",
+    bio: "Specialist in heart-related conditions and treatments with over a decade of experience.",
+    profilePictureURL: "https://randomuser.me/api/portraits/men/32.jpg",
+  },
+  {
+    id: 3,
+    firstName: "Sophia",
+    lastName: "Rodriguez",
+    role: "Pediatrician",
+    specialization: "Pediatrics",
+    startedPracticingAt: "2018-03-20",
+    education: "University of California, San Francisco",
+    bio: "Dedicated to the health and well-being of children and adolescents.",
+    profilePictureURL: "https://randomuser.me/api/portraits/women/12.jpg",
+  },
+  {
+    id: 4,
+    firstName: "James",
+    lastName: "Singh",
+    role: "Orthopedic Surgeon",
+    specialization: "Orthopedics",
+    startedPracticingAt: "2010-11-05",
+    education: "Stanford University School of Medicine",
+    bio: "Experienced surgeon helping patients recover from musculoskeletal injuries.",
+    profilePictureURL: "https://randomuser.me/api/portraits/men/55.jpg",
+  },
+  {
+    id: 5,
+    firstName: "Emily",
+    lastName: "Chowdhury",
+    role: "Dermatologist",
+    specialization: "Dermatology",
+    startedPracticingAt: "2016-08-10",
+    education: "Yale School of Medicine",
+    bio: "Expert in skin care, treating both medical and cosmetic dermatological conditions.",
+    profilePictureURL: "https://randomuser.me/api/portraits/women/60.jpg",
+  },
+];
+
+// Generate time slots from 9am to 5pm in 30-minute intervals
+const generateTimeSlots = () => {
+  const slots = [];
+  for (let hour = 9; hour < 17; hour++) {
+    const hourFormatted = hour % 12 === 0 ? 12 : hour % 12;
+    const period = hour < 12 ? "AM" : "PM";
+
+    slots.push(`${hourFormatted}:00 ${period}`);
+    slots.push(`${hourFormatted}:30 ${period}`);
+  }
+  return slots;
+};
+
+const timeSlots = generateTimeSlots();
+
+export default function BookAppointment() {
+  const [step, setStep] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [notes, setNotes] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+
+  // Filter doctors based on search query
+  const filteredDoctors = doctors.filter(
+    (doctor: Doctor) =>
+      doctor.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      doctor.specialization.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleNext = () => {
+    if (step < 4) {
+      setStep(step + 1);
+    } else {
+      // Submit appointment
+      setIsSubmitting(true);
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setIsComplete(true);
+        setTimeout(() => {
+          window.location.href = "/patient-dashboard";
+        }, 2000);
+      }, 1500);
+    }
+  };
+
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
+
+  const isNextDisabled = () => {
+    switch (step) {
+      case 1:
+        return !selectedDoctor;
+      case 2:
+        return !selectedDate;
+      case 3:
+        return !selectedTime;
+      default:
+        return false;
+    }
+  };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.1,
+        duration: 0.3,
+      },
+    },
+    exit: {
+      opacity: 0,
+      transition: { duration: 0.2 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 300, damping: 24 },
+    },
+  };
+
+  // Step indicators
+  const steps = [
+    { number: 1, title: "Select Doctor", icon: <Search className="h-5 w-5" /> },
+    { number: 2, title: "Choose Date", icon: <Calendar className="h-5 w-5" /> },
+    { number: 3, title: "Select Time", icon: <Clock className="h-5 w-5" /> },
+    { number: 4, title: "Add Notes", icon: <FileText className="h-5 w-5" /> },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white p-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8 text-center"
+        >
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Book Your Appointment
+          </h1>
+          <p className="text-gray-600">
+            Schedule a video consultation with our specialists
+          </p>
+        </motion.div>
+
+        {/* Progress bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="mb-8"
+        >
+          <div className="flex justify-between items-center mb-2">
+            {steps.map((s) => (
+              <motion.div
+                key={s.number}
+                className="flex flex-col items-center"
+                initial={{ opacity: 0.5 }}
+                animate={{
+                  opacity: step >= s.number ? 1 : 0.5,
+                  scale: step === s.number ? 1.05 : 1,
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center mb-1",
+                    step > s.number
+                      ? "bg-purple-500 text-white"
+                      : step === s.number
+                      ? "bg-teal-600 text-white"
+                      : "bg-gray-200 text-gray-500"
+                  )}
+                >
+                  {step > s.number ? <Check className="h-5 w-5" /> : s.icon}
+                </div>
+                <span
+                  className={cn(
+                    "text-xs font-medium",
+                    step >= s.number ? "text-gray-900" : "text-gray-500"
+                  )}
+                >
+                  {s.title}
+                </span>
+              </motion.div>
+            ))}
+          </div>
+          <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-teal-600"
+              initial={{ width: "0%" }}
+              animate={{ width: `${(step / steps.length) * 100}%` }}
+              transition={{ duration: 0.5 }}
+            />
+          </div>
+        </motion.div>
+
+        {/* Main content */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6 overflow-hidden">
+          <AnimatePresence mode="wait" custom={step}>
+            {step === 1 && (
+              <motion.div
+                key="step1"
+                custom={1}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="min-h-[400px]"
+              >
+                <motion.h2
+                  variants={itemVariants}
+                  className="text-xl font-semibold mb-4 text-gray-800"
+                >
+                  Select a Doctor
+                </motion.h2>
+                <motion.div variants={itemVariants} className="mb-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <Input
+                      type="text"
+                      placeholder="Search by name or specialty..."
+                      className="pl-10"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                </motion.div>
+                <motion.div
+                  variants={itemVariants}
+                  className="space-y-3 max-h-[300px] overflow-y-auto px-3 py-2"
+                >
+                  {filteredDoctors.length > 0 ? (
+                    filteredDoctors.map((doctor) => (
+                      <motion.div
+                        key={doctor.id}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setSelectedDoctor(doctor)}
+                        className={cn(
+                          "p-4 rounded-lg border-2 cursor-pointer transition-all",
+                          selectedDoctor?.id === doctor.id
+                            ? "border-teal-500 bg-teal-50"
+                            : "border-gray-200 hover:border-teal-300"
+                        )}
+                      >
+                        <div className="flex items-center">
+                          <Avatar className="h-12 w-12 mr-4">
+                            <img
+                              src={
+                                doctor.profilePictureURL || "/placeholder.svg"
+                              }
+                              alt={doctor.firstName + " " + doctor.lastName}
+                            />
+                          </Avatar>
+                          <div className="flex-1">
+                            <h3 className="font-medium text-gray-900">
+                              {doctor.firstName} {doctor.lastName}
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                              {doctor.specialization}
+                            </p>
+                          </div>
+                          <div className="flex items-center">
+                            <span className="text-yellow-500 mr-1">★</span>
+                            <span className="text-sm font-medium">5</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <motion.p
+                      variants={itemVariants}
+                      className="text-center text-gray-500 py-8"
+                    >
+                      No doctors found matching your search.
+                    </motion.p>
+                  )}
+                </motion.div>
+              </motion.div>
+            )}
+
+            {step === 2 && (
+              <motion.div
+                key="step2"
+                custom={2}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="min-h-[400px]"
+              >
+                <motion.h2
+                  variants={itemVariants}
+                  className="text-xl font-semibold mb-4 text-gray-800"
+                >
+                  Select a Date
+                </motion.h2>
+                {selectedDoctor && (
+                  <motion.div
+                    variants={itemVariants}
+                    className="mb-6 p-3 bg-teal-50 rounded-lg flex items-center"
+                  >
+                    <Avatar className="h-10 w-10 mr-3">
+                      <img
+                        src={
+                          selectedDoctor.profilePictureURL || "/placeholder.svg"
+                        }
+                        alt={
+                          selectedDoctor.firstName +
+                          " " +
+                          selectedDoctor.lastName
+                        }
+                      />
+                    </Avatar>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {selectedDoctor.firstName +
+                          " " +
+                          selectedDoctor.lastName}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {selectedDoctor.specialization}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+                <motion.div
+                  variants={itemVariants}
+                  className="flex justify-center"
+                >
+                  <CalendarComponent
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    className="rounded-md border"
+                    classNames={{
+                      caption:
+                        "flex justify-center items-center relative w-full",
+                      caption_label: "text-sm font-medium text-center",
+                      nav: "flex absolute top-0 inset-x-0 justify-between items-center",
+                      nav_button: cn(
+                        buttonVariants({ variant: "outline" }),
+                        "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
+                      ),
+                      nav_button_previous: "ml-1",
+                      nav_button_next: "mr-1",
+                    }}
+                    disabled={(date) => {
+                      // Disable past dates and weekends
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      const day = date.getDay();
+                      return date < today || day === 0 || day === 6;
+                    }}
+                  />
+                </motion.div>
+                {selectedDate && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-4 text-center text-sm text-teal-600 font-medium"
+                  >
+                    You selected: {format(selectedDate, "EEEE, MMMM do, yyyy")}
+                  </motion.p>
+                )}
+              </motion.div>
+            )}
+
+            {step === 3 && (
+              <motion.div
+                key="step3"
+                custom={3}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="min-h-[400px]"
+              >
+                <motion.h2
+                  variants={itemVariants}
+                  className="text-xl font-semibold mb-4 text-gray-800"
+                >
+                  Select a Time
+                </motion.h2>
+                {selectedDoctor && selectedDate && (
+                  <motion.div
+                    variants={itemVariants}
+                    className="mb-6 p-3 bg-teal-50 rounded-lg"
+                  >
+                    <div className="flex items-center mb-2">
+                      <Avatar className="h-10 w-10 mr-3">
+                        <img
+                          src={
+                            selectedDoctor.profilePictureURL ||
+                            "/placeholder.svg"
+                          }
+                          alt={
+                            selectedDoctor.firstName +
+                            " " +
+                            selectedDoctor.lastName
+                          }
+                        />
+                      </Avatar>
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {selectedDoctor.firstName +
+                            " " +
+                            selectedDoctor.lastName}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {selectedDoctor.specialization}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-sm text-gray-700">
+                      <Calendar className="inline-block h-4 w-4 mr-1" />
+                      {format(selectedDate, "EEEE, MMMM do, yyyy")}
+                    </div>
+                  </motion.div>
+                )}
+                <motion.div
+                  variants={itemVariants}
+                  className="grid grid-cols-3 gap-3 sm:grid-cols-4"
+                >
+                  {timeSlots.map((time) => (
+                    <motion.button
+                      key={time}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setSelectedTime(time)}
+                      className={cn(
+                        "py-3 px-4 rounded-lg text-center text-sm font-medium transition-all",
+                        selectedTime === time
+                          ? "bg-teal-600 text-white shadow-md"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      )}
+                    >
+                      {time}
+                    </motion.button>
+                  ))}
+                </motion.div>
+              </motion.div>
+            )}
+
+            {step === 4 && (
+              <motion.div
+                key="step4"
+                custom={4}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="min-h-[400px]"
+              >
+                <motion.h2
+                  variants={itemVariants}
+                  className="text-xl font-semibold mb-4 text-gray-800"
+                >
+                  Add Notes
+                </motion.h2>
+                {selectedDoctor && selectedDate && selectedTime && (
+                  <motion.div
+                    variants={itemVariants}
+                    className="mb-6 p-4 bg-teal-50 rounded-lg"
+                  >
+                    <div className="flex items-center mb-3">
+                      <Avatar className="h-12 w-12 mr-4">
+                        <img
+                          src={
+                            selectedDoctor.profilePictureURL ||
+                            "/placeholder.svg"
+                          }
+                          alt={
+                            selectedDoctor.firstName +
+                            " " +
+                            selectedDoctor.lastName
+                          }
+                        />
+                      </Avatar>
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {selectedDoctor.firstName +
+                            " " +
+                            selectedDoctor.lastName}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {selectedDoctor.specialization}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-sm text-gray-700">
+                      <div className="flex items-center">
+                        <Calendar className="inline-block h-4 w-4 mr-2" />
+                        {format(selectedDate, "EEEE, MMMM do, yyyy")}
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="inline-block h-4 w-4 mr-2" />
+                        {selectedTime}
+                      </div>
+                      <div className="flex items-center">
+                        <Badge className="bg-teal-100 text-teal-800 hover:bg-teal-100">
+                          Video Call
+                        </Badge>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+                <motion.div variants={itemVariants} className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Reason for appointment / Notes for the doctor
+                  </label>
+                  <Textarea
+                    placeholder="Please describe your symptoms or reason for the appointment..."
+                    className="min-h-[120px]"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                  />
+                  <p className="text-xs text-gray-500">
+                    This information will help the doctor prepare for your
+                    appointment.
+                  </p>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Success message */}
+          {isComplete && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="fixed inset-0 flex items-center justify-center bg-white z-50"
+            >
+              <div className="text-center p-8 max-w-md">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                  className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"
+                >
+                  <Check className="h-10 w-10 text-green-600" />
+                </motion.div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  Appointment Booked!
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Your appointment has been successfully scheduled. Redirecting
+                  to dashboard...
+                </p>
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 2 }}
+                  className="h-1 bg-green-500 rounded-full w-full origin-left"
+                />
+              </div>
+            </motion.div>
+          )}
+        </div>
+
+        {/* Navigation buttons */}
+        <div className="flex justify-between">
+          <Button
+            variant="outline"
+            onClick={handleBack}
+            disabled={step === 1 || isSubmitting}
+            className="flex items-center"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back
+          </Button>
+
+          <Button
+            onClick={handleNext}
+            disabled={isNextDisabled() || isSubmitting}
+            className="bg-teal-600 hover:bg-teal-700 text-white flex items-center"
+          >
+            {isSubmitting ? (
+              <div className="flex items-center">
+                <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                Processing...
+              </div>
+            ) : step === 4 ? (
+              <>
+                Confirm Booking <Check className="ml-2 h-4 w-4" />
+              </>
+            ) : (
+              <>
+                Next <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,4 +1,3 @@
-"use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
@@ -10,8 +9,6 @@ import {
   Video,
   CheckCircle,
   Bell,
-  Heart,
-  Activity,
 } from "lucide-react";
 
 import { Button } from "@/Components/ui/button";
@@ -25,9 +22,12 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { Badge } from "@/Components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
+import { useAuthStore } from "@/store/authStore";
+import { Link } from "react-router";
+import ConfirmedAppointments from "./ConfirmedAppointments";
 
 // Types for our data
-type AppointmentStatus = "pending" | "confirmed" | "cancelled";
+type AppointmentStatus = "pending" | "confirmed" | "cancelled" | "completed";
 
 interface Appointment {
   id: number;
@@ -54,7 +54,7 @@ interface Doctor {
 export default function PatientDashboard() {
   const [activeDoctor, setActiveDoctor] = useState<number | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
-
+  const { user } = useAuthStore();
   // Update time every minute
   useEffect(() => {
     const timer = setInterval(() => {
@@ -63,13 +63,6 @@ export default function PatientDashboard() {
 
     return () => clearInterval(timer);
   }, []);
-
-  // Format time as HH:MM AM/PM
-  const formattedTime = currentTime.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
 
   // Format date as Day, Month Date
   const formattedDate = currentTime.toLocaleDateString("en-US", {
@@ -100,7 +93,7 @@ export default function PatientDashboard() {
       date: "Tomorrow",
       time: "10:00 AM",
       status: "pending",
-      type: "in-person",
+      type: "video",
     },
     {
       id: 4,
@@ -110,7 +103,45 @@ export default function PatientDashboard() {
       date: "May 22, 2023",
       time: "1:00 PM",
       status: "confirmed",
-      type: "in-person",
+      type: "video",
+    },
+  ];
+
+  // Add completed appointments to the mock data after the existing appointments array
+  const completedAppointments: Appointment[] = [
+    {
+      id: 5,
+      doctorName: "Dr. Emily Taylor",
+      doctorSpecialty: "Neurologist",
+      doctorImage: "/placeholder.svg?height=80&width=80",
+      date: "May 1, 2023",
+      time: "9:15 AM",
+      status: "completed",
+      type: "video",
+      notes:
+        "Follow-up on migraine treatment. Medication seems to be working well.",
+    },
+    {
+      id: 6,
+      doctorName: "Dr. Robert Kim",
+      doctorSpecialty: "Ophthalmologist",
+      doctorImage: "/placeholder.svg?height=80&width=80",
+      date: "April 22, 2023",
+      time: "11:30 AM",
+      status: "completed",
+      type: "video",
+      notes: "Annual eye examination. Prescription updated.",
+    },
+    {
+      id: 7,
+      doctorName: "Dr. Sarah Johnson",
+      doctorSpecialty: "Cardiologist",
+      doctorImage: "/placeholder.svg?height=80&width=80",
+      date: "April 15, 2023",
+      time: "2:00 PM",
+      status: "completed",
+      type: "video",
+      notes: "Routine heart checkup. All tests normal.",
     },
   ];
 
@@ -185,18 +216,6 @@ export default function PatientDashboard() {
     },
   };
 
-  const pulseVariants = {
-    pulse: {
-      scale: [1, 1.05, 1],
-      opacity: [0.7, 1, 0.7],
-      transition: {
-        duration: 2,
-        repeat: Number.POSITIVE_INFINITY,
-        repeatType: "reverse",
-      },
-    },
-  };
-
   // Function to render appointment status badge
   const renderStatusBadge = (status: AppointmentStatus) => {
     switch (status) {
@@ -220,6 +239,13 @@ export default function PatientDashboard() {
             Cancelled
           </Badge>
         );
+      case "completed":
+        return (
+          <Badge className="bg-gradient-to-r from-gray-400 to-gray-500 text-white hover:from-gray-500 hover:to-gray-600 flex items-center gap-1">
+            <CheckCircle className="h-3 w-3" />
+            Completed
+          </Badge>
+        );
       default:
         return null;
     }
@@ -233,11 +259,9 @@ export default function PatientDashboard() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">
-                Patient Dashboard
+                Welcome, John Pork
               </h1>
-              <p className="text-gray-600">
-                {formattedDate} • {formattedTime}
-              </p>
+              <p className="text-gray-600">{formattedDate} 2025</p>
             </div>
             <div className="flex items-center gap-3">
               <motion.div
@@ -269,8 +293,8 @@ export default function PatientDashboard() {
                 />
               </motion.div>
               <div>
-                <p className="font-medium text-gray-900">Welcome, John</p>
-                <p className="text-xs text-gray-500">Patient ID: #12345</p>
+                <p className="font-medium text-gray-900">John Pork</p>
+                <p className="text-xs text-gray-500">JohnPork@gmail.com</p>
               </div>
             </div>
           </div>
@@ -290,13 +314,15 @@ export default function PatientDashboard() {
             whileTap={{ scale: 0.97 }}
             className="relative overflow-hidden"
           >
-            <Button
-              size="lg"
-              className="w-full h-20 text-lg bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 border-none shadow-md"
-            >
-              <User className="mr-2 h-5 w-5" />
-              Edit Profile
-            </Button>
+            <Link to="/my-profile">
+              <Button
+                size="lg"
+                className="w-full cursor-pointer text-white h-20 text-lg bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 border-none shadow-md"
+              >
+                <User className="mr-2 h-5 w-5" />
+                Edit Profile
+              </Button>
+            </Link>
             <motion.div
               className="absolute -top-6 -right-6 w-12 h-12 bg-white/10 rounded-full"
               animate={{
@@ -316,13 +342,15 @@ export default function PatientDashboard() {
             whileTap={{ scale: 0.97 }}
             className="relative overflow-hidden"
           >
-            <Button
-              size="lg"
-              className="w-full h-20 text-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-none shadow-md"
-            >
-              <Plus className="mr-2 h-5 w-5" />
-              Book New Appointment
-            </Button>
+            <Link to="/book-appointment">
+              <Button
+                size="lg"
+                className="w-full cursor-pointer text-white h-20 text-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-none shadow-md"
+              >
+                <Plus className="mr-2 h-5 w-5" />
+                Book New Appointment
+              </Button>
+            </Link>
             <motion.div
               className="absolute -top-6 -right-6 w-12 h-12 bg-white/10 rounded-full"
               animate={{
@@ -343,13 +371,15 @@ export default function PatientDashboard() {
             whileTap={{ scale: 0.97 }}
             className="relative overflow-hidden"
           >
-            <Button
-              size="lg"
-              className="w-full h-20 text-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 border-none shadow-md"
-            >
-              <Stethoscope className="mr-2 h-5 w-5" />
-              Browse Doctors
-            </Button>
+            <Link to={"/doctors"}>
+              <Button
+                size="lg"
+                className="w-full cursor-pointer h-20 text-white text-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 border-none shadow-md"
+              >
+                <Stethoscope className="mr-2 h-5 w-5" />
+                Browse Doctors
+              </Button>
+            </Link>
             <motion.div
               className="absolute -top-6 -right-6 w-12 h-12 bg-white/10 rounded-full"
               animate={{
@@ -364,88 +394,6 @@ export default function PatientDashboard() {
               }}
             />
           </motion.div>
-        </motion.div>
-
-        {/* Health Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="mb-10"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <motion.div
-              whileHover={{ y: -5 }}
-              className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl p-4 text-white shadow-lg"
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="font-medium">Heart Rate</h3>
-                <Heart className="h-5 w-5" />
-              </div>
-              <div className="mt-2 flex items-baseline">
-                <span className="text-3xl font-bold">72</span>
-                <span className="ml-1 text-sm opacity-80">bpm</span>
-              </div>
-              <div className="mt-2">
-                <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-white"
-                    initial={{ width: 0 }}
-                    animate={{ width: "65%" }}
-                    transition={{ duration: 1, delay: 0.5 }}
-                  />
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ y: -5 }}
-              className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-lg"
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="font-medium">Blood Pressure</h3>
-                <Activity className="h-5 w-5" />
-              </div>
-              <div className="mt-2 flex items-baseline">
-                <span className="text-3xl font-bold">120/80</span>
-                <span className="ml-1 text-sm opacity-80">mmHg</span>
-              </div>
-              <div className="mt-2">
-                <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-white"
-                    initial={{ width: 0 }}
-                    animate={{ width: "75%" }}
-                    transition={{ duration: 1, delay: 0.7 }}
-                  />
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ y: -5 }}
-              className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white shadow-lg"
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="font-medium">Next Checkup</h3>
-                <Calendar className="h-5 w-5" />
-              </div>
-              <div className="mt-2 flex items-baseline">
-                <span className="text-3xl font-bold">3</span>
-                <span className="ml-1 text-sm opacity-80">days</span>
-              </div>
-              <div className="mt-2">
-                <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-white"
-                    initial={{ width: 0 }}
-                    animate={{ width: "85%" }}
-                    transition={{ duration: 1, delay: 0.9 }}
-                  />
-                </div>
-              </div>
-            </motion.div>
-          </div>
         </motion.div>
 
         {/* Appointments Section */}
@@ -487,6 +435,12 @@ export default function PatientDashboard() {
               >
                 Pending ({pendingAppointments.length})
               </TabsTrigger>
+              <TabsTrigger
+                value="completed"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-gray-500 data-[state=active]:to-gray-600 data-[state=active]:text-white"
+              >
+                Completed ({completedAppointments.length})
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="confirmed">
@@ -497,120 +451,7 @@ export default function PatientDashboard() {
                 className="grid gap-6"
               >
                 {confirmedAppointments.map((appointment) => (
-                  <motion.div
-                    key={appointment.id}
-                    variants={itemVariants}
-                    whileHover={{ y: -5 }}
-                  >
-                    <Card className="overflow-hidden border-teal-100 hover:shadow-lg transition-all duration-300">
-                      <CardHeader className="pb-2 bg-gradient-to-r from-teal-50 to-blue-50">
-                        <div className="flex justify-between items-start">
-                          <div className="flex items-center">
-                            <div className="relative">
-                              <Avatar className="h-12 w-12 mr-3 border-2 border-teal-200">
-                                <AvatarImage
-                                  src={
-                                    appointment.doctorImage ||
-                                    "/placeholder.svg"
-                                  }
-                                  alt={appointment.doctorName}
-                                />
-                                <AvatarFallback>
-                                  {appointment.doctorName.charAt(0)}
-                                </AvatarFallback>
-                              </Avatar>
-                              {appointment.type === "video" && (
-                                <motion.div
-                                  variants={pulseVariants}
-                                  animate="pulse"
-                                  className="absolute -bottom-1 -right-1 bg-teal-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                                >
-                                  <Video className="h-3 w-3" />
-                                </motion.div>
-                              )}
-                            </div>
-                            <div>
-                              <CardTitle className="text-lg">
-                                {appointment.doctorName}
-                              </CardTitle>
-                              <p className="text-gray-500">
-                                {appointment.doctorSpecialty}
-                              </p>
-                            </div>
-                          </div>
-                          {renderStatusBadge(appointment.status)}
-                        </div>
-                      </CardHeader>
-                      <CardContent className="pb-2 pt-4">
-                        <div className="flex flex-wrap gap-4 text-sm">
-                          <div className="flex items-center text-gray-600">
-                            <Calendar className="h-4 w-4 mr-1 text-teal-600" />
-                            {appointment.date}
-                          </div>
-                          <div className="flex items-center text-gray-600">
-                            <Clock className="h-4 w-4 mr-1 text-teal-600" />
-                            {appointment.time}
-                          </div>
-                          <div className="flex items-center text-gray-600">
-                            {appointment.type === "video" ? (
-                              <>
-                                <Video className="h-4 w-4 mr-1 text-teal-600" />
-                                Video Call
-                              </>
-                            ) : (
-                              <>
-                                <svg
-                                  className="h-4 w-4 mr-1 text-teal-600"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                  />
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                  />
-                                </svg>
-                                In-Person
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </CardContent>
-                      <CardFooter className="pt-2">
-                        <div className="flex justify-end w-full">
-                          {appointment.type === "video" ? (
-                            <motion.div
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              <Button className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 shadow-md">
-                                <Video className="mr-2 h-4 w-4" />
-                                Join Video Call
-                              </Button>
-                            </motion.div>
-                          ) : (
-                            <motion.div
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              <Button className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 shadow-md">
-                                Get Directions
-                              </Button>
-                            </motion.div>
-                          )}
-                        </div>
-                      </CardFooter>
-                    </Card>
-                  </motion.div>
+                  <ConfirmedAppointments appointment={appointment} />
                 ))}
               </motion.div>
             </TabsContent>
@@ -628,8 +469,8 @@ export default function PatientDashboard() {
                     variants={itemVariants}
                     whileHover={{ y: -5 }}
                   >
-                    <Card className="overflow-hidden border-amber-100 hover:shadow-lg transition-all duration-300">
-                      <CardHeader className="pb-2 bg-gradient-to-r from-amber-50 to-orange-50">
+                    <Card className="overflow-hidden border-amber-100 hover:shadow-lg transition-all duration-300 pt-0">
+                      <CardHeader className="py-4 bg-gradient-to-r from-amber-50 to-orange-50">
                         <div className="flex justify-between items-start">
                           <div className="flex items-center">
                             <Avatar className="h-12 w-12 mr-3 border-2 border-amber-200">
@@ -666,41 +507,13 @@ export default function PatientDashboard() {
                             {appointment.time}
                           </div>
                           <div className="flex items-center text-gray-600">
-                            {appointment.type === "video" ? (
-                              <>
-                                <Video className="h-4 w-4 mr-1 text-amber-600" />
-                                Video Call
-                              </>
-                            ) : (
-                              <>
-                                <svg
-                                  className="h-4 w-4 mr-1 text-amber-600"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                  />
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                  />
-                                </svg>
-                                In-Person
-                              </>
-                            )}
+                            <Video className="h-4 w-4 mr-1 text-amber-600" />
+                            Video Call
                           </div>
                         </div>
                       </CardContent>
                       <CardFooter className="pt-2">
-                        <div className="flex justify-end w-full gap-2">
+                        <div className="flex justify-between w-full">
                           <motion.div
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -712,14 +525,101 @@ export default function PatientDashboard() {
                               Cancel
                             </Button>
                           </motion.div>
-                          <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-md">
-                              Confirm
-                            </Button>
-                          </motion.div>
+                          <div className="flex gap-2">
+                            <motion.div
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-md">
+                                Edit
+                              </Button>
+                            </motion.div>
+                          </div>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </TabsContent>
+
+            <TabsContent value="completed">
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid gap-6"
+              >
+                {completedAppointments.map((appointment) => (
+                  <motion.div
+                    key={appointment.id}
+                    variants={itemVariants}
+                    whileHover={{ y: -5 }}
+                  >
+                    <Card className="overflow-hidden border-gray-200 hover:shadow-lg transition-all duration-300 pt-0">
+                      <CardHeader className="py-4 bg-gradient-to-r from-gray-100 to-gray-200">
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-center">
+                            <Avatar className="h-12 w-12 mr-3 border-2 border-gray-200">
+                              <AvatarImage
+                                src={
+                                  appointment.doctorImage || "/placeholder.svg"
+                                }
+                                alt={appointment.doctorName}
+                              />
+                              <AvatarFallback>
+                                {appointment.doctorName.charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <CardTitle className="text-lg">
+                                {appointment.doctorName}
+                              </CardTitle>
+                              <p className="text-gray-500">
+                                {appointment.doctorSpecialty}
+                              </p>
+                            </div>
+                          </div>
+                          {renderStatusBadge(appointment.status)}
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pb-2 pt-4">
+                        <div className="flex flex-wrap gap-4 text-sm">
+                          <div className="flex items-center text-gray-600">
+                            <Calendar className="h-4 w-4 mr-1 text-gray-500" />
+                            {appointment.date}
+                          </div>
+                          <div className="flex items-center text-gray-600">
+                            <Clock className="h-4 w-4 mr-1 text-gray-500" />
+                            {appointment.time}
+                          </div>
+                          <div className="flex items-center text-gray-600">
+                            <Video className="h-4 w-4 mr-1 text-gray-500" />
+                            Video Call
+                          </div>
+                        </div>
+                        {appointment.notes && (
+                          <div className="mt-3 p-3 bg-gray-50 rounded-md text-sm text-gray-600 border border-gray-100">
+                            <p className="font-medium text-gray-700 mb-1">
+                              Doctor's Notes:
+                            </p>
+                            <p>{appointment.notes}</p>
+                          </div>
+                        )}
+                      </CardContent>
+                      <CardFooter className="pt-2">
+                        <div className="flex justify-between w-full">
+                          <div></div>
+                          <div className="flex gap-2">
+                            <motion.div
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              <Button className="bg-gradient-to-r text-white from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 shadow-md">
+                                Book Follow-up
+                              </Button>
+                            </motion.div>
+                          </div>
                         </div>
                       </CardFooter>
                     </Card>
