@@ -122,7 +122,7 @@ export default function BookAppointment() {
         setIsSubmitting(false);
         setIsComplete(true);
         setTimeout(() => {
-          window.location.href = "/patient-dashboard";
+          window.location.href = "/dashboard";
         }, 2000);
       }, 1500);
     }
@@ -391,8 +391,7 @@ export default function BookAppointment() {
                     onSelect={setSelectedDate}
                     className="rounded-md border"
                     classNames={{
-                      caption:
-                        "flex justify-center items-center relative w-full",
+                      caption: "flex justify-center items-center relative",
                       caption_label: "text-sm font-medium text-center",
                       nav: "flex absolute top-0 inset-x-0 justify-between items-center",
                       nav_button: cn(
@@ -486,7 +485,7 @@ export default function BookAppointment() {
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setSelectedTime(time)}
                       className={cn(
-                        "py-3 px-4 rounded-lg text-center text-sm font-medium transition-all",
+                        "py-3 px-4 rounded-lg text-center text-sm font-medium transition-all cursor-pointer",
                         selectedTime === time
                           ? "bg-teal-600 text-white shadow-md"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -616,12 +615,12 @@ export default function BookAppointment() {
         </div>
 
         {/* Navigation buttons */}
-        <div className="flex justify-between">
+        <div className="flex justify-between ">
           <Button
             variant="outline"
             onClick={handleBack}
             disabled={step === 1 || isSubmitting}
-            className="flex items-center"
+            className="flex items-center cursor-pointer hover:opacity-50"
           >
             <ArrowLeft className="mr-2 h-4 w-4" /> Back
           </Button>
@@ -629,7 +628,7 @@ export default function BookAppointment() {
           <Button
             onClick={handleNext}
             disabled={isNextDisabled() || isSubmitting}
-            className="bg-teal-600 hover:bg-teal-700 text-white flex items-center"
+            className="bg-teal-600 hover:bg-teal-700 text-white flex items-center cursor-pointer"
           >
             {isSubmitting ? (
               <div className="flex items-center">
