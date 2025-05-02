@@ -29,7 +29,7 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
       <div className="flex items-center px-16 pt-2">
         <Link
-          to="/login"
+          to="/dashboard"
           className="flex items-center text-teal-800 mr-4 text-lg hover:border-b hover:opacity-80"
         >
           <ArrowLeft size={20} className="mr-1" />

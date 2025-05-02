@@ -41,18 +41,8 @@ interface Appointment {
   notes?: string;
 }
 
-interface Doctor {
-  id: number;
-  name: string;
-  specialty: string;
-  image: string;
-  rating: number;
-  available: string;
-  bgColor: string;
-}
 
 export default function PatientDashboard() {
-  const [activeDoctor, setActiveDoctor] = useState<number | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const { user } = useAuthStore();
   // Update time every minute
@@ -142,46 +132,6 @@ export default function PatientDashboard() {
       status: "completed",
       type: "video",
       notes: "Routine heart checkup. All tests normal.",
-    },
-  ];
-
-  // Mock data for doctors
-  const doctors: Doctor[] = [
-    {
-      id: 1,
-      name: "Dr. Sarah Johnson",
-      specialty: "Cardiologist",
-      image: "/placeholder.svg?height=80&width=80",
-      rating: 4.9,
-      available: "Today",
-      bgColor: "from-red-400 to-red-500",
-    },
-    {
-      id: 2,
-      name: "Dr. Michael Chen",
-      specialty: "Dermatologist",
-      image: "/placeholder.svg?height=80&width=80",
-      rating: 4.8,
-      available: "Tomorrow",
-      bgColor: "from-blue-400 to-blue-500",
-    },
-    {
-      id: 3,
-      name: "Dr. Emily Taylor",
-      specialty: "Neurologist",
-      image: "/placeholder.svg?height=80&width=80",
-      rating: 4.7,
-      available: "May 20",
-      bgColor: "from-purple-400 to-purple-500",
-    },
-    {
-      id: 4,
-      name: "Dr. James Wilson",
-      specialty: "Psychiatrist",
-      image: "/placeholder.svg?height=80&width=80",
-      rating: 4.6,
-      available: "Today",
-      bgColor: "from-green-400 to-green-500",
     },
   ];
 

@@ -50,8 +50,14 @@ function App() {
           path="/patient/:id"
           element={<ProtectedRoute element={<PatientDetail />} />}
         />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/book-appointment" element={<BookAppointment />} />
+        <Route
+          path="/dashboard"
+          element={<ProtectedRoute element={<Dashboard />} />}
+        />
+        <Route
+          path="/book-appointment"
+          element={<ProtectedRoute element={<BookAppointment />} />}
+        />
         <Route path="/" Component={LandingPage} />
       </Routes>
     </BrowserRouter>

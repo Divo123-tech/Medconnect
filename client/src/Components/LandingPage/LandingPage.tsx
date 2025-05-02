@@ -7,7 +7,6 @@ import {
   Calendar,
   CheckCircle,
   Clock,
-  //   FileText,
   Lock,
   MessageSquare,
   Phone,
@@ -233,13 +232,13 @@ export default function LandingPage() {
               <Link to="/login">
                 <Button
                   variant="outline"
-                  className="border-teal-200 text-teal-600 hover:bg-teal-50"
+                  className="border-teal-200 text-teal-600 hover:bg-teal-50 cursor-pointer"
                 >
                   Log In
                 </Button>
               </Link>
               <Link to="/register">
-                <Button className="bg-teal-600 hover:bg-teal-700 text-white">
+                <Button className="bg-teal-600 hover:bg-teal-700 text-white cursor-pointer">
                   Sign Up
                 </Button>
               </Link>
@@ -269,41 +268,34 @@ export default function LandingPage() {
         {isMenuOpen && (
           <div className="md:hidden bg-white border-b border-gray-100">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <Link
+              <a
                 to="#features"
                 className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-teal-600 hover:bg-gray-50"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Features
-              </Link>
-              <Link
-                to="#how-it-works"
+              </a>
+              <a
+                href="#how-it-works"
                 className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-teal-600 hover:bg-gray-50"
                 onClick={() => setIsMenuOpen(false)}
               >
                 How It Works
-              </Link>
-              <Link
-                to="#testimonials"
+              </a>
+              <a
+                href="#testimonials"
                 className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-teal-600 hover:bg-gray-50"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Testimonials
-              </Link>
-              <Link
-                to="#pricing"
-                className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-teal-600 hover:bg-gray-50"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Pricing
-              </Link>
-              <Link
-                to="#faq"
+              </a>
+              <a
+                href="#faq"
                 className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-teal-600 hover:bg-gray-50"
                 onClick={() => setIsMenuOpen(false)}
               >
                 FAQ
-              </Link>
+              </a>
             </div>
             <div className="pt-4 pb-3 border-t border-gray-200">
               <div className="flex items-center px-5">
@@ -364,20 +356,20 @@ export default function LandingPage() {
                   <Link to="/register">
                     <Button
                       size="lg"
-                      className="bg-teal-600 hover:bg-teal-700 text-white"
+                      className="bg-teal-600 hover:bg-teal-700 text-white cursor-pointer"
                     >
                       Get Started <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
-                  <Link to="#how-it-works">
+                  <a href="#how-it-works">
                     <Button
                       size="lg"
                       variant="outline"
-                      className="border-teal-200 text-teal-600 hover:bg-teal-50"
+                      className="border-teal-200 text-teal-600 hover:bg-teal-50 cursor-pointer"
                     >
                       How It Works
                     </Button>
-                  </Link>
+                  </a>
                 </motion.div>
                 <motion.div
                   variants={fadeIn}
