@@ -61,7 +61,7 @@ export default function DoctorsPage() {
   );
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [filteredDoctors, setFilteredDoctors] = useState<Doctor[] | null>(null);
+  // const [filteredDoctors, setFilteredDoctors] = useState<Doctor[] | null>(null);
   const [sortBy, setSortBy] = useState<string>("firstName");
   // const [showFilters, setShowFilters] = useState(false);
 
@@ -98,23 +98,10 @@ export default function DoctorsPage() {
   // Get current doctors for pagination
   const indexOfLastDoctor = currentPage * doctorsPerPage;
   const indexOfFirstDoctor = indexOfLastDoctor - doctorsPerPage;
-  const currentDoctors = filteredDoctors?.slice(
-    indexOfFirstDoctor,
-    indexOfLastDoctor
-  );
+  const currentDoctors = doctors?.slice(indexOfFirstDoctor, indexOfLastDoctor);
 
   // Change page
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
-  // Initial loading
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setFilteredDoctors(doctors);
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [doctors]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
@@ -268,8 +255,7 @@ export default function DoctorsPage() {
               <Skeleton className="h-6 w-48" />
             ) : (
               <p>
-                Showing{" "}
-                <span className="font-medium">{filteredDoctors?.length}</span>{" "}
+                Showing <span className="font-medium">{doctors?.length}</span>{" "}
                 doctors
                 {searchTerm && (
                   <span>
@@ -352,7 +338,7 @@ export default function DoctorsPage() {
                     initial={{ scale: 0.8, opacity: 0.8 }}
                     animate={{ scale: 1.5, opacity: 0 }}
                     transition={{
-                      duration: 2,
+                      duration: 1,
                       repeat: Number.POSITIVE_INFINITY,
                       ease: "easeOut",
                     }}
@@ -384,10 +370,8 @@ export default function DoctorsPage() {
                       transition={{
                         duration: 2,
                         ease: "easeInOut",
-                        repeat: Number.POSITIVE_INFINITY,
-                        repeatType: "loop",
-                        repeatDelay: 0.2,
                       }}
+                      onAnimationComplete={() => setIsLoading(false)}
                     />
                   </svg>
                 </div>
@@ -430,7 +414,7 @@ export default function DoctorsPage() {
               ))}
             </div>
           </div>
-        ) : filteredDoctors?.length === 0 ? (
+        ) : doctors?.length === 0 ? (
           <div className="text-center py-12">
             <div className="bg-white rounded-xl shadow-md p-8 max-w-md mx-auto border border-teal-100">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-teal-100 text-teal-600 mb-4">
@@ -465,78 +449,72 @@ export default function DoctorsPage() {
         )}
 
         {/* Pagination */}
-        {!isLoading &&
-          filteredDoctors?.length != undefined &&
-          filteredDoctors?.length > 0 && (
-            <div className="mt-8 flex justify-center">
-              <nav className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => paginate(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="border-teal-200 text-teal-700 hover:bg-teal-50 disabled:opacity-50"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
+        {!isLoading && doctors?.length != undefined && doctors?.length > 0 && (
+          <div className="mt-8 flex justify-center">
+            <nav className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => paginate(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                className="border-teal-200 text-teal-700 hover:bg-teal-50 disabled:opacity-50"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
 
-                <div className="flex items-center space-x-1">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (number) => {
-                      // Show first page, last page, current page, and pages around current
-                      const shouldShow =
-                        number === 1 ||
-                        number === totalPages ||
-                        Math.abs(number - currentPage) <= 1;
+              <div className="flex items-center space-x-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (number) => {
+                    // Show first page, last page, current page, and pages around current
+                    const shouldShow =
+                      number === 1 ||
+                      number === totalPages ||
+                      Math.abs(number - currentPage) <= 1;
 
-                      // Show ellipsis for gaps
-                      if (!shouldShow) {
-                        // Only show one ellipsis between gaps
-                        if (number === 2 || number === totalPages - 1) {
-                          return (
-                            <span key={number} className="px-2 text-gray-400">
-                              ...
-                            </span>
-                          );
-                        }
-                        return null;
+                    // Show ellipsis for gaps
+                    if (!shouldShow) {
+                      // Only show one ellipsis between gaps
+                      if (number === 2 || number === totalPages - 1) {
+                        return (
+                          <span key={number} className="px-2 text-gray-400">
+                            ...
+                          </span>
+                        );
                       }
-
-                      return (
-                        <Button
-                          key={number}
-                          variant={
-                            currentPage === number ? "default" : "outline"
-                          }
-                          size="icon"
-                          onClick={() => paginate(number)}
-                          className={
-                            currentPage === number
-                              ? "bg-teal-600 hover:bg-teal-700 text-white"
-                              : "border-teal-200 text-teal-700 hover:bg-teal-50"
-                          }
-                        >
-                          {number}
-                        </Button>
-                      );
+                      return null;
                     }
-                  )}
-                </div>
 
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() =>
-                    paginate(Math.min(totalPages, currentPage + 1))
+                    return (
+                      <Button
+                        key={number}
+                        variant={currentPage === number ? "default" : "outline"}
+                        size="icon"
+                        onClick={() => paginate(number)}
+                        className={
+                          currentPage === number
+                            ? "bg-teal-600 hover:bg-teal-700 text-white"
+                            : "border-teal-200 text-teal-700 hover:bg-teal-50"
+                        }
+                      >
+                        {number}
+                      </Button>
+                    );
                   }
-                  disabled={currentPage === totalPages}
-                  className="border-teal-200 text-teal-700 hover:bg-teal-50 disabled:opacity-50"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </nav>
-            </div>
-          )}
+                )}
+              </div>
+
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+                className="border-teal-200 text-teal-700 hover:bg-teal-50 disabled:opacity-50"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </nav>
+          </div>
+        )}
       </div>
     </div>
   );

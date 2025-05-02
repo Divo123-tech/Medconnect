@@ -9,8 +9,8 @@ export const getDoctors = async ({
   size = 10,
 }: {
   name: string;
-  specialization: string;
-  sortBy: string;
+  specialization?: string;
+  sortBy?: string;
   page: number;
   size: number;
 }) => {

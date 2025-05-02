@@ -401,7 +401,10 @@ export default function PatientDashboard() {
                 className="grid gap-6"
               >
                 {confirmedAppointments.map((appointment) => (
-                  <ConfirmedAppointments appointment={appointment} />
+                  <ConfirmedAppointments
+                    appointment={appointment}
+                    key={appointment.id}
+                  />
                 ))}
               </motion.div>
             </TabsContent>

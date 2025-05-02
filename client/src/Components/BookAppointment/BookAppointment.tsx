@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -10,6 +10,8 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
@@ -21,6 +23,10 @@ import { Calendar as CalendarComponent } from "@/Components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/Components/ui/button";
 import { Doctor } from "@/utils/types";
+import { getDoctors } from "@/services/doctorService";
+import { createAppointment } from "@/services/appointmentService";
+import { useAuthStore } from "@/store/authStore";
+import { useNavigate } from "react-router";
 
 const doctors: Doctor[] = [
   {
@@ -84,11 +90,9 @@ const doctors: Doctor[] = [
 const generateTimeSlots = () => {
   const slots = [];
   for (let hour = 9; hour < 17; hour++) {
-    const hourFormatted = hour % 12 === 0 ? 12 : hour % 12;
-    const period = hour < 12 ? "AM" : "PM";
-
-    slots.push(`${hourFormatted}:00 ${period}`);
-    slots.push(`${hourFormatted}:30 ${period}`);
+    const hourStr = hour.toString().padStart(2, "0");
+    slots.push(`${hourStr}:00`);
+    slots.push(`${hourStr}:30`);
   }
   return slots;
 };
@@ -97,35 +101,73 @@ const timeSlots = generateTimeSlots();
 
 export default function BookAppointment() {
   const [step, setStep] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [doctors, setDoctors] = useState<Doctor[] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [totalPages, setTotalPages] = useState(1);
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const { token } = useAuthStore();
+  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchDoctorsData = async () => {
+      setDoctors([]);
+      try {
+        const data = await getDoctors({
+          page: currentPage - 1,
+          size: 5,
+          name: searchTerm.trim(),
+        });
 
-  // Filter doctors based on search query
-  const filteredDoctors = doctors.filter(
-    (doctor: Doctor) =>
-      doctor.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doctor.specialization.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+        setDoctors(data.content);
+        setTotalPages(data.totalPages);
+        console.log(data.content);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchDoctorsData();
+  }, [currentPage, searchTerm]);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < 4) {
       setStep(step + 1);
     } else {
       // Submit appointment
       setIsSubmitting(true);
-      setTimeout(() => {
-        setIsSubmitting(false);
+      try {
+        await createAppointment(
+          token,
+          selectedDoctor?.id,
+          selectedDate?.toISOString().split("T")[0],
+          selectedTime,
+          notes
+        );
         setIsComplete(true);
         setTimeout(() => {
-          window.location.href = "/dashboard";
+          navigate("/dashboard");
         }, 2000);
-      }, 1500);
+      } catch (err) {
+        setIsSubmitting(false);
+        console.log(err);
+      }
+
+      //   setTimeout(() => {
+      //     setIsSubmitting(false);
+      //     setIsComplete(true);
+      //     setTimeout(() => {
+      //       window.location.href = "/dashboard";
+      //     }, 2000);
+      //   }, 1500);
     }
+    console.log("doctor", selectedDoctor);
+    console.log("date", selectedDate);
+    console.log("time", selectedTime);
   };
 
   const handleBack = () => {
@@ -264,12 +306,89 @@ export default function BookAppointment() {
                 exit="exit"
                 className="min-h-[400px]"
               >
-                <motion.h2
-                  variants={itemVariants}
-                  className="text-xl font-semibold mb-4 text-gray-800"
-                >
-                  Select a Doctor
-                </motion.h2>
+                <div className="flex justify-between items-center pb-4">
+                  <motion.h2
+                    variants={itemVariants}
+                    className="text-xl font-semibold text-gray-800"
+                  >
+                    Select a Doctor
+                  </motion.h2>
+                  {/* Pagination */}
+                  {doctors?.length != undefined && doctors?.length > 0 && (
+                    <div className="flex justify-center">
+                      <nav className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => paginate(Math.max(1, currentPage - 1))}
+                          disabled={currentPage === 1}
+                          className="border-teal-200 text-teal-700 hover:bg-teal-50 disabled:opacity-50"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+
+                        <div className="flex items-center space-x-1">
+                          {Array.from(
+                            { length: totalPages },
+                            (_, i) => i + 1
+                          ).map((number) => {
+                            // Show first page, last page, current page, and pages around current
+                            const shouldShow =
+                              number === 1 ||
+                              number === totalPages ||
+                              Math.abs(number - currentPage) <= 1;
+
+                            // Show ellipsis for gaps
+                            if (!shouldShow) {
+                              // Only show one ellipsis between gaps
+                              if (number === 2 || number === totalPages - 1) {
+                                return (
+                                  <span
+                                    key={number}
+                                    className="px-2 text-gray-400"
+                                  >
+                                    ...
+                                  </span>
+                                );
+                              }
+                              return null;
+                            }
+
+                            return (
+                              <Button
+                                key={number}
+                                variant={
+                                  currentPage === number ? "default" : "outline"
+                                }
+                                size="icon"
+                                onClick={() => paginate(number)}
+                                className={
+                                  currentPage === number
+                                    ? "bg-teal-600 hover:bg-teal-700 text-white"
+                                    : "border-teal-200 text-teal-700 hover:bg-teal-50"
+                                }
+                              >
+                                {number}
+                              </Button>
+                            );
+                          })}
+                        </div>
+
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() =>
+                            paginate(Math.min(totalPages, currentPage + 1))
+                          }
+                          disabled={currentPage === totalPages}
+                          className="border-teal-200 text-teal-700 hover:bg-teal-50 disabled:opacity-50"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </nav>
+                    </div>
+                  )}
+                </div>
                 <motion.div variants={itemVariants} className="mb-4">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -277,8 +396,8 @@ export default function BookAppointment() {
                       type="text"
                       placeholder="Search by name or specialty..."
                       className="pl-10"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
                 </motion.div>
@@ -286,8 +405,8 @@ export default function BookAppointment() {
                   variants={itemVariants}
                   className="space-y-3 max-h-[300px] overflow-y-auto px-3 py-2"
                 >
-                  {filteredDoctors.length > 0 ? (
-                    filteredDoctors.map((doctor) => (
+                  {doctors && doctors?.length > 0 ? (
+                    doctors?.map((doctor) => (
                       <motion.div
                         key={doctor.id}
                         whileHover={{ scale: 1.02 }}
