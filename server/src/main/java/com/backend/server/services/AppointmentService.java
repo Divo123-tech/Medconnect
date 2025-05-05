@@ -134,9 +134,11 @@ public class AppointmentService {
                 appointment.getPatient().getId(),
                 appointment.getDoctor().getFirstName(),
                 appointment.getDoctor().getLastName(),
+                appointment.getDoctor().getProfilePictureUrl(),
                 appointment.getPatient().getFirstName(),
                 appointment.getPatient().getLastName(),
-                appointment.getDate(),
+                appointment.getPatient().getProfilePictureUrl(),
+                appointment.getDate(),  
                 appointment.getTime(),
                 appointment.getReason(),
                 appointment.getStatus()
