@@ -61,6 +61,7 @@ export type Doctor = {
   id: number;
   firstName: string;
   lastName: string;
+  email: string;
   role: string;
   specialization: string;
   startedPracticingAt: string; // ISO date string like "2020-04-25"
@@ -98,4 +99,24 @@ export type GetAllDoctorsResponse = {
     unsorted: boolean;
   };
   empty: boolean;
+};
+export type Appointment = {
+  id: number;
+  doctorId: number;
+  patientId: number;
+
+  doctorFirstName: string;
+  doctorLastName: string;
+  doctorProfilePicture: string;
+
+  patientFirstName: string;
+  patientLastName: string;
+  patientProfilePicture: string;
+
+  date: string; // format: "YYYY-MM-DD"
+  time: string; // format: "HH:mm" (24-hour)
+
+  reason: string;
+
+  status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"; // or use enum if you have it
 };
