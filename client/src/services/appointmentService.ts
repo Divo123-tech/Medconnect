@@ -39,3 +39,20 @@ export const getAppointments = async (token: string | null, status: string) => {
 
   return res.data;
 };
+
+export const getAppointmentsForDoctor = async (
+  token: string | null,
+  status: string
+) => {
+  const res = await axios.get(
+    `http://localhost:8080/api/v1/appointments/doctor?status=${status}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
+};

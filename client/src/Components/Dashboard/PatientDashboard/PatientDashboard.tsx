@@ -92,7 +92,7 @@ export default function PatientDashboard() {
               <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">
                 Welcome, {user?.firstName} {user?.lastName}
               </h1>
-              <p className="text-gray-600">{formattedDate} 2025</p>
+              <p className="text-gray-600">{formattedDate}, 2025</p>
             </div>
             <div className="flex items-center gap-3">
               <motion.div
