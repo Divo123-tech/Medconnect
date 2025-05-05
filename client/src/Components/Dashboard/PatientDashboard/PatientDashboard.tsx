@@ -12,11 +12,11 @@ import { Button } from "@/Components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { useAuthStore } from "@/store/authStore";
 import { Link } from "react-router";
-import ConfirmedAppointments from "./ConfirmedAppointments";
 import { getAppointments } from "@/services/appointmentService";
 import { Appointment } from "@/utils/types";
-import CompletedAppointments from "./CompletedAppointments";
-import PendingAppointments from "./PendingAppointments";
+import CompletedAppointment from "./CompletedAppointment";
+import PendingAppointment from "./PendingAppointment";
+import ConfirmedAppointment from "./ConfirmedAppointment";
 
 export default function PatientDashboard() {
   const { token } = useAuthStore();
@@ -50,7 +50,6 @@ export default function PatientDashboard() {
     };
 
     fetchAllAppointments();
-    
   }, [token]);
 
   // Animation variants
@@ -217,7 +216,7 @@ export default function PatientDashboard() {
               >
                 {confirmedAppointments.length > 0 ? (
                   confirmedAppointments.map((appointment) => (
-                    <ConfirmedAppointments
+                    <ConfirmedAppointment
                       appointment={appointment}
                       key={appointment.id}
                     />
@@ -253,7 +252,7 @@ export default function PatientDashboard() {
               >
                 {pendingAppointments.length > 0 ? (
                   pendingAppointments.map((appointment) => (
-                    <PendingAppointments
+                    <PendingAppointment
                       appointment={appointment}
                       key={appointment.id}
                     />
@@ -289,7 +288,7 @@ export default function PatientDashboard() {
               >
                 {completedAppointments.length > 0 ? (
                   completedAppointments.map((appointment) => (
-                    <CompletedAppointments
+                    <CompletedAppointment
                       appointment={appointment}
                       key={appointment.id}
                     />
