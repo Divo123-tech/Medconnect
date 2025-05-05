@@ -40,6 +40,7 @@ type Doctor = {
   id: number;
   firstName: string;
   lastName: string;
+  email: string;
   role: string;
   specialization: string;
   startedPracticingAt: string; // Using string for date handling in form
@@ -350,7 +351,21 @@ export default function DoctorProfile({ user }: Props) {
                             />
                           </div>
                         </div>
-
+                        <div className="space-y-2">
+                          <Label htmlFor="email" className="text-teal-800">
+                            Email
+                          </Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={doctor.email}
+                            onChange={(e) =>
+                              setDoctor({ ...doctor, email: e.target.value })
+                            }
+                            required
+                            className="border-teal-200 focus:border-teal-400 focus:ring-teal-300"
+                          />
+                        </div>
                         <div className="space-y-2">
                           <Label htmlFor="bio" className="text-teal-800">
                             Biography

@@ -32,9 +32,12 @@ const Dashboard = () => {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">
-                Welcome, Dr. {user?.firstName} {user?.lastName}
+                Welcome, {user?.role == "DOCTOR" && "Dr."} {user?.firstName}{" "}
+                {user?.lastName}
               </h1>
-              <p className="text-gray-600">{formattedDate}, 2025</p>
+              <p className="text-gray-600">
+                {formattedDate}, {currentTime.getFullYear()}
+              </p>
             </div>
             <Link
               to="/my-profile"
@@ -70,7 +73,8 @@ const Dashboard = () => {
               </motion.div>
               <div>
                 <p className="font-medium text-gray-900">
-                  Dr. {user?.firstName} {user?.lastName}
+                  {user?.role == "DOCTOR" && "Dr."} {user?.firstName}{" "}
+                  {user?.lastName}
                 </p>
                 <p className="text-xs text-gray-500">{user?.email}</p>
               </div>

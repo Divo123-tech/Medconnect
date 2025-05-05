@@ -40,36 +40,25 @@ export default function DoctorDashboard() {
     console.log(user);
   }, [user]);
   useEffect(() => {
-    const fetchPendingAppointments = async () => {
-      try {
-        const result = await getAppointmentsForDoctor(token, "PENDING");
-        console.log(result);
-        setPendingAppointments(result.content);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    const fetchConfirmedAppointments = async () => {
-      try {
-        const result = await getAppointmentsForDoctor(token, "CONFIRMED");
-        console.log(result);
-        setConfirmedAppointments(result.content);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    const fetchCompletedAppointments = async () => {
-      try {
-        const result = await getAppointmentsForDoctor(token, "COMPLETED");
-        console.log(result);
-        setCompletedAppointments(result.content);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchPendingAppointments();
-    fetchCompletedAppointments();
-    fetchConfirmedAppointments();
+       const fetchAllAppointments = async () => {
+         try {
+           const [pending, confirmed, completed] = await Promise.all([
+             getAppointmentsForDoctor(token, "PENDING"),
+             getAppointmentsForDoctor(token, "CONFIRMED"),
+             getAppointmentsForDoctor(token, "COMPLETED"),
+           ]);
+
+           setPendingAppointments(pending.content);
+           setConfirmedAppointments(confirmed.content);
+           setCompletedAppointments(completed.content);
+
+           console.log({ pending, confirmed, completed });
+         } catch (err) {
+           console.error("Failed to fetch appointments:", err);
+         }
+       };
+
+       fetchAllAppointments();
   }, [token]);
 
   // Mock data for waiting patient
