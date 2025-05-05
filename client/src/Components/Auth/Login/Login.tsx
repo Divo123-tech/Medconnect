@@ -13,6 +13,7 @@ import { Label } from "@/Components/ui/label";
 import { LoginRequest } from "@/utils/types";
 import { login } from "@/services/authService";
 import { useAuthStore } from "@/store/authStore";
+import { getMyProfile } from "@/services/myProfileService";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ export default function LoginPage() {
   // Animation states
   const [checkmarkAnimationComplete, setCheckmarkAnimationComplete] =
     useState(false);
-  const { setToken } = useAuthStore();
+  const { setToken, setUser } = useAuthStore();
   useEffect(() => {
     // Navigate to dashboard after the checkmark animation completes
     if (checkmarkAnimationComplete) {
@@ -50,10 +51,11 @@ export default function LoginPage() {
     // Simulate API call
     try {
       const jwtToken = await login(loginRequest);
-      console.log(jwtToken);
       setToken(jwtToken);
       setIsSubmitting(false);
       setIsSuccess(true);
+      const data = await getMyProfile(jwtToken);
+      setUser(data);
     } catch (err) {
       const error = err as Error;
       console.log(error.message);

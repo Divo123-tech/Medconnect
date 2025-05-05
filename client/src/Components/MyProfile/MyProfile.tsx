@@ -1,30 +1,13 @@
-import { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router";
 
-import { getMyProfile } from "@/services/myProfileService";
 import { useAuthStore } from "@/store/authStore";
 import PatientProfile from "./PatientProfile";
 import DoctorProfile from "./DoctorProfile";
 import { isDoctor, isPatient } from "@/utils/typeGuards";
 
 export default function ProfilePage() {
-  // Mock patient data - in a real app, this would come from your API
-  const { token, user, setUser } = useAuthStore();
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const data = await getMyProfile(token);
-        setUser(data);
-        console.log(data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchProfile();
-  }, [setUser, token]);
-
+  const { user } = useAuthStore();
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
       <div className="flex items-center px-16 pt-2">

@@ -1,12 +1,15 @@
-import React from "react";
+import { useAuthStore } from "@/store/authStore";
 import PatientDashboard from "./PatientDashboard";
+import { isDoctor, isPatient } from "@/utils/typeGuards";
+import DoctorDashboard from "./DoctorDashboard/DoctorDashboard";
 
-type Props = {};
+const Dashboard = () => {
+  const { user } = useAuthStore();
 
-const Dashboard = (props: Props) => {
   return (
     <>
-      <PatientDashboard />
+      {user?.role == "PATIENT" && isPatient(user) && <PatientDashboard />}
+      {user?.role == "DOCTOR" && isDoctor(user) && <DoctorDashboard />}
     </>
   );
 };
