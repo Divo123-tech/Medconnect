@@ -9,6 +9,8 @@ import {
   Video,
   User,
   Files,
+  CheckCircle,
+  CalendarPlus,
 } from "lucide-react";
 
 import { Button } from "@/Components/ui/button";
@@ -19,8 +21,8 @@ import { Link } from "react-router";
 import { useAuthStore } from "@/store/authStore";
 import { getAppointmentsForDoctor } from "@/services/appointmentService";
 import { Appointment } from "@/utils/types";
-import PendingAppointments from "./PendingAppointments";
-import ConfirmedAppointments from "./ConfirmedAppointments";
+import PendingAppointment from "./PendingAppointment";
+import ConfirmedAppointment from "./ConfirmedAppointment";
 import CompletedAppointment from "./CompletedAppointment";
 
 export default function DoctorDashboard() {
@@ -40,25 +42,25 @@ export default function DoctorDashboard() {
     console.log(user);
   }, [user]);
   useEffect(() => {
-       const fetchAllAppointments = async () => {
-         try {
-           const [pending, confirmed, completed] = await Promise.all([
-             getAppointmentsForDoctor(token, "PENDING"),
-             getAppointmentsForDoctor(token, "CONFIRMED"),
-             getAppointmentsForDoctor(token, "COMPLETED"),
-           ]);
+    const fetchAllAppointments = async () => {
+      try {
+        const [pending, confirmed, completed] = await Promise.all([
+          getAppointmentsForDoctor(token, "PENDING"),
+          getAppointmentsForDoctor(token, "CONFIRMED"),
+          getAppointmentsForDoctor(token, "COMPLETED"),
+        ]);
 
-           setPendingAppointments(pending.content);
-           setConfirmedAppointments(confirmed.content);
-           setCompletedAppointments(completed.content);
+        setPendingAppointments(pending.content);
+        setConfirmedAppointments(confirmed.content);
+        setCompletedAppointments(completed.content);
 
-           console.log({ pending, confirmed, completed });
-         } catch (err) {
-           console.error("Failed to fetch appointments:", err);
-         }
-       };
+        console.log({ pending, confirmed, completed });
+      } catch (err) {
+        console.error("Failed to fetch appointments:", err);
+      }
+    };
 
-       fetchAllAppointments();
+    fetchAllAppointments();
   }, [token]);
 
   // Mock data for waiting patient
@@ -431,19 +433,31 @@ export default function DoctorDashboard() {
                 animate="visible"
                 className="grid gap-6"
               >
-                {pendingAppointments.map((appointment) => (
-                  <PendingAppointments
-                    appointment={appointment}
-                    key={appointment.id}
-                  />
-                ))}
-
-                {pendingAppointments.length === 0 && (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">
-                      No pending appointments to confirm.
+                {pendingAppointments.length > 0 ? (
+                  pendingAppointments.map((appointment) => (
+                    <PendingAppointment
+                      appointment={appointment}
+                      key={appointment.id}
+                    />
+                  ))
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="flex flex-col items-center justify-center text-center py-16 text-amber-600"
+                  >
+                    <div className="bg-amber-100 p-6 rounded-full shadow-inner mb-6">
+                      <CalendarPlus className="h-10 w-10 text-amber-500" />
+                    </div>
+                    <h2 className="text-xl font-semibold mb-2">
+                      No Pending Appointments
+                    </h2>
+                    <p className="text-sm text-amber-500 max-w-xs">
+                      You don’t have any appointments pending. Book an
+                      appointment to get started.
                     </p>
-                  </div>
+                  </motion.div>
                 )}
               </motion.div>
             </TabsContent>
@@ -455,12 +469,32 @@ export default function DoctorDashboard() {
                 animate="visible"
                 className="grid gap-6"
               >
-                {confirmedAppointments.map((appointment) => (
-                  <ConfirmedAppointments
-                    appointment={appointment}
-                    key={appointment.id}
-                  />
-                ))}
+                {confirmedAppointments.length > 0 ? (
+                  confirmedAppointments.map((appointment) => (
+                    <ConfirmedAppointment
+                      appointment={appointment}
+                      key={appointment.id}
+                    />
+                  ))
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="flex flex-col items-center justify-center text-center py-16 text-teal-600"
+                  >
+                    <div className="bg-teal-50 p-6 rounded-full shadow-inner mb-6">
+                      <CheckCircle className="h-10 w-10 text-teal-400" />
+                    </div>
+                    <h2 className="text-xl font-semibold mb-2">
+                      No Confirmed Appointments
+                    </h2>
+                    <p className="text-sm text-teal-500 max-w-xs">
+                      Once a doctor confirms your appointments, they’ll appear
+                      here.
+                    </p>
+                  </motion.div>
+                )}
               </motion.div>
             </TabsContent>
 
@@ -471,12 +505,32 @@ export default function DoctorDashboard() {
                 animate="visible"
                 className="grid gap-6"
               >
-                {completedAppointments.map((appointment) => (
-                  <CompletedAppointment
-                    appointment={appointment}
-                    key={appointment.id}
-                  />
-                ))}
+                {completedAppointments.length > 0 ? (
+                  completedAppointments.map((appointment) => (
+                    <CompletedAppointment
+                      appointment={appointment}
+                      key={appointment.id}
+                    />
+                  ))
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="flex flex-col items-center justify-center text-center py-16 text-gray-500"
+                  >
+                    <div className="bg-gray-100 p-6 rounded-full shadow-inner mb-6">
+                      <Calendar className="h-10 w-10 text-gray-400" />
+                    </div>
+                    <h2 className="text-xl font-semibold mb-2">
+                      No Completed Appointments
+                    </h2>
+                    <p className="text-sm text-gray-400 max-w-xs">
+                      Once you complete appointments with doctors, you'll see
+                      them listed here.
+                    </p>
+                  </motion.div>
+                )}
               </motion.div>
             </TabsContent>
           </Tabs>
