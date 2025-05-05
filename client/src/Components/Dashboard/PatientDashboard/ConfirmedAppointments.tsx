@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import {
   Card,
   CardContent,
@@ -10,8 +10,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Button } from "@/Components/ui/button";
 import { Calendar, CheckCircle, Clock, Video } from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
+import { Appointment } from "@/utils/types";
 type Props = {
-  appointment: any;
+  appointment: Appointment;
 };
 
 const ConfirmedAppointments = ({ appointment }: Props) => {
@@ -27,14 +28,14 @@ const ConfirmedAppointments = ({ appointment }: Props) => {
     },
   };
 
-  const pulseVariants = {
+  const pulseVariants: Variants = {
     pulse: {
-      scale: [1, 1.05, 1],
-      opacity: [0.7, 1, 0.7],
+      scale: [1, 1.2, 1],
+      opacity: [1, 0.8, 1],
       transition: {
-        duration: 2,
-        repeat: Number.POSITIVE_INFINITY,
-        repeatType: "reverse",
+        duration: 1.5,
+        repeat: Infinity,
+        repeatType: "loop",
       },
     },
   };
@@ -51,28 +52,27 @@ const ConfirmedAppointments = ({ appointment }: Props) => {
               <div className="relative">
                 <Avatar className="h-12 w-12 mr-3 border-2 border-teal-200">
                   <AvatarImage
-                    src={appointment.doctorImage || "/placeholder.svg"}
-                    alt={appointment.doctorName}
+                    src={appointment.doctorProfilePicture || "/placeholder.svg"}
+                    alt={appointment.doctorFirstName}
                   />
                   <AvatarFallback>
-                    {appointment.doctorName.charAt(0)}
+                    {appointment.doctorFirstName.charAt(0) +
+                      appointment.doctorLastName.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
-                {appointment.type === "video" && (
-                  <motion.div
-                    variants={pulseVariants}
-                    animate="pulse"
-                    className="absolute -bottom-1 -right-1 bg-teal-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                  >
-                    <Video className="h-3 w-3" />
-                  </motion.div>
-                )}
+                <motion.div
+                  variants={pulseVariants}
+                  animate="pulse"
+                  className="absolute -bottom-1 -right-1 bg-teal-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                >
+                  <Video className="h-3 w-3" />
+                </motion.div>
               </div>
               <div>
                 <CardTitle className="text-lg">
-                  {appointment.doctorName}
+                  {appointment.doctorFirstName} {appointment.doctorLastName}
                 </CardTitle>
-                <p className="text-gray-500">{appointment.doctorSpecialty}</p>
+                <p className="text-gray-500">specialization</p>
               </div>
             </div>
             <Badge className="bg-gradient-to-r from-green-400 to-green-500 text-white hover:from-green-500 hover:to-green-600 flex items-center gap-1">

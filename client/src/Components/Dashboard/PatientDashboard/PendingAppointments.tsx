@@ -10,8 +10,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Button } from "@/Components/ui/button";
 import { Bell, Calendar, Clock, Video } from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
+import { Appointment } from "@/utils/types";
 type Props = {
-  appointment: any;
+  appointment: Appointment;
 };
 
 const PendingAppointments = ({ appointment }: Props) => {
