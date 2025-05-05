@@ -18,11 +18,14 @@ import {
 } from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
 import { Appointment } from "@/utils/types";
+import { updateAppointmentStatus } from "@/services/appointmentService";
+import { useAuthStore } from "@/store/authStore";
 type Props = {
   appointment: Appointment;
+  onStatusChange: () => void;
 };
 
-const PendingAppointments = ({ appointment }: Props) => {
+const PendingAppointments = ({ appointment, onStatusChange }: Props) => {
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -33,6 +36,16 @@ const PendingAppointments = ({ appointment }: Props) => {
         stiffness: 100,
       },
     },
+  };
+  const { token } = useAuthStore();
+
+  const confirmAppointment = async () => {
+    try {
+      await updateAppointmentStatus(token, appointment.id, "CONFIRMED");
+      onStatusChange();
+    } catch (err) {
+      console.log(err);
+    }
   };
   return (
     <motion.div
@@ -111,7 +124,10 @@ const PendingAppointments = ({ appointment }: Props) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button className="text-white cursor-pointer bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-md">
+                <Button
+                  onClick={confirmAppointment}
+                  className="text-white cursor-pointer bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-md"
+                >
                   <CheckCircle className="mr-2 h-4 w-4" />
                   Confirm Appointment
                 </Button>

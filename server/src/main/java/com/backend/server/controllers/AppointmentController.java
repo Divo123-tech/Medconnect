@@ -115,7 +115,7 @@ public class AppointmentController {
     @PatchMapping("/{id}")
     public ResponseEntity<AppointmentDTO.GetAppointmentDTO> updateAppointment(@PathVariable Long id, @RequestBody AppointmentDTO.GetAppointmentDTO appointmentDTO, Authentication auth) {
         User userRequesting = (User) auth.getPrincipal(); // this is safe
-        return ResponseEntity.ok(appointmentService.updateAppointment(id, appointmentDTO, userRequesting.getRole()));
+        return ResponseEntity.ok(appointmentService.updateAppointment(id, appointmentDTO, userRequesting));
     }
 
     @DeleteMapping("/{id}")

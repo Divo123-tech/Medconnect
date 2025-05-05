@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar,
@@ -41,27 +41,24 @@ export default function DoctorDashboard() {
   useEffect(() => {
     console.log(user);
   }, [user]);
-  useEffect(() => {
-    const fetchAllAppointments = async () => {
-      try {
-        const [pending, confirmed, completed] = await Promise.all([
-          getAppointmentsForDoctor(token, "PENDING"),
-          getAppointmentsForDoctor(token, "CONFIRMED"),
-          getAppointmentsForDoctor(token, "COMPLETED"),
-        ]);
+  const fetchAllAppointments = useCallback(async () => {
+    try {
+      const [pending, confirmed, completed] = await Promise.all([
+        getAppointmentsForDoctor(token, "PENDING"),
+        getAppointmentsForDoctor(token, "CONFIRMED"),
+        getAppointmentsForDoctor(token, "COMPLETED"),
+      ]);
 
-        setPendingAppointments(pending.content);
-        setConfirmedAppointments(confirmed.content);
-        setCompletedAppointments(completed.content);
-
-        console.log({ pending, confirmed, completed });
-      } catch (err) {
-        console.error("Failed to fetch appointments:", err);
-      }
-    };
-
-    fetchAllAppointments();
+      setPendingAppointments(pending.content);
+      setConfirmedAppointments(confirmed.content);
+      setCompletedAppointments(completed.content);
+    } catch (err) {
+      console.error("Failed to fetch appointments:", err);
+    }
   }, [token]);
+  useEffect(() => {
+    if (token) fetchAllAppointments();
+  }, [fetchAllAppointments, token]);
 
   // Mock data for waiting patient
   const waitingPatient = {
@@ -435,6 +432,7 @@ export default function DoctorDashboard() {
                   pendingAppointments.map((appointment) => (
                     <PendingAppointment
                       appointment={appointment}
+                      onStatusChange={fetchAllAppointments}
                       key={appointment.id}
                     />
                   ))

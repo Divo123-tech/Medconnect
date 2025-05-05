@@ -88,11 +88,11 @@ public class AppointmentService {
         return mapToDTO(saved);
     }
 
-    public AppointmentDTO.GetAppointmentDTO updateAppointment(Long id, AppointmentDTO.GetAppointmentDTO dto, User.Role role) {
+    public AppointmentDTO.GetAppointmentDTO updateAppointment(Long id, AppointmentDTO.GetAppointmentDTO dto, User user) {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
-        Doctor doctor = doctorRepository.findById(dto.getDoctorId())
+        Doctor doctor = doctorRepository.findById(user.getId())
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
         if (doctor != null) {
@@ -112,7 +112,7 @@ public class AppointmentService {
         }
 
         if (dto.getStatus() != null) {
-            if(role == User.Role.DOCTOR){
+            if(user.getRole() == User.Role.DOCTOR){
                 appointment.setStatus(dto.getStatus());
             }
             else if(dto.getStatus() == Appointment.Status.CANCELLED){

@@ -56,3 +56,23 @@ export const getAppointmentsForDoctor = async (
 
   return res.data;
 };
+
+
+export const updateAppointmentStatus = async (
+  token: string | null,
+  id: string | number,
+  status: string
+) => {
+  const res = await axios.patch(
+    `http://localhost:8080/api/v1/appointments/${id}`,
+    { status },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
+};
