@@ -238,9 +238,7 @@ export default function DoctorDashboard() {
                         <h3 className="font-medium text-gray-900">
                           {waitingPatient.name}
                         </h3>
-                        <p className="text-sm text-gray-500">
-                          {waitingPatient.age} years • {waitingPatient.gender}
-                        </p>
+
                         <div className="flex items-center mt-1">
                           <Clock className="h-3 w-3 text-teal-600 mr-1" />
                           <span className="text-xs text-teal-600">14:00</span>

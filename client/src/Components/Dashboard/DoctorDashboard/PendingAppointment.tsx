@@ -78,7 +78,7 @@ const PendingAppointments = ({ appointment }: Props) => {
             </div>
             <div className="flex items-center text-gray-600">
               <Clock className="h-4 w-4 mr-1 text-amber-600" />
-              {appointment.time}
+              {appointment.time.slice(0, 5)}
             </div>
             <div className="flex items-center text-gray-600">
               <Video className="h-4 w-4 mr-1 text-amber-600" />
