@@ -31,36 +31,26 @@ export default function PatientDashboard() {
   >([]);
 
   useEffect(() => {
-    const fetchPendingAppointments = async () => {
+    const fetchAllAppointments = async () => {
       try {
-        const result = await getAppointments(token, "PENDING");
-        console.log(result);
-        setPendingAppointments(result.content);
+        const [pending, confirmed, completed] = await Promise.all([
+          getAppointments(token, "PENDING"),
+          getAppointments(token, "CONFIRMED"),
+          getAppointments(token, "COMPLETED"),
+        ]);
+
+        setPendingAppointments(pending.content);
+        setConfirmedAppointments(confirmed.content);
+        setCompletedAppointments(completed.content);
+
+        console.log({ pending, confirmed, completed });
       } catch (err) {
-        console.log(err);
+        console.error("Failed to fetch appointments:", err);
       }
     };
-    const fetchConfirmedAppointments = async () => {
-      try {
-        const result = await getAppointments(token, "CONFIRMED");
-        console.log(result);
-        setConfirmedAppointments(result.content);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    const fetchCompletedAppointments = async () => {
-      try {
-        const result = await getAppointments(token, "COMPLETED");
-        console.log(result);
-        setCompletedAppointments(result.content);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchPendingAppointments();
-    fetchCompletedAppointments();
-    fetchConfirmedAppointments();
+
+    fetchAllAppointments();
+    
   }, [token]);
 
   // Animation variants
