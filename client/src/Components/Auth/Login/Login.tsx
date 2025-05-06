@@ -33,7 +33,7 @@ export default function LoginPage() {
     // Navigate to dashboard after the checkmark animation completes
     if (checkmarkAnimationComplete) {
       const timer = setTimeout(() => {
-        navigate("/my-profile");
+        navigate("/dashboard");
       }, 1000); // Wait 1 second after animation completes before navigating
 
       return () => clearTimeout(timer);
