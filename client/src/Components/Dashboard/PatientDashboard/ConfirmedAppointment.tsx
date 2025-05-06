@@ -1,11 +1,5 @@
 import { motion, Variants } from "framer-motion";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/Components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Button } from "@/Components/ui/button";
 import { Calendar, CheckCircle, Clock, Video } from "lucide-react";
@@ -63,12 +57,12 @@ const ConfirmedAppointments = ({ appointment }: Props) => {
                 <motion.div
                   variants={pulseVariants}
                   animate="pulse"
-                  className="absolute -bottom-1 -right-1 bg-teal-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                  className="absolute -bottom-1 bg-teal-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
                 >
                   <Video className="h-3 w-3" />
                 </motion.div>
               </div>
-              <div>
+              <div className="">
                 <CardTitle className="text-lg">
                   {appointment.doctorFirstName} {appointment.doctorLastName}
                 </CardTitle>
@@ -81,61 +75,35 @@ const ConfirmedAppointments = ({ appointment }: Props) => {
             </Badge>
           </div>
         </CardHeader>
-        <CardContent className="pb-2 pt-4">
-          <div className="flex flex-wrap gap-4 text-sm">
-            <div className="flex items-center text-gray-600">
-              <Calendar className="h-4 w-4 mr-1 text-teal-600" />
-              {appointment.date}
+        <CardContent className="">
+          <div className="flex w-full">
+            <div className="flex flex-wrap gap-4 text-sm">
+              <div className="flex items-center text-gray-600">
+                <Calendar className="h-4 w-4 mr-1 text-teal-600" />
+                {appointment.date}
+              </div>
+              <div className="flex items-center text-gray-600">
+                <Clock className="h-4 w-4 mr-1 text-teal-600" />
+                {appointment.time.slice(0, 5)}
+              </div>
+              <div className="flex items-center text-gray-600">
+                <Video className="h-4 w-4 mr-1 text-teal-600" />
+                Video Call
+              </div>
             </div>
-            <div className="flex items-center text-gray-600">
-              <Clock className="h-4 w-4 mr-1 text-teal-600" />
-              {appointment.time}
-            </div>
-            <div className="flex items-center text-gray-600">
-              <Video className="h-4 w-4 mr-1 text-teal-600" />
-              Video Call
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter className="pt-2">
-          <div className="flex justify-between w-full">
-            <div className="flex gap-2">
+            <div className="flex gap-2 ml-auto">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button
-                  variant="outline"
-                  className="text-red-600 border-red-200 hover:bg-red-50"
-                >
-                  Cancel
-                </Button>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  variant="outline"
-                  className="text-teal-600 border-teal-300 hover:bg-red-50"
-                >
-                  Edit
-                </Button>
-              </motion.div>
-            </div>
-            <div className="flex gap-2">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button className="bg-gradient-to-r text-white from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 shadow-md">
+                <Button className="cursor-pointer bg-gradient-to-r text-white from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 shadow-md">
                   <Video className="mr-2 h-4 w-4" />
                   Join Video Call
                 </Button>
               </motion.div>
             </div>
           </div>
-        </CardFooter>
+        </CardContent>
       </Card>
     </motion.div>
   );
