@@ -7,11 +7,20 @@ import { Badge } from "@/Components/ui/badge";
 import { Appointment } from "@/utils/types";
 import prepForCall from "@/utils/webrtcUtilities/prepForCall";
 import { useCallStore } from "@/store/webrtcStore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import createPeerConnection from "@/utils/webrtcUtilities/createPeerConn";
 import socketConnection from "@/utils/webrtcUtilities/socketConnection";
 import clientSocketListeners from "@/utils/webrtcUtilities/clientSocketListeners";
 import { useNavigate } from "react-router";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/Components/ui/dialog";
+
 type Props = {
   appointment: Appointment;
   remoteStream: MediaStream | null;
@@ -25,6 +34,9 @@ const ConfirmedAppointments = ({
 }: Props) => {
   const [typeOfCall, setTypeOfCall] = useState<string>("");
   const navigate = useNavigate();
+  const hasInitialized = useRef(false);
+  const [joined, setJoined] = useState(false);
+  const hasCalled = useRef(false);
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -43,7 +55,19 @@ const ConfirmedAppointments = ({
     peerConnection,
     setPeerConnection,
     localStream,
+    setUserOfferTo,
   } = useCallStore();
+  //Nothing happens until the user clicks join
+  //(Helps with React double render)
+  useEffect(() => {
+    if (joined) {
+      setUserOfferTo("big chungus");
+      const socket = socketConnection("nigga");
+
+      //emitting get offers
+      socket?.emit("getOffers");
+    }
+  }, [joined, setUserOfferTo]);
   //We have media via GUM. setup the peerConnection w/listeners
   useEffect(() => {
     console.log("signaling state", peerConnection);
@@ -77,7 +101,14 @@ const ConfirmedAppointments = ({
   //We know which type of client this is and have PC.
   //Add socketlisteners
   useEffect(() => {
-    if (typeOfCall && peerConnection) {
+    if (
+      !hasInitialized.current &&
+      typeOfCall &&
+      peerConnection &&
+      localStream
+    ) {
+      hasInitialized.current = true;
+
       const socket = socketConnection("username");
       clientSocketListeners(
         socket,
@@ -118,7 +149,8 @@ const ConfirmedAppointments = ({
   };
   const call = async () => {
     //call related stuff goes here
-
+    if (hasCalled.current) return;
+    hasCalled.current = true;
     initCall("offer");
   };
   const pulseVariants: Variants = {
@@ -132,6 +164,7 @@ const ConfirmedAppointments = ({
       },
     },
   };
+
   return (
     <motion.div
       key={appointment.id}
@@ -191,18 +224,68 @@ const ConfirmedAppointments = ({
               </div>
             </div>
             <div className="flex gap-2 ml-auto">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  onClick={call}
-                  className="cursor-pointer bg-gradient-to-r text-white from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 shadow-md"
-                >
-                  <Video className="mr-2 h-4 w-4" />
-                  Join Video Call
-                </Button>
-              </motion.div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      onClick={() => setJoined(true)}
+                      className="cursor-pointer bg-gradient-to-r text-white from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 shadow-md"
+                    >
+                      <Video className="mr-2 h-4 w-4" />
+                      Join Video Call
+                    </Button>
+                  </motion.div>
+                </DialogTrigger>
+
+                <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-transparent">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    className="w-full h-full bg-gradient-to-br from-teal-50 via-white to-teal-100 rounded-lg shadow-lg p-6"
+                  >
+                    <DialogHeader className="flex flex-col items-center space-y-4">
+                      <div className="bg-teal-100 text-teal-700 p-4 rounded-full">
+                        <Video className="w-8 h-8" />
+                      </div>
+                      <DialogTitle className="text-lg text-center text-teal-900 font-semibold">
+                        Before you enter the meeting...
+                      </DialogTitle>
+                    </DialogHeader>
+
+                    <div className="text-sm text-gray-700 text-center mt-4 px-2">
+                      <p>
+                        Please{" "}
+                        <span className="font-semibold text-teal-700">
+                          do not hang up
+                        </span>{" "}
+                        once you're in the meeting room. Leaving the call will
+                        end the appointment.
+                        <br />
+                        <br />
+                        Kindly{" "}
+                        <span className="font-semibold text-teal-700">
+                          wait patiently
+                        </span>{" "}
+                        for the doctor to join. Thank you for your
+                        understanding.
+                      </p>
+                    </div>
+
+                    <DialogFooter className="pt-6 flex justify-center">
+                      <Button
+                        className="bg-gradient-to-r from-teal-500 to-teal-600 text-white hover:from-teal-600 hover:to-teal-700 px-6 py-2 rounded-lg"
+                        onClick={call}
+                      >
+                        I understand, proceed to call
+                      </Button>
+                    </DialogFooter>
+                  </motion.div>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </CardContent>

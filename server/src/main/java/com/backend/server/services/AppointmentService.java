@@ -89,17 +89,21 @@ public class AppointmentService {
     }
 
     public AppointmentDTO.GetAppointmentDTO updateAppointment(Long id, AppointmentDTO.GetAppointmentDTO dto, User user) {
+        System.out.println(id);
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 //        if(user.getRole() == User.Role.DOCTOR){
 //
 //
 //        }
+        if(dto.getDoctorId() != null){
         Doctor doctor = doctorRepository.findById(dto.getDoctorId())
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
         if (doctor != null) {
-            appointment.setDoctor(doctor);
+                appointment.setDoctor(doctor);
+            }
         }
+
 
         if (dto.getDate() != null) {
             appointment.setDate(dto.getDate());
