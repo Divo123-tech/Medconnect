@@ -54,9 +54,7 @@ const PendingAppointments = ({ appointment }: Props) => {
               </Avatar>
               <div>
                 <CardTitle className="text-lg">
-                  {appointment.doctorFirstName +
-                    " " +
-                    appointment.doctorLastName}
+                  Dr. {appointment.doctorFirstName} {appointment.doctorLastName}
                 </CardTitle>
                 <p className="text-gray-500">Cardiology</p>
               </div>
