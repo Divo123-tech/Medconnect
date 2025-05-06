@@ -1,4 +1,4 @@
-import { Appointment, Doctor } from "@/utils/types";
+import { Appointment } from "@/utils/types";
 import axios from "axios";
 
 export const createAppointment = async (
