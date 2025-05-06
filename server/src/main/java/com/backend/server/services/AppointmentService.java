@@ -91,10 +91,12 @@ public class AppointmentService {
     public AppointmentDTO.GetAppointmentDTO updateAppointment(Long id, AppointmentDTO.GetAppointmentDTO dto, User user) {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
-
-        Doctor doctor = doctorRepository.findById(user.getId())
+//        if(user.getRole() == User.Role.DOCTOR){
+//
+//
+//        }
+        Doctor doctor = doctorRepository.findById(dto.getDoctorId())
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
-
         if (doctor != null) {
             appointment.setDoctor(doctor);
         }

@@ -23,8 +23,8 @@ import { buttonVariants } from "@/Components/ui/button";
 import { Doctor } from "@/utils/types";
 import { getDoctors, getSingleDoctor } from "@/services/doctorService";
 import {
-  createAppointment,
   getAppointmentById,
+  updateAppointment,
 } from "@/services/appointmentService";
 import { useAuthStore } from "@/store/authStore";
 import { useNavigate, useParams } from "react-router";
@@ -104,13 +104,12 @@ export default function EditAppointment() {
       // Submit appointment
       setIsSubmitting(true);
       try {
-        await createAppointment(
-          token,
-          selectedDoctor?.id,
-          selectedDate?.toISOString().split("T")[0],
-          selectedTime,
-          notes
-        );
+        await updateAppointment(token, params?.id, {
+          doctorId: selectedDoctor?.id,
+          date: selectedDate?.toISOString().split("T")[0],
+          time: selectedTime,
+          reason: notes,
+        });
         setIsComplete(true);
         setTimeout(() => {
           navigate("/dashboard");
@@ -568,7 +567,7 @@ export default function EditAppointment() {
                       onClick={() => setSelectedTime(time)}
                       className={cn(
                         "py-3 px-4 rounded-lg text-center text-sm font-medium transition-all cursor-pointer",
-                        selectedTime === time
+                        selectedTime?.slice(0, 5) === time
                           ? "bg-teal-600 text-white shadow-md"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       )}
@@ -682,8 +681,8 @@ export default function EditAppointment() {
                   Appointment Booked!
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Your appointment has been successfully scheduled. Redirecting
-                  to dashboard...
+                  Your appointment has been successfully rescheduled.
+                  Redirecting to dashboard...
                 </p>
                 <motion.div
                   initial={{ scaleX: 0 }}

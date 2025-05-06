@@ -1,4 +1,4 @@
-import { Appointment } from "@/utils/types";
+import { Appointment, Doctor } from "@/utils/types";
 import axios from "axios";
 
 export const createAppointment = async (
@@ -81,6 +81,30 @@ export const updateAppointmentStatus = async (
   const res = await axios.patch(
     `http://localhost:8080/api/v1/appointments/${id}`,
     { status },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
+};
+
+export const updateAppointment = async (
+  token: string | null,
+  id: string | undefined,
+  updatedAppointment: {
+    doctorId: number | undefined;
+    time: string | null;
+    date: string | undefined;
+    reason: string;
+  }
+) => {
+  const res = await axios.patch(
+    `http://localhost:8080/api/v1/appointments/${id}`,
+    updatedAppointment,
     {
       headers: {
         "Content-Type": "application/json",
