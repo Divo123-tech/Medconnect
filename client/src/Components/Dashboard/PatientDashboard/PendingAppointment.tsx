@@ -12,11 +12,25 @@ import { Bell, Calendar, Clock, Video } from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
 import { Appointment } from "@/utils/types";
 import { Link } from "react-router";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/Components/ui/dialog";
+import { useState } from "react";
+import { updateAppointmentStatus } from "@/services/appointmentService";
+import { useAuthStore } from "@/store/authStore";
+
 type Props = {
   appointment: Appointment;
+  onStatusChange: () => void;
 };
 
-const PendingAppointments = ({ appointment }: Props) => {
+const PendingAppointments = ({ appointment, onStatusChange }: Props) => {
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -28,7 +42,14 @@ const PendingAppointments = ({ appointment }: Props) => {
       },
     },
   };
-
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { token } = useAuthStore();
+  const cancelAppointment = async () => {
+    await updateAppointmentStatus(token, appointment.id, "CANCELLED");
+    console.log(appointment?.id);
+    onStatusChange();
+    setIsDialogOpen(false);
+  };
   return (
     <motion.div
       key={appointment.id}
@@ -83,14 +104,48 @@ const PendingAppointments = ({ appointment }: Props) => {
         </CardContent>
         <CardFooter className="pt-2">
           <div className="flex justify-between w-full">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                variant="outline"
-                className="text-red-600 border-red-200 hover:bg-red-50"
-              >
-                Cancel
-              </Button>
-            </motion.div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="outline"
+                    className="text-red-600 border-red-200 hover:bg-red-50"
+                    onClick={() => setIsDialogOpen(true)}
+                  >
+                    Cancel
+                  </Button>
+                </motion.div>
+              </DialogTrigger>
+
+              <DialogContent className="bg-teal-50 border-teal-300">
+                <DialogHeader>
+                  <DialogTitle>Are you sure?</DialogTitle>
+                  <DialogDescription>
+                    This will cancel your appointment with Dr.{" "}
+                    {appointment.doctorFirstName} {appointment.doctorLastName}.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <DialogFooter className="mt-4 flex justify-end gap-2">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setIsDialogOpen(false)}
+                    className="bg-white border border-gray-400 hover:bg-gray-100 cursor-pointer"
+                  >
+                    No, go back
+                  </Button>
+                  <Button
+                    className="bg-red-500 text-white hover:bg-red-600 cursor-pointer"
+                    onClick={cancelAppointment}
+                  >
+                    Yes, cancel it
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             <div className="flex gap-2">
               <motion.div
                 whileHover={{ scale: 1.05 }}

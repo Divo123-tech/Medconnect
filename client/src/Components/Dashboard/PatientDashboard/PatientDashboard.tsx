@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   Calendar,
@@ -30,27 +30,26 @@ export default function PatientDashboard() {
     Appointment[]
   >([]);
 
-  useEffect(() => {
-    const fetchAllAppointments = async () => {
-      try {
-        const [pending, confirmed, completed] = await Promise.all([
-          getAppointments(token, "PENDING"),
-          getAppointments(token, "CONFIRMED"),
-          getAppointments(token, "COMPLETED"),
-        ]);
+  const fetchAllAppointments = useCallback(async () => {
+    try {
+      const [pending, confirmed, completed] = await Promise.all([
+        getAppointments(token, "PENDING"),
+        getAppointments(token, "CONFIRMED"),
+        getAppointments(token, "COMPLETED"),
+      ]);
 
-        setPendingAppointments(pending.content);
-        setConfirmedAppointments(confirmed.content);
-        setCompletedAppointments(completed.content);
+      setPendingAppointments(pending.content);
+      setConfirmedAppointments(confirmed.content);
+      setCompletedAppointments(completed.content);
 
-        console.log({ pending, confirmed, completed });
-      } catch (err) {
-        console.error("Failed to fetch appointments:", err);
-      }
-    };
-
-    fetchAllAppointments();
+      console.log({ pending, confirmed, completed });
+    } catch (err) {
+      console.error("Failed to fetch appointments:", err);
+    }
   }, [token]);
+  useEffect(() => {
+    if (token) fetchAllAppointments();
+  }, [fetchAllAppointments, token]);
 
   // Animation variants
   const containerVariants = {
@@ -255,6 +254,7 @@ export default function PatientDashboard() {
                     <PendingAppointment
                       appointment={appointment}
                       key={appointment.id}
+                      onStatusChange={fetchAllAppointments}
                     />
                   ))
                 ) : (
