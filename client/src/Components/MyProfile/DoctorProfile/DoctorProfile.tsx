@@ -412,11 +412,15 @@ export default function DoctorProfile({ user }: Props) {
                             <SelectTrigger className="border-teal-200 focus:ring-teal-300 w-full">
                               <SelectValue placeholder="Select specialization" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="bg-white">
                               {specializations.map((specialization) => (
                                 <SelectItem
                                   key={specialization}
                                   value={specialization}
+                                  className={`hover:bg-teal-100 cursor-pointer ${
+                                    specialization == doctor.specialization &&
+                                    "bg-teal-100"
+                                  }`}
                                 >
                                   {specialization}
                                 </SelectItem>

@@ -35,7 +35,7 @@ const ConfirmedAppointments = ({ appointment }: Props) => {
       whileHover={{ y: -5 }}
     >
       <Card className="overflow-hidden border-teal-100 hover:shadow-lg transition-all duration-300 pt-0">
-        <CardHeader className="py-4 bg-gradient-to-r from-teal-50 to-blue-50">
+        <CardHeader className="py-4 bg-gradient-to-r from-teal-100 to-teal-50">
           <div className="flex justify-between items-start">
             <div className="flex items-center">
               <div className="relative">

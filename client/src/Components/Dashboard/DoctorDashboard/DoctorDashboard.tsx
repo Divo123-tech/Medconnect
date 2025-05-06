@@ -450,8 +450,7 @@ export default function DoctorDashboard() {
                       No Pending Appointments
                     </h2>
                     <p className="text-sm text-amber-500 max-w-xs">
-                      You don’t have any appointments pending. Book an
-                      appointment to get started.
+                      You don’t have any appointments pending to confirm
                     </p>
                   </motion.div>
                 )}
@@ -486,8 +485,7 @@ export default function DoctorDashboard() {
                       No Confirmed Appointments
                     </h2>
                     <p className="text-sm text-teal-500 max-w-xs">
-                      Once a doctor confirms your appointments, they’ll appear
-                      here.
+                      Once a you confirm and appointment, they’ll appear here.
                     </p>
                   </motion.div>
                 )}
@@ -522,8 +520,8 @@ export default function DoctorDashboard() {
                       No Completed Appointments
                     </h2>
                     <p className="text-sm text-gray-400 max-w-xs">
-                      Once you complete appointments with doctors, you'll see
-                      them listed here.
+                      Once you completed appointments you'll see them listed
+                      here.
                     </p>
                   </motion.div>
                 )}
