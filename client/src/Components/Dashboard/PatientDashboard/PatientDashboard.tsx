@@ -17,8 +17,14 @@ import { Appointment } from "@/utils/types";
 import CompletedAppointment from "./CompletedAppointment";
 import PendingAppointment from "./PendingAppointment";
 import ConfirmedAppointment from "./ConfirmedAppointment";
-
-export default function PatientDashboard() {
+type Props = {
+  remoteStream: MediaStream | null;
+  setRemoteStream: React.Dispatch<React.SetStateAction<MediaStream | null>>;
+};
+export default function PatientDashboard({
+  remoteStream,
+  setRemoteStream,
+}: Props) {
   const { token } = useAuthStore();
   const [pendingAppointments, setPendingAppointments] = useState<Appointment[]>(
     []
@@ -218,6 +224,8 @@ export default function PatientDashboard() {
                     <ConfirmedAppointment
                       appointment={appointment}
                       key={appointment.id}
+                      remoteStream={remoteStream}
+                      setRemoteStream={setRemoteStream}
                     />
                   ))
                 ) : (

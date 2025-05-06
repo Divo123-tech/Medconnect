@@ -22,7 +22,7 @@ const createPeerConnection = (userName: string, typeOfCall: string) => {
       console.log("Found and ice candidate!");
       if (e.candidate) {
         // emit the new ice cand. to the signaling server
-        socket.emit("sendIceCandidateToSignalingServer", {
+        socket?.emit("sendIceCandidateToSignalingServer", {
           iceCandidate: e.candidate,
           iceUserName: userName,
           didIOffer: typeOfCall === "offer",
@@ -34,7 +34,7 @@ const createPeerConnection = (userName: string, typeOfCall: string) => {
       // the remote has sent us a track!
       // let's add it to our remoteStream
       e.streams[0].getTracks().forEach((track) => {
-        remoteStream.addTrack(track, remoteStream);
+        remoteStream.addTrack(track);
         console.log("This should add some video/audio to the remote feed...");
       });
     });

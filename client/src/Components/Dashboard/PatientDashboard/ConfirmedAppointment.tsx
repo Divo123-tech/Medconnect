@@ -5,11 +5,26 @@ import { Button } from "@/Components/ui/button";
 import { Calendar, CheckCircle, Clock, Video } from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
 import { Appointment } from "@/utils/types";
+import prepForCall from "@/utils/webrtcUtilities/prepForCall";
+import { useCallStore } from "@/store/webrtcStore";
+import { useEffect, useState } from "react";
+import createPeerConnection from "@/utils/webrtcUtilities/createPeerConn";
+import socketConnection from "@/utils/webrtcUtilities/socketConnection";
+import clientSocketListeners from "@/utils/webrtcUtilities/clientSocketListeners";
+import { useNavigate } from "react-router";
 type Props = {
   appointment: Appointment;
+  remoteStream: MediaStream | null;
+  setRemoteStream: React.Dispatch<React.SetStateAction<MediaStream | null>>;
 };
 
-const ConfirmedAppointments = ({ appointment }: Props) => {
+const ConfirmedAppointments = ({
+  appointment,
+  remoteStream,
+  setRemoteStream,
+}: Props) => {
+  const [typeOfCall, setTypeOfCall] = useState<string>("");
+  const navigate = useNavigate();
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -21,7 +36,91 @@ const ConfirmedAppointments = ({ appointment }: Props) => {
       },
     },
   };
+  const {
+    callStatus,
+    setCallStatus,
+    setLocalStream,
+    peerConnection,
+    setPeerConnection,
+    localStream,
+  } = useCallStore();
+  //We have media via GUM. setup the peerConnection w/listeners
+  useEffect(() => {
+    console.log("signaling state", peerConnection);
+    console.log("Call status", callStatus);
+    if (
+      callStatus.haveMedia &&
+      (!peerConnection || peerConnection.signalingState == "closed")
+    ) {
+      // prepForCall has finished running and updated callStatus
+      console.log("NEW PEER CONNECTION");
+      const createdPeerConnection = createPeerConnection(
+        "username",
+        typeOfCall
+      );
+      if (createdPeerConnection == undefined) {
+        return;
+      } else {
+        const { peerConnection, remoteStream } = createdPeerConnection;
+        setPeerConnection(peerConnection);
+        setRemoteStream(remoteStream);
+      }
+    }
+  }, [
+    callStatus,
+    peerConnection,
+    setPeerConnection,
+    setRemoteStream,
+    typeOfCall,
+  ]);
 
+  //We know which type of client this is and have PC.
+  //Add socketlisteners
+  useEffect(() => {
+    if (typeOfCall && peerConnection) {
+      const socket = socketConnection("username");
+      clientSocketListeners(
+        socket,
+        typeOfCall,
+        localStream,
+        callStatus,
+        setCallStatus,
+        peerConnection,
+        setRemoteStream
+      );
+    }
+  }, [
+    typeOfCall,
+    peerConnection,
+    localStream,
+    callStatus,
+    setCallStatus,
+    setRemoteStream,
+  ]);
+
+  //once remoteStream AND pc are ready, navigate
+  useEffect(() => {
+    if (remoteStream && peerConnection) {
+      if (typeOfCall) {
+        navigate(`/${typeOfCall}?token=${Math.random()}`);
+      } else {
+        navigate("/");
+      }
+    }
+  }, [remoteStream, peerConnection, typeOfCall, navigate]);
+  //called on "Call" or "Answer"
+  const initCall = async (typeOfCall: string) => {
+    // set localStream and GUM
+    await prepForCall(callStatus, setCallStatus, setLocalStream);
+    // console.log("gum access granted!")
+
+    setTypeOfCall(typeOfCall); //offer or answer
+  };
+  const call = async () => {
+    //call related stuff goes here
+
+    initCall("offer");
+  };
   const pulseVariants: Variants = {
     pulse: {
       scale: [1, 1.2, 1],
@@ -96,7 +195,10 @@ const ConfirmedAppointments = ({ appointment }: Props) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button className="cursor-pointer bg-gradient-to-r text-white from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 shadow-md">
+                <Button
+                  onClick={call}
+                  className="cursor-pointer bg-gradient-to-r text-white from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 shadow-md"
+                >
                   <Video className="mr-2 h-4 w-4" />
                   Join Video Call
                 </Button>

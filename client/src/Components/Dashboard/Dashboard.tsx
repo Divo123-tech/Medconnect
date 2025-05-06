@@ -6,8 +6,11 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-
-const Dashboard = () => {
+type Props = {
+  remoteStream: MediaStream | null;
+  setRemoteStream: React.Dispatch<React.SetStateAction<MediaStream | null>>;
+};
+const Dashboard = ({ remoteStream, setRemoteStream }: Props) => {
   const { user } = useAuthStore();
   const [currentTime, setCurrentTime] = useState(new Date());
   // Update time every minute
@@ -82,7 +85,12 @@ const Dashboard = () => {
           </div>
         </div>
       </header>
-      {user?.role == "PATIENT" && isPatient(user) && <PatientDashboard />}
+      {user?.role == "PATIENT" && isPatient(user) && (
+        <PatientDashboard
+          remoteStream={remoteStream}
+          setRemoteStream={setRemoteStream}
+        />
+      )}
       {user?.role == "DOCTOR" && isDoctor(user) && <DoctorDashboard />}
     </>
   );

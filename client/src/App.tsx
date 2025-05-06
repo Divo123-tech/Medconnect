@@ -53,7 +53,16 @@ function App() {
         />
         <Route
           path="/dashboard"
-          element={<ProtectedRoute element={<Dashboard />} />}
+          element={
+            <ProtectedRoute
+              element={
+                <Dashboard
+                  remoteStream={remoteStream}
+                  setRemoteStream={setRemoteStream}
+                />
+              }
+            />
+          }
         />
         <Route
           path="/book-appointment"
