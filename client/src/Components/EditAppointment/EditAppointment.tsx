@@ -39,7 +39,7 @@ const generateTimeSlots = () => {
 
 const timeSlots = generateTimeSlots();
 
-export default function BookAppointment() {
+export default function EditAppointment() {
   const [step, setStep] = useState(1);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
