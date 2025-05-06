@@ -11,6 +11,7 @@ import { Button } from "@/Components/ui/button";
 import { Bell, Calendar, Clock, Video } from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
 import { Appointment } from "@/utils/types";
+import { Link } from "react-router";
 type Props = {
   appointment: Appointment;
 };
@@ -97,9 +98,11 @@ const PendingAppointments = ({ appointment }: Props) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-md">
-                  Edit
-                </Button>
+                <Link to={`/edit-appointment/${appointment.id}`}>
+                  <Button className="cursor-pointer text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-md">
+                    Edit
+                  </Button>
+                </Link>
               </motion.div>
             </div>
           </div>
