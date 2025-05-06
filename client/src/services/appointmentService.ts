@@ -1,3 +1,4 @@
+import { Appointment } from "@/utils/types";
 import axios from "axios";
 
 export const createAppointment = async (
@@ -39,7 +40,22 @@ export const getAppointments = async (token: string | null, status: string) => {
 
   return res.data;
 };
+export const getAppointmentById = async (
+  token: string | null,
+  id: string
+): Promise<Appointment> => {
+  const res = await axios.get(
+    `http://localhost:8080/api/v1/appointments/${id}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
+  return res.data;
+};
 export const getAppointmentsForDoctor = async (
   token: string | null,
   status: string
@@ -56,7 +72,6 @@ export const getAppointmentsForDoctor = async (
 
   return res.data;
 };
-
 
 export const updateAppointmentStatus = async (
   token: string | null,

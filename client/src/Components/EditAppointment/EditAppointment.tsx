@@ -21,10 +21,13 @@ import { Calendar as CalendarComponent } from "@/Components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/Components/ui/button";
 import { Doctor } from "@/utils/types";
-import { getDoctors } from "@/services/doctorService";
-import { createAppointment } from "@/services/appointmentService";
+import { getDoctors, getSingleDoctor } from "@/services/doctorService";
+import {
+  createAppointment,
+  getAppointmentById,
+} from "@/services/appointmentService";
 import { useAuthStore } from "@/store/authStore";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 // Generate time slots from 9am to 5pm in 30-minute intervals
 const generateTimeSlots = () => {
@@ -54,6 +57,7 @@ export default function EditAppointment() {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   const { token } = useAuthStore();
   const navigate = useNavigate();
+  const params = useParams();
   useEffect(() => {
     const fetchDoctorsData = async () => {
       setDoctors([]);
@@ -74,6 +78,25 @@ export default function EditAppointment() {
     fetchDoctorsData();
   }, [currentPage, searchTerm]);
 
+  useEffect(() => {
+    const fetchAppointment = async () => {
+      if (!params.id) {
+        navigate("/");
+        return;
+      }
+
+      try {
+        const appointment = await getAppointmentById(token, params.id);
+        setSelectedDoctor(await getSingleDoctor(appointment.doctorId));
+        setSelectedDate(new Date(appointment.date));
+        setSelectedTime(appointment.time);
+        setNotes(appointment.reason);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchAppointment();
+  }, [navigate, params.id, token]);
   const handleNext = async () => {
     if (step < 4) {
       setStep(step + 1);
