@@ -81,6 +81,8 @@ const CallerVideo = ({ remoteStream }: Props) => {
     callStatus,
     callStatus.videoEnabled,
     offerCreated,
+    offerData?.offererFullName,
+    offerData?.scheduledTime,
     peerConnection,
     userOfferTo,
     username,

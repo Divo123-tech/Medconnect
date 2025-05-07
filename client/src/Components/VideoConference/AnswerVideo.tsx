@@ -4,6 +4,8 @@ import socketConnection from "../../utils/webrtcUtilities/socketConnection";
 import ActionButtons from "../ActionButtons/ActionButtons";
 import { useCallStore } from "../../store/webrtcStore";
 import { IceCandidate } from "../../utils/types";
+import { Eye, Sun, Users, Video, Volume2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 type Props = {
   remoteStream: MediaStream | null;
@@ -92,17 +94,61 @@ const AnswerVideo = ({ remoteStream }: Props) => {
   //
   if (!answerCreated && callStatus.videoEnabled == null) {
     return (
-      <div className="flex flex-col justify-center items-center gap-16">
-        <video
-          id="local-feed"
-          ref={localFeedEl}
-          autoPlay
-          controls
-          playsInline
-          className="w-[720px] h-[400px] object-cover"
-        ></video>
-        <button
-          className="px-5 py-2 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700 transition-colors"
+      <motion.div
+        className="flex flex-col items-center justify-center gap-5 pt-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
+        {/* Tips section */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className=" bg-white/10 backdrop-blur-sm rounded-xl border border-gray-200/20 max-w-2xl"
+        >
+          <h3 className="text-center font-medium text-gray-800 mb-3">
+            Tips for a great video call
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="flex flex-col items-center text-center p-2">
+              <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center mb-2">
+                <Sun className="w-5 h-5 text-teal-600" />
+              </div>
+              <p className="text-gray-700">Ensure good lighting on your face</p>
+            </div>
+            <div className="flex flex-col items-center text-center p-2">
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+                <Volume2 className="w-5 h-5 text-blue-600" />
+              </div>
+              <p className="text-gray-700">
+                Check your microphone before joining
+              </p>
+            </div>
+            <div className="flex flex-col items-center text-center p-2">
+              <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mb-2">
+                <Users className="w-5 h-5 text-purple-600" />
+              </div>
+              <p className="text-gray-700">Find a quiet, private location</p>
+            </div>
+          </div>
+        </motion.div>
+        <div className="relative rounded-xl overflow-hidden shadow-lg border-2 border-teal-200">
+          <video
+            id="local-feed"
+            ref={localFeedEl}
+            autoPlay
+            muted
+            playsInline
+            className="w-[720px] h-[400px] object-cover rounded-xl"
+          />
+          <div className="absolute top-2 left-2 bg-teal-500 text-white px-3 py-1 rounded-full flex items-center gap-1 text-xs shadow-sm">
+            <Eye className="h-4 w-4" />
+            Preview
+          </div>
+        </div>
+
+        <motion.button
           onClick={() => {
             const copyCallStatus = { ...callStatus };
             copyCallStatus.videoEnabled = true;
@@ -111,10 +157,14 @@ const AnswerVideo = ({ remoteStream }: Props) => {
               peerConnection?.addTrack(track, localStream);
             });
           }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="cursor-pointer flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-lg shadow-md hover:from-teal-600 hover:to-teal-700 transition-all"
         >
+          <Video className="h-5 w-5" />
           Join Call
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
     );
   }
   return (
