@@ -5,6 +5,7 @@ import ActionButtons from "../ActionButtons/ActionButtons";
 import { useCallStore } from "../../store/webrtcStore";
 import { motion } from "framer-motion";
 import { Eye, Sun, Users, Video, Volume2 } from "lucide-react";
+import { useNoScroll } from "@/utils/hooks/noScroll";
 type Props = {
   remoteStream: MediaStream | null;
 };
@@ -23,6 +24,7 @@ const CallerVideo = ({ remoteStream }: Props) => {
   } = useCallStore();
   const [offerCreated, setOfferCreated] = useState(false);
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  useNoScroll();
   //send back to home if no localStream
   useEffect(() => {
     if (!localStream) {
@@ -176,7 +178,7 @@ const CallerVideo = ({ remoteStream }: Props) => {
   }
 
   return (
-    <div>
+    <div className="overflow-hidden overflow-y-hidden">
       <div className="absolute overflow-hidden">
         <video
           id="local-feed"

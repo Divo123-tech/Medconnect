@@ -6,6 +6,7 @@ import { useCallStore } from "../../store/webrtcStore";
 import { IceCandidate } from "../../utils/types";
 import { Eye, Sun, Users, Video, Volume2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNoScroll } from "@/utils/hooks/noScroll";
 
 type Props = {
   remoteStream: MediaStream | null;
@@ -24,6 +25,7 @@ const AnswerVideo = ({ remoteStream }: Props) => {
     peerConnection,
     offerData,
   } = useCallStore();
+  useNoScroll();
   //send back to home if no localStream
   useEffect(() => {
     if (!localStream) {

@@ -1,34 +1,30 @@
+import { useState } from "react";
 import { useCallStore } from "../../store/webrtcStore";
 
 const AudioButton = () => {
   const { callStatus, setCallStatus, localStream, peerConnection } =
     useCallStore();
-
-  const micText = "On";
+  const [audioEnabled, setAudioEnabled] = useState<boolean>(
+    callStatus.audioEnabled
+  );
 
   const startStopAudio = () => {
-    const copyCallStatus = { ...callStatus };
-    //first, check if the audio is enabled, if so disabled
-    if (callStatus.audioEnabled === true) {
-      //update redux callStatus
-      copyCallStatus.audioEnabled = false;
-      setCallStatus(copyCallStatus);
-      //set the stream to disabled
-      const tracks = localStream?.getAudioTracks();
-      tracks?.forEach((t) => (t.enabled = false));
-    } else if (callStatus.audioEnabled === false) {
-      //second, check if the audio is disabled, if so enable
-      //update redux callStatus
-      copyCallStatus.audioEnabled = true;
-      setCallStatus(copyCallStatus);
-      const tracks = localStream?.getAudioTracks();
-      tracks?.forEach((t) => (t.enabled = true));
+    const updatedCallStatus = { ...callStatus };
+
+    if (audioEnabled) {
+      updatedCallStatus.audioEnabled = false;
+      setCallStatus(updatedCallStatus);
+      setAudioEnabled(false);
+      localStream?.getAudioTracks().forEach((track) => (track.enabled = false));
+    } else if (audioEnabled === false) {
+      updatedCallStatus.audioEnabled = true;
+      setCallStatus(updatedCallStatus);
+      setAudioEnabled(true);
+      localStream?.getAudioTracks().forEach((track) => (track.enabled = true));
     } else {
-      //audio is "off" What do we do?
-      // changeAudioDevice({target:{value:"inputdefault"}})
-      //add the tracks
-      localStream?.getAudioTracks().forEach((t) => {
-        peerConnection?.addTrack(t, localStream);
+      // If audioEnabled is null or undefined, try adding tracks
+      localStream?.getAudioTracks().forEach((track) => {
+        peerConnection?.addTrack(track, localStream);
       });
     }
   };
@@ -36,11 +32,21 @@ const AudioButton = () => {
   return (
     <div className="inline-block relative">
       <div
-        className=" text-white flex flex-col items-center justify-center px-4 py-4 rounded cursor-pointer hover:bg-gray-400 hover:bg-opacity-20 transition"
         onClick={startStopAudio}
+        className={`flex flex-col items-center justify-center px-4 py-4 rounded cursor-pointer transition duration-200
+          ${
+            audioEnabled
+              ? "text-white hover:bg-teal-500/20"
+              : "text-red-500 hover:bg-red-500/20"
+          }
+        `}
       >
-        <i className="fa fa-microphone text-[32px] mb-1"></i>
-        <div className="text-sm">{micText}</div>
+        <i
+          className={`fa ${
+            audioEnabled ? "fa-microphone" : "fa-microphone-slash"
+          } text-[32px] mb-1 transition-all duration-200`}
+        ></i>
+        <div className="text-sm">{audioEnabled ? "Mute" : "Unmute"}</div>
       </div>
     </div>
   );

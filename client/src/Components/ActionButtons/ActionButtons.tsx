@@ -9,7 +9,7 @@ const ActionButtons = () => {
     <div
       id="menu-buttons"
       ref={menuButtons}
-      className="flex flex-wrap h-[80px] w-full bg-[#333] absolute bottom-[-6px]"
+      className="flex flex-wrap h-[80px] w-full bg-[#333] absolute bottom-[-6px] px-4"
     >
       <div className="w-full md:w-1/2 flex gap-4">
         <AudioButton />
