@@ -11,6 +11,7 @@ import { Button } from "@/Components/ui/button";
 import { Calendar, CheckCircle, Clock, Video } from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
 import { Appointment } from "@/utils/types";
+import { Link } from "react-router";
 type Props = {
   appointment: Appointment;
 };
@@ -84,9 +85,11 @@ const CompletedAppointments = ({ appointment }: Props) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button className="bg-gradient-to-r text-white from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 shadow-md">
-                  Book Follow-up
-                </Button>
+                <Link to="/book-appointment">
+                  <Button className="bg-gradient-to-r text-white from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 shadow-md">
+                    Book Follow-up
+                  </Button>
+                </Link>
               </motion.div>
             </div>
           </div>

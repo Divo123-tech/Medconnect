@@ -113,8 +113,6 @@ io.on("connection", (socket: Socket) => {
   );
 
   socket.on("getOffer", (email: string) => {
-    console.log("this is the offers: ", offers);
-    console.log(email);
     for (const offer of offers) {
       if (offer.offeringTo == email) {
         socket.emit("availableOffer", offer);
