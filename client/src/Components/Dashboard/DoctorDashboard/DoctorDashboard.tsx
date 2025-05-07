@@ -86,16 +86,18 @@ export default function DoctorDashboard({
   useEffect(() => {
     const socket = socketConnection(user?.email || "");
 
-    const setCalls = (data: Offer[]) => {
-      if (data.length > 0) {
-        setAvailableCall(data[0]);
+    const setCall = (data: Offer) => {
+      if (data) {
+        setAvailableCall(data);
       }
       console.log(data);
     };
     //emitting get offers
     socket?.emit("getOffers");
-    socket?.on("availableOffers", setCalls);
-    socket?.on("newOfferAwaiting", setCalls);
+    socket?.emit("getOffer", user?.email);
+    socket?.on("availableOffer", setCall);
+    // socket?.on("availableOffers", setCalls);
+    // socket?.on("newOfferAwaiting", setCalls);
   }, [setUserOfferTo, user?.email]);
   //We have media via GUM. setup the peerConnection w/listeners
   useEffect(() => {
