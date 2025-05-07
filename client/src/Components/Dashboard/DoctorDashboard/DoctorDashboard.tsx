@@ -38,7 +38,6 @@ export default function DoctorDashboard({
   setRemoteStream,
 }: Props) {
   const [typeOfCall, setTypeOfCall] = useState<string>("");
-  const [patientWaiting, setPatientWaiting] = useState(true); // Set to true to show the waiting room by default
   const [pendingAppointments, setPendingAppointments] = useState<Appointment[]>(
     []
   );
@@ -177,17 +176,6 @@ export default function DoctorDashboard({
 
     setTypeOfCall(typeOfCall); //offer or answer
   };
-  // Mock data for waiting patient
-  const waitingPatient = {
-    id: 1,
-    name: "John Doe",
-    age: 45,
-    gender: "male",
-    image: "/placeholder.svg?height=80&width=80",
-    waitingSince: "2 minutes ago",
-    appointmentType: "Annual Checkup",
-    appointmentTime: "2:30 PM",
-  };
 
   // Animation variants
   const containerVariants = {
@@ -199,7 +187,6 @@ export default function DoctorDashboard({
       },
     },
   };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
@@ -389,7 +376,6 @@ export default function DoctorDashboard({
                       <Button
                         variant="outline"
                         size="lg"
-                        onClick={() => setPatientWaiting(false)}
                         className="border-teal-200 text-teal-700 hover:bg-teal-50"
                       >
                         Send Message
