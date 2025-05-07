@@ -54,6 +54,7 @@ export const useCallStore = create<CallStore>((set) => ({
     offer: undefined,
     offererFullName: "",
     scheduledTime: "",
+    appointmentId: "",
     offerIceCandidates: [],
     answererUserName: null,
     answer: undefined,

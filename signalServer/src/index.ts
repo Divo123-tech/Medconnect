@@ -49,6 +49,7 @@ type Offer = {
   offeringTo: string;
   offererFullName: string;
   scheduledTime: string;
+  appointmentId: string | number;
 };
 
 type ConnectedSocket = {
@@ -92,6 +93,7 @@ io.on("connection", (socket: Socket) => {
       offerTo: string;
       offererFullName: string;
       scheduledTime: string;
+      appointmentId: string | number;
     }) => {
       const offer: Offer = {
         offererUserName: userName,
@@ -103,9 +105,10 @@ io.on("connection", (socket: Socket) => {
         offeringTo: newOffer.offerTo,
         offererFullName: newOffer.offererFullName,
         scheduledTime: newOffer.scheduledTime,
+        appointmentId: newOffer.appointmentId,
       };
       offers.push(offer);
-      socket.broadcast.emit("newOfferAwaiting", [offer]);
+      socket.broadcast.emit("availableOffer", offer);
     }
   );
 

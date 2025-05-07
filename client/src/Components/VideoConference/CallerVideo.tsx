@@ -66,6 +66,7 @@ const CallerVideo = ({ remoteStream }: Props) => {
         offerTo: userOfferTo,
         offererFullName: offerData?.offererFullName,
         scheduledTime: offerData?.scheduledTime,
+        appointmentId: offerData?.appointmentId,
       });
       setOfferCreated(true); //so that our useEffect doesn't make an offer again
       console.log(
@@ -83,6 +84,7 @@ const CallerVideo = ({ remoteStream }: Props) => {
     callStatus,
     callStatus.videoEnabled,
     offerCreated,
+    offerData?.appointmentId,
     offerData?.offererFullName,
     offerData?.scheduledTime,
     peerConnection,

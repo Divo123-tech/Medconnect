@@ -157,12 +157,14 @@ const ConfirmedAppointments = ({
   };
   const call = async () => {
     //call related stuff goes here
+
     initCall("offer");
     setOfferData({
       offererFullName: `${appointment.patientFirstName} ${appointment.patientLastName}`,
       offererUserName: offerData?.offererUserName || "", // provide a default if undefined
       offer: offerData?.offer || undefined, // no change if undefined
       scheduledTime: appointment.time.slice(0, 5), // provide a default if undefined
+      appointmentId: appointment.id,
       offerIceCandidates: offerData?.offerIceCandidates || [], // default empty array if undefined
       answererUserName: offerData?.answererUserName || null, // default to null if undefined
       answer: offerData?.answer || undefined, // no change if undefined

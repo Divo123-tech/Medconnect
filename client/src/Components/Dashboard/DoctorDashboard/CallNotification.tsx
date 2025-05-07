@@ -1,5 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Button } from "@/Components/ui/button";
+import { updateAppointmentStatus } from "@/services/appointmentService";
+import { useAuthStore } from "@/store/authStore";
 import { Offer } from "@/utils/types";
 import { motion } from "framer-motion";
 import { Clock, Video } from "lucide-react";
@@ -10,6 +12,18 @@ type Props = {
 };
 
 const CallNotification = ({ availableCall, answer }: Props) => {
+  const { token } = useAuthStore();
+  const completeAppointment = async () => {
+    try {
+      await updateAppointmentStatus(
+        token,
+        availableCall.appointmentId,
+        "COMPLETED"
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <motion.div
       initial={{ opacity: 0, y: -20, height: 0 }}
@@ -96,28 +110,16 @@ const CallNotification = ({ availableCall, answer }: Props) => {
               </div>
             </div>
 
-            {/* <div className="flex-1 bg-white/60 rounded-md p-3 text-sm">
-          <div className="flex justify-between mb-2">
-            <span className="text-gray-600">Appointment:</span>
-            <span className="font-medium">
-              {waitingPatient.appointmentType}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">Scheduled Time:</span>
-            <span className="font-medium">
-              {waitingPatient.appointmentTime}
-            </span>
-          </div>
-        </div> */}
-
             <div className="flex gap-2 ml-auto">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <Button
-                  onClick={() => answer(availableCall)}
+                  onClick={async () => {
+                    await completeAppointment();
+                    answer(availableCall);
+                  }}
                   size="lg"
                   className="bg-gradient-to-r from-teal-500 to-green-500 hover:from-teal-600 hover:to-green-600 text-white shadow-lg"
                 >

@@ -18,6 +18,7 @@ export type Offer = {
   offer: RTCSessionDescriptionInit | undefined;
   offererFullName: string;
   scheduledTime: string;
+  appointmentId: string | number;
   offerIceCandidates: IceCandidate[];
   answererUserName: string | null;
   answer: RTCSessionDescriptionInit | undefined;
