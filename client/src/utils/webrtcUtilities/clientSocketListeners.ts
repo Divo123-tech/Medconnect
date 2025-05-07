@@ -52,7 +52,7 @@ const clientSocketListeners = (
 
       return new MediaStream(); // ✅ Replace with a new empty stream
     });
-    window.location.href = "/";
+    window.location.href = "/dashboard";
   });
 };
 

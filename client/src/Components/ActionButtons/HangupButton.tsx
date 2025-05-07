@@ -18,14 +18,12 @@ const HangupButton = () => {
   }
 
   return (
-    <Link to="/">
-      <button
-        onClick={hangupCall}
-        className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors absolute top-5 right-2.5"
-      >
-        Hang Up
-      </button>
-    </Link>
+    <button
+      onClick={hangupCall}
+      className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors absolute top-5 right-2.5"
+    >
+      Hang Up
+    </button>
   );
 };
 

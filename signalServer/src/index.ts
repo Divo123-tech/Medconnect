@@ -93,8 +93,18 @@ io.on("connection", (socket: Socket) => {
     socket.broadcast.emit("newOfferAwaiting", [offer]);
   });
 
+  // socket.on("getOffer", (email: string) => {
+  //   console.log(offers);
+  //   console.log(email);
+  //   for (const offer of offers) {
+  //     if (offer.offeringTo == email) {
+  //       socket.emit("availableOffer", offer);
+  //     }
+  //   }
+  // });
+
   socket.on("getOffers", () => {
-    socket.emit("availableOffers", offers);
+    socket?.emit("availableOffers", offers);
   });
 
   socket.on(
