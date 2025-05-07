@@ -85,7 +85,6 @@ export default function DoctorDashboard({
 
   useEffect(() => {
     const socket = socketConnection(user?.email || "");
-
     const setCall = (data: Offer) => {
       if (data) {
         setAvailableCall(data);
@@ -201,11 +200,6 @@ export default function DoctorDashboard({
     },
   };
 
-  // Add this function to dismiss the waiting room notification
-  // const joinVideoCall = () => {
-  //   // In a real app, this would initiate the video call
-  //   setPatientWaiting(false);
-  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">

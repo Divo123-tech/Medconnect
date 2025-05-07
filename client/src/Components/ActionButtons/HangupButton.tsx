@@ -1,13 +1,15 @@
 import { Link } from "react-router";
 import socketConnection from "../../utils/webrtcUtilities/socketConnection";
 import { useCallStore } from "../../store/webrtcStore";
+import { useAuthStore } from "@/store/authStore";
 
 const HangupButton = () => {
-  const { username, callStatus, peerConnection } = useCallStore();
+  const { callStatus, peerConnection } = useCallStore();
+  const { user } = useAuthStore();
   const hangupCall = () => {
     if (peerConnection) {
-      const socket = socketConnection(username);
-      socket?.emit("hangup", username);
+      const socket = socketConnection(user?.email || "");
+      socket?.emit("hangup", user?.email || "");
     }
     //reload to clean up socket
     window.location.reload();

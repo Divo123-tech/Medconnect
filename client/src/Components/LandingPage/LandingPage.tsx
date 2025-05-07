@@ -353,7 +353,10 @@ export default function LandingPage() {
                   variants={fadeIn}
                   className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
                 >
-                  <Link to="/register">
+                  <Link
+                    to="/dashboard
+                  "
+                  >
                     <Button
                       size="lg"
                       className="bg-teal-600 hover:bg-teal-700 text-white cursor-pointer"

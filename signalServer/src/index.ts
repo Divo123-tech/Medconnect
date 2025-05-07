@@ -186,6 +186,7 @@ io.on("connection", (socket: Socket) => {
         (s) => s.username === otherUser
       );
       if (socketToNotify) {
+        console.log("found the socket to notify!", socketToNotify);
         socket.to(socketToNotify.socketId).emit("hangup");
       }
     }
@@ -198,6 +199,7 @@ io.on("connection", (socket: Socket) => {
   });
 
   socket.on("hangup", () => {
+    socket.emit("test");
     cleanUpUser(userName);
   });
 });
