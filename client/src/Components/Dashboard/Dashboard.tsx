@@ -91,7 +91,12 @@ const Dashboard = ({ remoteStream, setRemoteStream }: Props) => {
           setRemoteStream={setRemoteStream}
         />
       )}
-      {user?.role == "DOCTOR" && isDoctor(user) && <DoctorDashboard />}
+      {user?.role == "DOCTOR" && isDoctor(user) && (
+        <DoctorDashboard
+          remoteStream={remoteStream}
+          setRemoteStream={setRemoteStream}
+        />
+      )}
     </>
   );
 };

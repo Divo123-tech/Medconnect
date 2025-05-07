@@ -61,13 +61,18 @@ const ConfirmedAppointments = ({
   //(Helps with React double render)
   useEffect(() => {
     if (joined) {
-      setUserOfferTo("big chungus");
-      const socket = socketConnection("nigga");
+      setUserOfferTo(appointment.doctorEmail);
+      const socket = socketConnection(appointment.patientEmail);
 
       //emitting get offers
       socket?.emit("getOffers");
     }
-  }, [joined, setUserOfferTo]);
+  }, [
+    appointment.doctorEmail,
+    appointment.patientEmail,
+    joined,
+    setUserOfferTo,
+  ]);
   //We have media via GUM. setup the peerConnection w/listeners
   useEffect(() => {
     console.log("signaling state", peerConnection);
@@ -79,7 +84,7 @@ const ConfirmedAppointments = ({
       // prepForCall has finished running and updated callStatus
       console.log("NEW PEER CONNECTION");
       const createdPeerConnection = createPeerConnection(
-        "username",
+        appointment.patientEmail,
         typeOfCall
       );
       if (createdPeerConnection == undefined) {
@@ -91,6 +96,7 @@ const ConfirmedAppointments = ({
       }
     }
   }, [
+    appointment.patientEmail,
     callStatus,
     peerConnection,
     setPeerConnection,
@@ -109,7 +115,7 @@ const ConfirmedAppointments = ({
     ) {
       hasInitialized.current = true;
 
-      const socket = socketConnection("username");
+      const socket = socketConnection(appointment.patientEmail);
       clientSocketListeners(
         socket,
         typeOfCall,
@@ -127,6 +133,7 @@ const ConfirmedAppointments = ({
     callStatus,
     setCallStatus,
     setRemoteStream,
+    appointment.patientEmail,
   ]);
 
   //once remoteStream AND pc are ready, navigate

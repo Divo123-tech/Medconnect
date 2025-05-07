@@ -22,11 +22,15 @@ public class AppointmentDTO {
 
         private Integer doctorId;
         private Integer patientId;
+
         private String doctorFirstName;
         private String doctorLastName;
+        private String doctorEmail;
         private String doctorProfilePicture;
+
         private String patientFirstName;
         private String patientLastName;
+        private String patientEmail;
         private String patientProfilePicture;
 
         private LocalDate date;

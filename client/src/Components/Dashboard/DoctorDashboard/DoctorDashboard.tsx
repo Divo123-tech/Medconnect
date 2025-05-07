@@ -17,15 +17,27 @@ import { Button } from "@/Components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useAuthStore } from "@/store/authStore";
 import { getAppointmentsForDoctor } from "@/services/appointmentService";
-import { Appointment } from "@/utils/types";
+import { Appointment, Offer } from "@/utils/types";
 import PendingAppointment from "./PendingAppointment";
 import ConfirmedAppointment from "./ConfirmedAppointment";
 import CompletedAppointment from "./CompletedAppointment";
-
-export default function DoctorDashboard() {
+import socketConnection from "@/utils/webrtcUtilities/socketConnection";
+import { useCallStore } from "@/store/webrtcStore";
+import createPeerConnection from "@/utils/webrtcUtilities/createPeerConn";
+import clientSocketListeners from "@/utils/webrtcUtilities/clientSocketListeners";
+import prepForCall from "@/utils/webrtcUtilities/prepForCall";
+type Props = {
+  remoteStream: MediaStream | null;
+  setRemoteStream: React.Dispatch<React.SetStateAction<MediaStream | null>>;
+};
+export default function DoctorDashboard({
+  remoteStream,
+  setRemoteStream,
+}: Props) {
+  const [typeOfCall, setTypeOfCall] = useState<string>("");
   const [patientWaiting, setPatientWaiting] = useState(true); // Set to true to show the waiting room by default
   const [pendingAppointments, setPendingAppointments] = useState<Appointment[]>(
     []
@@ -36,8 +48,19 @@ export default function DoctorDashboard() {
   const [completedAppointments, setCompletedAppointments] = useState<
     Appointment[]
   >([]);
+  const [availableCall, setAvailableCall] = useState<Offer | null>(null);
   const { user, token } = useAuthStore();
-
+  const navigate = useNavigate();
+  const {
+    callStatus,
+    setCallStatus,
+    peerConnection,
+    setPeerConnection,
+    localStream,
+    setLocalStream,
+    setUserOfferTo,
+    setOfferData,
+  } = useCallStore();
   useEffect(() => {
     console.log(user);
   }, [user]);
@@ -60,6 +83,99 @@ export default function DoctorDashboard() {
     if (token) fetchAllAppointments();
   }, [fetchAllAppointments, token]);
 
+  useEffect(() => {
+    const socket = socketConnection(user?.email || "");
+
+    const setCalls = (data: Offer[]) => {
+      if (data.length > 0) {
+        setAvailableCall(data[0]);
+      }
+      console.log(data);
+    };
+    //emitting get offers
+    socket?.emit("getOffers");
+    socket?.on("availableOffers", setCalls);
+    socket?.on("newOfferAwaiting", setCalls);
+  }, [setUserOfferTo, user?.email]);
+  //We have media via GUM. setup the peerConnection w/listeners
+  useEffect(() => {
+    console.log("signaling state", peerConnection);
+    console.log("Call status", callStatus);
+    if (
+      callStatus.haveMedia &&
+      (!peerConnection || peerConnection.signalingState == "closed")
+    ) {
+      // prepForCall has finished running and updated callStatus
+      console.log("NEW PEER CONNECTION");
+      const createdPeerConnection = createPeerConnection(
+        user?.email || "",
+        typeOfCall
+      );
+      if (createdPeerConnection == undefined) {
+        return;
+      } else {
+        const { peerConnection, remoteStream } = createdPeerConnection;
+        setPeerConnection(peerConnection);
+        setRemoteStream(remoteStream);
+      }
+    }
+  }, [
+    callStatus,
+    peerConnection,
+    setPeerConnection,
+    setRemoteStream,
+    typeOfCall,
+    user?.email,
+  ]);
+
+  //We know which type of client this is and have PC.
+  //Add socketlisteners
+  useEffect(() => {
+    if (typeOfCall && peerConnection) {
+      const socket = socketConnection(user?.email || "");
+      clientSocketListeners(
+        socket,
+        typeOfCall,
+        localStream,
+        callStatus,
+        setCallStatus,
+        peerConnection,
+        setRemoteStream
+      );
+    }
+  }, [
+    typeOfCall,
+    peerConnection,
+    localStream,
+    callStatus,
+    setCallStatus,
+    setRemoteStream,
+    user?.email,
+  ]);
+
+  //once remoteStream AND pc are ready, navigate
+  useEffect(() => {
+    if (remoteStream && peerConnection) {
+      if (typeOfCall) {
+        navigate(`/${typeOfCall}?token=${Math.random()}`);
+      } else {
+        navigate("/");
+      }
+    }
+  }, [remoteStream, peerConnection, typeOfCall, navigate]);
+
+  const answer = (callData: Offer) => {
+    //answer related stuff goes here
+    initCall("answer");
+    setOfferData(callData);
+  };
+  const initCall = async (typeOfCall: string) => {
+    // set localStream and GUM
+    await prepForCall(callStatus, setCallStatus, setLocalStream);
+    // console.log("gum access granted!")
+
+    setTypeOfCall(typeOfCall); //offer or answer
+  };
   // Mock data for waiting patient
   const waitingPatient = {
     id: 1,
@@ -84,10 +200,10 @@ export default function DoctorDashboard() {
   };
 
   // Add this function to dismiss the waiting room notification
-  const joinVideoCall = () => {
-    // In a real app, this would initiate the video call
-    setPatientWaiting(false);
-  };
+  // const joinVideoCall = () => {
+  //   // In a real app, this would initiate the video call
+  //   setPatientWaiting(false);
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
@@ -156,7 +272,7 @@ export default function DoctorDashboard() {
         </motion.div>
         {/* Patient Waiting Room - New Section */}
         <AnimatePresence>
-          {patientWaiting && (
+          {patientWaiting && availableCall && (
             <motion.div
               initial={{ opacity: 0, y: -20, height: 0 }}
               animate={{ opacity: 1, y: 0, height: "auto" }}
@@ -264,7 +380,7 @@ export default function DoctorDashboard() {
                         whileTap={{ scale: 0.95 }}
                       >
                         <Button
-                          onClick={joinVideoCall}
+                          onClick={() => answer(availableCall)}
                           size="lg"
                           className="bg-gradient-to-r from-teal-500 to-green-500 hover:from-teal-600 hover:to-green-600 text-white shadow-lg"
                         >
@@ -533,3 +649,5 @@ export default function DoctorDashboard() {
     </div>
   );
 }
+
+

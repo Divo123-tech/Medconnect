@@ -108,9 +108,10 @@ export type Appointment = {
   doctorFirstName: string;
   doctorLastName: string;
   doctorProfilePicture: string;
-
+  doctorEmail: string;
   patientFirstName: string;
   patientLastName: string;
+  patientEmail: string;
   patientProfilePicture: string;
 
   date: string; // format: "YYYY-MM-DD"
