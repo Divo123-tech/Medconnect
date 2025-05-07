@@ -4,10 +4,10 @@ import { persist } from "zustand/middleware";
 
 interface AuthStore {
   user: null | Patient | Doctor;
-  setUser: (user: Patient | Doctor) => void;
+  setUser: (user: Patient | Doctor | null) => void;
 
   token: null | string;
-  setToken: (token: string) => void;
+  setToken: (token: string | null) => void;
 
   logout: () => void;
 }
