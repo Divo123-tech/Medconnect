@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Button } from "@/Components/ui/button";
 import { Calendar, CheckCircle, Clock, Video } from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
-import { Appointment, Offer } from "@/utils/types";
+import { Appointment } from "@/utils/types";
 import prepForCall from "@/utils/webrtcUtilities/prepForCall";
 import { useCallStore } from "@/store/webrtcStore";
 import { useEffect, useRef, useState } from "react";

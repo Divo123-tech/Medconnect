@@ -3,10 +3,9 @@ import { Button } from "@/Components/ui/button";
 import { Offer } from "@/utils/types";
 import { motion } from "framer-motion";
 import { Clock, Video } from "lucide-react";
-import React from "react";
 
 type Props = {
-  availableCall: Offer | null;
+  availableCall: Offer;
   answer: (callData: Offer) => void;
 };
 
@@ -63,7 +62,7 @@ const CallNotification = ({ availableCall, answer }: Props) => {
             <div className="flex items-center">
               <div className="relative">
                 <Avatar className="h-16 w-16 border-2 border-teal-200">
-                  <AvatarImage src={""} alt={availableCall.offererFullName} />
+                  <AvatarImage src={""} alt={availableCall?.offererFullName} />
                   <AvatarFallback>
                     {availableCall?.offererFullName.charAt(0)}
                   </AvatarFallback>
