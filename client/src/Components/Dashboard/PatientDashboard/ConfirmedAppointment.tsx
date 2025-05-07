@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Button } from "@/Components/ui/button";
 import { Calendar, CheckCircle, Clock, Video } from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
-import { Appointment } from "@/utils/types";
+import { Appointment, Offer } from "@/utils/types";
 import prepForCall from "@/utils/webrtcUtilities/prepForCall";
 import { useCallStore } from "@/store/webrtcStore";
 import { useEffect, useRef, useState } from "react";
@@ -36,7 +36,6 @@ const ConfirmedAppointments = ({
   const navigate = useNavigate();
   const hasInitialized = useRef(false);
   const [joined, setJoined] = useState(false);
-  const hasCalled = useRef(false);
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -55,7 +54,9 @@ const ConfirmedAppointments = ({
     peerConnection,
     setPeerConnection,
     localStream,
+    setOfferData,
     setUserOfferTo,
+    offerData,
   } = useCallStore();
   //Nothing happens until the user clicks join
   //(Helps with React double render)
@@ -156,9 +157,18 @@ const ConfirmedAppointments = ({
   };
   const call = async () => {
     //call related stuff goes here
-    if (hasCalled.current) return;
-    hasCalled.current = true;
     initCall("offer");
+    setOfferData({
+      offererFullName: `${appointment.patientFirstName} ${appointment.patientLastName}`,
+      offererUserName: offerData?.offererUserName || "", // provide a default if undefined
+      offer: offerData?.offer || undefined, // no change if undefined
+      scheduledTime: appointment.time.slice(0, 5), // provide a default if undefined
+      offerIceCandidates: offerData?.offerIceCandidates || [], // default empty array if undefined
+      answererUserName: offerData?.answererUserName || null, // default to null if undefined
+      answer: offerData?.answer || undefined, // no change if undefined
+      answererIceCandidates: offerData?.answererIceCandidates || [], // default empty array if undefined
+      offeringTo: offerData?.offeringTo || "", // provide a default if undefined
+    });
   };
   const pulseVariants: Variants = {
     pulse: {

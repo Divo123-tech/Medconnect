@@ -47,6 +47,8 @@ type Offer = {
   answer: SDP | null;
   answererIceCandidates: IceCandidate[];
   offeringTo: string;
+  offererFullName: string;
+  scheduledTime: string;
 };
 
 type ConnectedSocket = {
@@ -78,20 +80,34 @@ io.on("connection", (socket: Socket) => {
   if (offers.length) {
     socket.emit("availableOffers", offers);
   }
-
-  socket.on("newOffer", (newOffer: { offer: any; offerTo: string }) => {
-    const offer: Offer = {
-      offererUserName: userName,
-      offer: newOffer.offer,
-      offerIceCandidates: [],
-      answererUserName: null,
-      answer: null,
-      answererIceCandidates: [],
-      offeringTo: newOffer.offerTo,
-    };
-    offers.push(offer);
-    socket.broadcast.emit("newOfferAwaiting", [offer]);
+  socket.on("registerInfo", (data) => {
+    console.log("Extra user data received:", data);
+    // { firstName, lastName, time }
   });
+
+  socket.on(
+    "newOffer",
+    (newOffer: {
+      offer: any;
+      offerTo: string;
+      offererFullName: string;
+      scheduledTime: string;
+    }) => {
+      const offer: Offer = {
+        offererUserName: userName,
+        offer: newOffer.offer,
+        offerIceCandidates: [],
+        answererUserName: null,
+        answer: null,
+        answererIceCandidates: [],
+        offeringTo: newOffer.offerTo,
+        offererFullName: newOffer.offererFullName,
+        scheduledTime: newOffer.scheduledTime,
+      };
+      offers.push(offer);
+      socket.broadcast.emit("newOfferAwaiting", [offer]);
+    }
+  );
 
   socket.on("getOffer", (email: string) => {
     console.log("this is the offers: ", offers);

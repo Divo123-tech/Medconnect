@@ -321,11 +321,11 @@ export default function DoctorDashboard({
                       <div className="relative">
                         <Avatar className="h-16 w-16 border-2 border-teal-200">
                           <AvatarImage
-                            src={waitingPatient.image || "/placeholder.svg"}
-                            alt={waitingPatient.name}
+                            src={""}
+                            alt={availableCall.offererFullName}
                           />
                           <AvatarFallback>
-                            {waitingPatient.name.charAt(0)}
+                            {availableCall.offererFullName.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
                         <motion.div
@@ -345,12 +345,14 @@ export default function DoctorDashboard({
                       </div>
                       <div className="ml-4">
                         <h3 className="font-medium text-gray-900">
-                          {waitingPatient.name}
+                          {availableCall.offererFullName}
                         </h3>
 
                         <div className="flex items-center mt-1">
                           <Clock className="h-3 w-3 text-teal-600 mr-1" />
-                          <span className="text-xs text-teal-600">14:00</span>
+                          <span className="text-xs text-teal-600">
+                            {availableCall.scheduledTime}
+                          </span>
                         </div>
                       </div>
                     </div>

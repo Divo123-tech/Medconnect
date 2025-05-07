@@ -49,6 +49,16 @@ export const useCallStore = create<CallStore>((set) => ({
   userOfferTo: "",
   setUserOfferTo: (offerTo) => set({ userOfferTo: offerTo }),
 
-  offerData: null,
+  offerData: {
+    offererUserName: "",
+    offer: undefined,
+    offererFullName: "",
+    scheduledTime: "",
+    offerIceCandidates: [],
+    answererUserName: null,
+    answer: undefined,
+    answererIceCandidates: [],
+    offeringTo: "",
+  },
   setOfferData: (data) => set({ offerData: data }),
 }));

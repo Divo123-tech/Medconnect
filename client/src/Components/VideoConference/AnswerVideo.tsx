@@ -25,7 +25,7 @@ const AnswerVideo = ({ remoteStream }: Props) => {
   //send back to home if no localStream
   useEffect(() => {
     if (!localStream) {
-      navigate(`/`);
+      navigate(`/dashboard`);
     } else {
       if (localFeedEl.current) {
         localFeedEl.current.srcObject = localStream;

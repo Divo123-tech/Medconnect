@@ -19,13 +19,14 @@ const CallerVideo = ({ remoteStream }: Props) => {
     localStream,
     peerConnection,
     userOfferTo,
+    offerData,
   } = useCallStore();
   const [offerCreated, setOfferCreated] = useState(false);
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   //send back to home if no localStream
   useEffect(() => {
     if (!localStream) {
-      navigate(`/`);
+      navigate(`/dashboard`);
     } else {
       if (localFeedEl.current) {
         localFeedEl.current.srcObject = localStream;
@@ -58,7 +59,12 @@ const CallerVideo = ({ remoteStream }: Props) => {
       //we can now start collecing ice candidates!
       // we need to emit the offer to the server
       const socket = socketConnection(username);
-      socket?.emit("newOffer", { offer, offerTo: userOfferTo });
+      socket?.emit("newOffer", {
+        offer,
+        offerTo: userOfferTo,
+        offererFullName: offerData?.offererFullName,
+        scheduledTime: offerData?.scheduledTime,
+      });
       setOfferCreated(true); //so that our useEffect doesn't make an offer again
       console.log(
         "created offer, setLocalDesc, emitted offer, updated videoMessage"

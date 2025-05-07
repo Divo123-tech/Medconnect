@@ -16,6 +16,8 @@ export type IceCandidate = {
 export type Offer = {
   offererUserName: string;
   offer: RTCSessionDescriptionInit | undefined;
+  offererFullName: string;
+  scheduledTime: string;
   offerIceCandidates: IceCandidate[];
   answererUserName: string | null;
   answer: RTCSessionDescriptionInit | undefined;

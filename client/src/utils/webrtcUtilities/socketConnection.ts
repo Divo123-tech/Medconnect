@@ -16,6 +16,7 @@ const socketConnection = (userName: string) => {
         userName,
       },
     });
+
     if (userName == "test") {
       console.log("Testing...");
       socket?.emitWithAck("test").then((resp) => {
