@@ -27,6 +27,8 @@ import {
 } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
 import { getSingleDoctor } from "@/services/doctorService";
+import ProfileBadge from "../ProfileBadge";
+import { useAuthStore } from "@/store/authStore";
 
 // Using the exact Doctor type as provided
 export type Doctor = {
@@ -47,14 +49,17 @@ export default function DoctorProfilePage() {
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const { user, setUser, setToken } = useAuthStore();
   // Calculate years of experience based on startedPracticingAt
   const calculateYearsExperience = (startDate: string) => {
     const start = new Date(startDate);
     const now = new Date();
     return now.getFullYear() - start.getFullYear();
   };
-
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+  };
   useEffect(() => {
     const fetchDoctor = async () => {
       setIsLoading(true);
@@ -101,18 +106,52 @@ export default function DoctorProfilePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
-        <header className="bg-gradient-to-r from-teal-500 to-teal-600 shadow-md">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center">
-            <Link
-              to="/doctors"
-              className="flex items-center text-white hover:text-teal-100 mr-4"
-            >
-              <ArrowLeft size={20} className="mr-1" />
-              <span className="text-sm">Back to Doctors</span>
-            </Link>
-            <h1 className="text-xl font-semibold text-white">
-              Loading Doctor Profile...
-            </h1>
+        <header className="py-4 lg:px-8 bg-white shadow-sm relative overflow-hidden">
+          <div className="mx-auto relative w-full">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex gap-6">
+                <div className="flex items-center">
+                  <a href="/" className="flex items-center">
+                    <div className="w-10 h-10 bg-gradient-to-r from-teal-400 to-teal-600 rounded-lg flex items-center justify-center text-white mr-2">
+                      <Stethoscope size={24} />
+                    </div>
+                    <span className="text-xl font-bold bg-gradient-to-r from-teal-600 to-teal-400 bg-clip-text text-transparent">
+                      MedConnect
+                    </span>
+                  </a>
+                </div>
+              </div>
+              <div className="hidden lg:flex items-center space-x-4">
+                {user == null ? (
+                  <>
+                    <Link to="/login">
+                      <Button
+                        variant="outline"
+                        className="border-teal-200 text-teal-600 hover:bg-teal-50 cursor-pointer"
+                      >
+                        Log In
+                      </Button>
+                    </Link>
+                    <Link to="/register">
+                      <Button className="bg-teal-600 hover:bg-teal-700 text-white cursor-pointer">
+                        Sign Up
+                      </Button>
+                    </Link>{" "}
+                  </>
+                ) : (
+                  <div className="flex gap-4">
+                    <ProfileBadge />
+                    <Button
+                      variant="outline"
+                      className="border-red-400 text-red-600 hover:bg-red-50 cursor-pointer"
+                      onClick={logout}
+                    >
+                      Log Out
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </header>
 
@@ -358,7 +397,7 @@ export default function DoctorProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
-      <header className="bg-gradient-to-r from-teal-500 to-teal-600 shadow-md">
+      {/* <header className="bg-gradient-to-r from-teal-500 to-teal-600 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center">
           <Link
             to="/doctors"
@@ -369,9 +408,63 @@ export default function DoctorProfilePage() {
           </Link>
           <h1 className="text-xl font-semibold text-white">Doctor Profile</h1>
         </div>
+      </header> */}
+      <header className="py-4 lg:px-8 bg-white shadow-sm relative overflow-hidden">
+        <div className="mx-auto relative w-full">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex gap-6">
+              <div className="flex items-center">
+                <a href="/" className="flex items-center">
+                  <div className="w-10 h-10 bg-gradient-to-r from-teal-400 to-teal-600 rounded-lg flex items-center justify-center text-white mr-2">
+                    <Stethoscope size={24} />
+                  </div>
+                  <span className="text-xl font-bold bg-gradient-to-r from-teal-600 to-teal-400 bg-clip-text text-transparent">
+                    MedConnect
+                  </span>
+                </a>
+              </div>
+            </div>
+            <div className="hidden lg:flex items-center space-x-4">
+              {user == null ? (
+                <>
+                  <Link to="/login">
+                    <Button
+                      variant="outline"
+                      className="border-teal-200 text-teal-600 hover:bg-teal-50 cursor-pointer"
+                    >
+                      Log In
+                    </Button>
+                  </Link>
+                  <Link to="/register">
+                    <Button className="bg-teal-600 hover:bg-teal-700 text-white cursor-pointer">
+                      Sign Up
+                    </Button>
+                  </Link>{" "}
+                </>
+              ) : (
+                <div className="flex gap-4">
+                  <ProfileBadge />
+                  <Button
+                    variant="outline"
+                    className="border-red-400 text-red-600 hover:bg-red-50 cursor-pointer"
+                    onClick={logout}
+                  >
+                    Log Out
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </header>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <Link
+          to="/doctors"
+          className="flex items-center w-fit text-teal-600 mr-4 my-4 hover:border-b"
+        >
+          <ArrowLeft size={20} className="mr-1" />
+          <span className="text-sm">Back to Doctors</span>
+        </Link>
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -399,12 +492,12 @@ export default function DoctorProfilePage() {
                     {doctor.specialization}
                   </p>
 
-                  <div className="mt-6 w-full">
+                  <Link to="/book-appointment" className="mt-6 w-full">
                     <Button className="w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-medium py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
                       <Calendar className="mr-2 h-5 w-5" />
                       Book Appointment
                     </Button>
-                  </div>
+                  </Link>
                 </div>
 
                 <div className="space-y-4 border-t border-teal-100 pt-4">

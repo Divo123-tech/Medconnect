@@ -25,19 +25,7 @@ import DoctorCard from "./DoctorCard";
 import { getDoctors } from "@/services/doctorService";
 import ProfileBadge from "../ProfileBadge";
 import { useAuthStore } from "@/store/authStore";
-
-// Define the Doctor type as provided
-type Doctor = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  role: string;
-  specialization: string;
-  startedPracticingAt: string; // Using string for date handling in form
-  education: string;
-  bio: string;
-  profilePictureURL: string;
-};
+import { Doctor } from "@/utils/types";
 
 export default function DoctorsPage() {
   const [doctors, setDoctors] = useState<Doctor[] | null>(null);
