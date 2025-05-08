@@ -43,7 +43,7 @@ const Dashboard = ({ remoteStream, setRemoteStream }: Props) => {
               </p>
             </div>
             <Link
-              to="/my-profile"
+              to="/dashboard"
               className="flex items-center gap-3 hover:opacity-60"
             >
               <motion.div

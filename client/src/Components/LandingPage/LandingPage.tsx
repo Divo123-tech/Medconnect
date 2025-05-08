@@ -27,10 +27,13 @@ import {
 } from "@/Components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { Badge } from "../ui/badge";
+import { useAuthStore } from "@/store/authStore";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDoctor, setActiveDoctor] = useState<number | null>(null);
+  const { user, setUser, setToken } = useAuthStore();
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -41,7 +44,10 @@ export default function LandingPage() {
       },
     },
   };
-
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+  };
   const staggerContainer = {
     hidden: { opacity: 0 },
     visible: {
@@ -187,9 +193,9 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white">
       {/* Navigation */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
+            <div className="flex items-center px-4 sm:px-6 lg:px-8">
               <a href="/" className="flex items-center">
                 <div className="w-10 h-10 bg-gradient-to-r from-teal-400 to-teal-600 rounded-lg flex items-center justify-center text-white mr-2">
                   <Stethoscope size={24} />
@@ -201,7 +207,7 @@ export default function LandingPage() {
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
+            <nav className="hidden lg:flex items-center space-x-8">
               <a
                 href="#features"
                 className="text-gray-600 hover:text-teal-600 transition-colors"
@@ -228,24 +234,78 @@ export default function LandingPage() {
               </a>
             </nav>
 
-            <div className="hidden md:flex items-center space-x-4">
-              <Link to="/login">
-                <Button
-                  variant="outline"
-                  className="border-teal-200 text-teal-600 hover:bg-teal-50 cursor-pointer"
-                >
-                  Log In
-                </Button>
-              </Link>
-              <Link to="/register">
-                <Button className="bg-teal-600 hover:bg-teal-700 text-white cursor-pointer">
-                  Sign Up
-                </Button>
-              </Link>
+            <div className="hidden lg:flex items-center space-x-4">
+              {user == null ? (
+                <>
+                  <Link to="/login">
+                    <Button
+                      variant="outline"
+                      className="border-teal-200 text-teal-600 hover:bg-teal-50 cursor-pointer"
+                    >
+                      Log In
+                    </Button>
+                  </Link>
+                  <Link to="/register">
+                    <Button className="bg-teal-600 hover:bg-teal-700 text-white cursor-pointer">
+                      Sign Up
+                    </Button>
+                  </Link>{" "}
+                </>
+              ) : (
+                <div className="flex gap-4">
+                  <Link
+                    to="/dashboard"
+                    className=" flex items-center gap-3 hover:opacity-60"
+                  >
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 260,
+                        damping: 20,
+                      }}
+                      className="relative"
+                    >
+                      <Avatar className="h-10 w-10 border-2 border-teal-200">
+                        <AvatarImage
+                          src="/placeholder.svg?height=40&width=40"
+                          alt="Dr. Sarah Johnson"
+                        />
+                        <AvatarFallback>DR</AvatarFallback>
+                      </Avatar>
+                      <motion.div
+                        animate={{
+                          scale: [1, 1.2, 1],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Number.POSITIVE_INFINITY,
+                        }}
+                        className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"
+                      />
+                    </motion.div>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {user?.role == "DOCTOR" && "Dr."} {user?.firstName}{" "}
+                        {user?.lastName}
+                      </p>
+                      <p className="text-xs text-gray-500">{user?.email}</p>
+                    </div>
+                  </Link>
+                  <Button
+                    variant="outline"
+                    className="border-red-400 text-red-600 hover:bg-red-50 cursor-pointer"
+                    onClick={logout}
+                  >
+                    Log Out
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* Mobile menu button */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-teal-600 hover:bg-gray-100 focus:outline-none"
@@ -266,7 +326,7 @@ export default function LandingPage() {
 
         {/* Mobile menu */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white border-b border-gray-100">
+          <div className="lg:hidden bg-white border-b border-gray-100">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               <a
                 href="#features"
@@ -298,23 +358,78 @@ export default function LandingPage() {
               </a>
             </div>
             <div className="pt-4 pb-3 border-t border-gray-200">
-              <div className="flex items-center px-5">
-                <Link to="/login" className="w-full">
-                  <Button
-                    variant="outline"
-                    className="w-full border-teal-200 text-teal-600 hover:bg-teal-50"
+              {user == null ? (
+                <>
+                  <div className="flex items-center px-5">
+                    <Link to="/login" className="w-full">
+                      <Button
+                        variant="outline"
+                        className="w-full border-teal-200 text-teal-600 hover:bg-teal-50"
+                      >
+                        Log In
+                      </Button>
+                    </Link>
+                  </div>
+                  <div className="mt-3 px-5 pb-2">
+                    <Link to="/register" className="w-full">
+                      <Button className="w-full bg-teal-600 hover:bg-teal-700 text-white">
+                        Sign Up
+                      </Button>
+                    </Link>
+                  </div>{" "}
+                </>
+              ) : (
+                <div className="flex justify-between px-4">
+                  <Link
+                    to="/dashboard"
+                    className=" flex items-center gap-3 hover:opacity-60"
                   >
-                    Log In
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 260,
+                        damping: 20,
+                      }}
+                      className="relative"
+                    >
+                      <Avatar className="h-10 w-10 border-2 border-teal-200">
+                        <AvatarImage
+                          src="/placeholder.svg?height=40&width=40"
+                          alt="Dr. Sarah Johnson"
+                        />
+                        <AvatarFallback>DR</AvatarFallback>
+                      </Avatar>
+                      <motion.div
+                        animate={{
+                          scale: [1, 1.2, 1],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Number.POSITIVE_INFINITY,
+                        }}
+                        className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"
+                      />
+                    </motion.div>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {user?.role == "DOCTOR" && "Dr."} {user?.firstName}{" "}
+                        {user?.lastName}
+                      </p>
+                      <p className="text-xs text-gray-500">{user?.email}</p>
+                    </div>
+                  </Link>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={logout}
+                    className="border-red-400 text-red-600 hover:bg-red-50 cursor-pointer"
+                  >
+                    Log Out
                   </Button>
-                </Link>
-              </div>
-              <div className="mt-3 px-5 pb-2">
-                <Link to="/register" className="w-full">
-                  <Button className="w-full bg-teal-600 hover:bg-teal-700 text-white">
-                    Sign Up
-                  </Button>
-                </Link>
-              </div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -354,25 +469,26 @@ export default function LandingPage() {
                   className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
                 >
                   <Link
-                    to="/dashboard
+                    to="/book-appointment
                   "
                   >
                     <Button
                       size="lg"
                       className="bg-teal-600 hover:bg-teal-700 text-white cursor-pointer"
                     >
-                      Get Started <ArrowRight className="ml-2 h-5 w-5" />
+                      Book Appointment
+                      <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
-                  <a href="#how-it-works">
+                  <Link to="/doctors">
                     <Button
                       size="lg"
                       variant="outline"
                       className="border-teal-200 text-teal-600 hover:bg-teal-50 cursor-pointer"
                     >
-                      How It Works
+                      Browse Doctors
                     </Button>
-                  </a>
+                  </Link>
                 </motion.div>
                 <motion.div
                   variants={fadeIn}
