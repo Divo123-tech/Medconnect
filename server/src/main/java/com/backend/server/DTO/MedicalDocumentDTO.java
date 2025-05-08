@@ -1,10 +1,17 @@
 package com.backend.server.DTO;
 
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class MedicalDocumentDTO {
     private Long id;
     private String fileName;
     private String fileUrl;
-    private LocalDateTime uploadedAt;
+    private LocalDate uploadedAt;
 }
