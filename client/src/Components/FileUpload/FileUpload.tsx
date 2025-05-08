@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { motion, AnimatePresence } from "framer-motion";
-// import { v4 as uuidv4 } from "uuid";
 import {
   FileText,
   X,

@@ -28,7 +28,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { Badge } from "../ui/badge";
 import { useAuthStore } from "@/store/authStore";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import ProfileBadge from "../ProfileBadge";
 
 export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -253,46 +253,7 @@ export default function LandingPage() {
                 </>
               ) : (
                 <div className="flex gap-4">
-                  <Link
-                    to="/dashboard"
-                    className=" flex items-center gap-3 hover:opacity-60"
-                  >
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 260,
-                        damping: 20,
-                      }}
-                      className="relative"
-                    >
-                      <Avatar className="h-10 w-10 border-2 border-teal-200">
-                        <AvatarImage
-                          src="/placeholder.svg?height=40&width=40"
-                          alt="Dr. Sarah Johnson"
-                        />
-                        <AvatarFallback>DR</AvatarFallback>
-                      </Avatar>
-                      <motion.div
-                        animate={{
-                          scale: [1, 1.2, 1],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Number.POSITIVE_INFINITY,
-                        }}
-                        className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"
-                      />
-                    </motion.div>
-                    <div>
-                      <p className="font-medium text-gray-900">
-                        {user?.role == "DOCTOR" && "Dr."} {user?.firstName}{" "}
-                        {user?.lastName}
-                      </p>
-                      <p className="text-xs text-gray-500">{user?.email}</p>
-                    </div>
-                  </Link>
+                  <ProfileBadge />
                   <Button
                     variant="outline"
                     className="border-red-400 text-red-600 hover:bg-red-50 cursor-pointer"
@@ -380,46 +341,7 @@ export default function LandingPage() {
                 </>
               ) : (
                 <div className="flex justify-between px-4">
-                  <Link
-                    to="/dashboard"
-                    className=" flex items-center gap-3 hover:opacity-60"
-                  >
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 260,
-                        damping: 20,
-                      }}
-                      className="relative"
-                    >
-                      <Avatar className="h-10 w-10 border-2 border-teal-200">
-                        <AvatarImage
-                          src="/placeholder.svg?height=40&width=40"
-                          alt="Dr. Sarah Johnson"
-                        />
-                        <AvatarFallback>DR</AvatarFallback>
-                      </Avatar>
-                      <motion.div
-                        animate={{
-                          scale: [1, 1.2, 1],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Number.POSITIVE_INFINITY,
-                        }}
-                        className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"
-                      />
-                    </motion.div>
-                    <div>
-                      <p className="font-medium text-gray-900">
-                        {user?.role == "DOCTOR" && "Dr."} {user?.firstName}{" "}
-                        {user?.lastName}
-                      </p>
-                      <p className="text-xs text-gray-500">{user?.email}</p>
-                    </div>
-                  </Link>
+                  <ProfileBadge />
                   <Button
                     size="lg"
                     variant="outline"
