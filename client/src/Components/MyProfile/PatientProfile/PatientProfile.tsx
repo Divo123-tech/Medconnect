@@ -15,11 +15,14 @@ import {
   Activity,
   Camera,
   CheckCircle2,
+  FileImage,
+  FileText,
   Heart,
   Loader2,
   Save,
   User,
   X,
+  FileIcon as FilePdf,
 } from "lucide-react";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Label } from "@/Components/ui/label";
@@ -33,6 +36,9 @@ import {
 } from "@/Components/ui/select";
 import PhoneInput from "../PhoneInput";
 import { Textarea } from "@/Components/ui/textarea";
+import FileUpload, {
+  FileWithPreview,
+} from "@/Components/FileUpload/FileUpload";
 type Props = {
   user: Patient;
 };
@@ -52,7 +58,51 @@ const PatientProfile = ({ user }: Props) => {
     patient.phoneNumber || ""
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  // Create mock file objects for the example
+  const createMockFile = (name: string, type: string, size: number): File => {
+    const file = new File(["mock content"], name, { type });
+    Object.defineProperty(file, "size", { value: size });
+    return file;
+  };
+  // Create example medical documents
+  const [medicalDocuments, setMedicalDocuments] = useState<FileWithPreview[]>([
+    {
+      id: "1",
+      file: createMockFile(
+        "Blood_Test_Results.pdf",
+        "application/pdf",
+        2.5 * 1024 * 1024
+      ),
+      preview: "",
+      progress: 100,
+      uploaded: true,
+    },
+    {
+      id: "2",
+      file: createMockFile("X-Ray_Chest.jpg", "image/jpeg", 3.8 * 1024 * 1024),
+      preview: "/placeholder.svg?height=300&width=400",
+      progress: 100,
+      uploaded: true,
+    },
+    {
+      id: "3",
+      file: createMockFile(
+        "Prescription_2023.pdf",
+        "application/pdf",
+        1.2 * 1024 * 1024
+      ),
+      preview: "",
+      progress: 100,
+      uploaded: true,
+    },
+    {
+      id: "4",
+      file: createMockFile("Allergy_Test.png", "image/png", 2.1 * 1024 * 1024),
+      preview: "/placeholder.svg?height=400&width=300",
+      progress: 100,
+      uploaded: true,
+    },
+  ]);
   const bloodTypes = [
     { type: "A+", value: "A_POS" },
     { type: "A-", value: "A_NEG" },
@@ -146,6 +196,32 @@ const PatientProfile = ({ user }: Props) => {
       console.log(error);
       setFormError("Failed to update profile. Please try again.");
     }
+  };
+
+  const handleFilesAdded = (newFiles: FileWithPreview[]) => {
+    setMedicalDocuments((prevFiles) => {
+      // For files that already exist, keep the existing file but update its properties
+      const updatedExistingFiles = prevFiles.map((prevFile) => {
+        const matchingNewFile = newFiles.find(
+          (newFile) => newFile.id === prevFile.id
+        );
+        return matchingNewFile || prevFile;
+      });
+
+      // Add new files that don't exist in the previous files
+      const brandNewFiles = newFiles.filter(
+        (newFile) => !prevFiles.some((prevFile) => prevFile.id === newFile.id)
+      );
+
+      return [...updatedExistingFiles, ...brandNewFiles];
+    });
+  };
+
+  const handleFileRemove = (fileId: string) => {
+    setMedicalDocuments((prevFiles) => {
+      const updatedFiles = prevFiles.filter((file) => file.id !== fileId);
+      return updatedFiles;
+    });
   };
   return (
     <>
@@ -498,6 +574,70 @@ const PatientProfile = ({ user }: Props) => {
                             placeholder="List any medical conditions, allergies, or important health information"
                             className="min-h-[120px] border-teal-200 focus:border-teal-400 focus:ring-teal-300"
                           />
+                        </div>
+                        {/* Medical Documents Section */}
+                        <div className="space-y-2 mt-6">
+                          <div className="flex items-center justify-between">
+                            <Label
+                              htmlFor="medicalDocuments"
+                              className="text-teal-800 flex items-center"
+                            >
+                              <FileText className="mr-2 h-5 w-5 text-teal-600" />
+                              Medical Documents
+                            </Label>
+                            <span className="text-xs text-teal-600 bg-teal-50 px-2 py-1 rounded-full">
+                              {medicalDocuments.length} of 10 files
+                            </span>
+                          </div>
+                          {/* Document Categories */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div className="bg-teal-50 rounded-md p-4 border border-teal-200">
+                              <div className="flex items-center mb-2">
+                                <FilePdf className="h-5 w-5 text-red-500 mr-2" />
+                                <h4 className="font-medium text-teal-800">
+                                  Medical Reports
+                                </h4>
+                              </div>
+                              <p className="text-xs text-teal-600">
+                                Lab results, doctor's notes, and medical reports
+                              </p>
+                            </div>
+                            <div className="bg-teal-50 rounded-md p-4 border border-teal-200">
+                              <div className="flex items-center mb-2">
+                                <FileImage className="h-5 w-5 text-blue-500 mr-2" />
+                                <h4 className="font-medium text-teal-800">
+                                  Medical Images
+                                </h4>
+                              </div>
+                              <p className="text-xs text-teal-600">
+                                X-rays, MRIs, and other medical imaging
+                              </p>
+                            </div>
+                          </div>
+                          {/* File Upload Component */}
+                          <div className="bg-white rounded-md p-4 border border-teal-200">
+                            <h4 className="font-medium text-teal-800 mb-3">
+                              Upload New Documents
+                            </h4>
+                            <FileUpload
+                              files={medicalDocuments}
+                              onFilesAdded={handleFilesAdded}
+                              onFileRemove={handleFileRemove}
+                              maxFiles={10}
+                              maxSize={10}
+                              acceptedFileTypes={[
+                                "application/pdf",
+                                "image/jpeg",
+                                "image/png",
+                                "image/jpg",
+                              ]}
+                            />
+                          </div>
+                          <p className="text-xs text-teal-600 mt-1">
+                            Upload medical records, lab results, prescriptions,
+                            or any other relevant documents. Supported formats:
+                            PDF, JPG, PNG (max 10MB per file)
+                          </p>
                         </div>
                       </CardContent>
                     </Card>
