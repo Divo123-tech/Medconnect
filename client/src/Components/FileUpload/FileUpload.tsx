@@ -76,12 +76,14 @@ export default function FileUpload({
           id: "123",
           file,
           preview,
-          progress: 0,
+          progress: 100,
+          uploaded: true,
         };
 
         // Simulate upload progress
-        simulateFileUpload(newFile);
-
+        // simulateFileUpload(newFile);
+        console.log("newFile", newFile);
+        // onFilesAdded([newFile]);
         return newFile;
       });
 

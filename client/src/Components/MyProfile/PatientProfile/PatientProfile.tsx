@@ -39,6 +39,7 @@ import { Textarea } from "@/Components/ui/textarea";
 import FileUpload, {
   FileWithPreview,
 } from "@/Components/FileUpload/FileUpload";
+import { uploadMedicalDocument } from "@/services/fileService";
 type Props = {
   user: Patient;
 };
@@ -160,19 +161,20 @@ const PatientProfile = ({ user }: Props) => {
 
     try {
       const formData = new FormData();
-      for (const key of Object.keys(patient)) {
-        console.log(key);
-      }
-
+      console.log("patient", patient);
       const userBlob = new Blob([JSON.stringify(patient)], {
         type: "application/json",
       });
-
       formData.append("user", userBlob);
       // Append profile picture only if user selected a new one
       if (selectedProfilePictureFile) {
         formData.append("profilePicture", selectedProfilePictureFile); // must be a File object
       }
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+
+      console.log("token", token);
       // Call your PATCH API
       await updateMyProfile(token, formData);
 
@@ -198,7 +200,8 @@ const PatientProfile = ({ user }: Props) => {
     }
   };
 
-  const handleFilesAdded = (newFiles: FileWithPreview[]) => {
+  const handleFilesAdded = async (newFiles: FileWithPreview[]) => {
+    console.log(newFiles);
     setMedicalDocuments((prevFiles) => {
       // For files that already exist, keep the existing file but update its properties
       const updatedExistingFiles = prevFiles.map((prevFile) => {
@@ -212,6 +215,16 @@ const PatientProfile = ({ user }: Props) => {
       const brandNewFiles = newFiles.filter(
         (newFile) => !prevFiles.some((prevFile) => prevFile.id === newFile.id)
       );
+      (async () => {
+        try {
+          const formData = new FormData();
+          formData.append("file", newFiles[0].file);
+          formData.append("patientId", String(patient?.id));
+          await uploadMedicalDocument(token, formData);
+        } catch (err) {
+          console.log(err);
+        }
+      })();
 
       return [...updatedExistingFiles, ...brandNewFiles];
     });
