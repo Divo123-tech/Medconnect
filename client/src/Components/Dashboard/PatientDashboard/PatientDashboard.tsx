@@ -25,7 +25,7 @@ export default function PatientDashboard({
   remoteStream,
   setRemoteStream,
 }: Props) {
-  const { token } = useAuthStore();
+  const { token, user } = useAuthStore();
   const [pendingAppointments, setPendingAppointments] = useState<Appointment[]>(
     []
   );
@@ -35,7 +35,19 @@ export default function PatientDashboard({
   const [completedAppointments, setCompletedAppointments] = useState<
     Appointment[]
   >([]);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
 
+    return () => clearInterval(timer);
+  }, []);
+  const formattedDate = currentTime.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
   const fetchAllAppointments = useCallback(async () => {
     try {
       const [pending, confirmed, completed] = await Promise.all([
@@ -70,7 +82,16 @@ export default function PatientDashboard({
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
-      <main className="max-w-6xl mx-auto px-6 py-8">
+      <main className="max-w-6xl mx-auto px-6 py-4">
+        <div className="pb-8">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">
+            Welcome, {user?.role == "DOCTOR" && "Dr."} {user?.firstName}{" "}
+            {user?.lastName}
+          </h1>
+          <p className="text-gray-600">
+            {formattedDate}, {currentTime.getFullYear()}
+          </p>
+        </div>
         {/* Main Action Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
