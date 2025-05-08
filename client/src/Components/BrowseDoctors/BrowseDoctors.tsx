@@ -23,6 +23,8 @@ import {
 } from "@/Components/ui/select";
 import DoctorCard from "./DoctorCard";
 import { getDoctors } from "@/services/doctorService";
+import ProfileBadge from "../ProfileBadge";
+import { useAuthStore } from "@/store/authStore";
 
 // Define the Doctor type as provided
 type Doctor = {
@@ -40,7 +42,7 @@ type Doctor = {
 export default function DoctorsPage() {
   const [doctors, setDoctors] = useState<Doctor[] | null>(null);
   // Mock data for doctors using the provided type
-
+  const { user, setToken, setUser } = useAuthStore();
   const specializations = [
     "All Specializations",
     "Cardiology",
@@ -64,7 +66,10 @@ export default function DoctorsPage() {
   // const [filteredDoctors, setFilteredDoctors] = useState<Doctor[] | null>(null);
   const [sortBy, setSortBy] = useState<string>("firstName");
   // const [showFilters, setShowFilters] = useState(false);
-
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+  };
   const doctorsPerPage = 10;
 
   const [totalPages, setTotalPages] = useState(1);
@@ -106,7 +111,7 @@ export default function DoctorsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
       {/* Header */}
-      <header className="bg-gradient-to-r from-teal-500 to-teal-600 shadow-md">
+      {/* <header className="bg-gradient-to-r from-teal-500 to-teal-600 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="mb-4 md:mb-0">
@@ -119,14 +124,6 @@ export default function DoctorsPage() {
               </p>
             </div>
             <div className="flex items-center space-x-2">
-              {/* <Button
-                onClick={() => setShowFilters(!showFilters)}
-                variant="outline"
-                className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-              >
-                <Filter className="mr-2 h-4 w-4" />
-                Filters
-              </Button> */}
               <Link to="/">
                 <Button
                   variant="outline"
@@ -138,11 +135,67 @@ export default function DoctorsPage() {
             </div>
           </div>
         </div>
+      </header> */}
+      <header className="py-4 lg:px-8 bg-white shadow-sm relative overflow-hidden">
+        <div className="mx-auto relative w-full">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex gap-6">
+              <div className="flex items-center">
+                <a href="/" className="flex items-center">
+                  <div className="w-10 h-10 bg-gradient-to-r from-teal-400 to-teal-600 rounded-lg flex items-center justify-center text-white mr-2">
+                    <Stethoscope size={24} />
+                  </div>
+                  <span className="text-xl font-bold bg-gradient-to-r from-teal-600 to-teal-400 bg-clip-text text-transparent">
+                    MedConnect
+                  </span>
+                </a>
+              </div>
+            </div>
+            <div className="hidden lg:flex items-center space-x-4">
+              {user == null ? (
+                <>
+                  <Link to="/login">
+                    <Button
+                      variant="outline"
+                      className="border-teal-200 text-teal-600 hover:bg-teal-50 cursor-pointer"
+                    >
+                      Log In
+                    </Button>
+                  </Link>
+                  <Link to="/register">
+                    <Button className="bg-teal-600 hover:bg-teal-700 text-white cursor-pointer">
+                      Sign Up
+                    </Button>
+                  </Link>{" "}
+                </>
+              ) : (
+                <div className="flex gap-4">
+                  <ProfileBadge />
+                  <Button
+                    variant="outline"
+                    className="border-red-400 text-red-600 hover:bg-red-50 cursor-pointer"
+                    onClick={logout}
+                  >
+                    Log Out
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </header>
-
       {/* Search and Filters */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="bg-white rounded-xl shadow-md p-4 mb-6 border border-teal-100">
+      <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+        {/* <div className="mb-2">
+          <h1 className="text-2xl font-bold text-teal-500 flex items-center">
+            <Stethoscope className="mr-2 h-6 w-6" />
+            Find Your Doctor
+          </h1>
+          <p className="text-teal-400 mt-1">
+            Browse our network of experienced healthcare professionals
+          </p>
+        </div> */}
+        <div className="bg-white rounded-xl shadow-md p-4 mb-4 border border-teal-100">
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="relative flex-grow">
               <Search
@@ -249,7 +302,7 @@ export default function DoctorsPage() {
         </div>
 
         {/* Results count and sorting */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
           <div className="text-gray-600 mb-2 sm:mb-0">
             {isLoading ? (
               <Skeleton className="h-6 w-48" />
@@ -311,7 +364,7 @@ export default function DoctorsPage() {
         {isLoading ? (
           <div className="relative">
             {/* Loading overlay with medical animation */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/80 rounded-xl backdrop-blur-sm">
+            <div className=" absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/80 rounded-xl backdrop-blur-sm">
               <div className="flex flex-col items-center">
                 <div className="relative w-24 h-24 mb-4">
                   {/* Animated stethoscope */}
