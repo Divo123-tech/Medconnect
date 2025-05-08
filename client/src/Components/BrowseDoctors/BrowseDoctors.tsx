@@ -98,32 +98,6 @@ export default function DoctorsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
-      {/* Header */}
-      {/* <header className="bg-gradient-to-r from-teal-500 to-teal-600 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="mb-4 md:mb-0">
-              <h1 className="text-2xl font-bold text-white flex items-center">
-                <Stethoscope className="mr-2 h-6 w-6" />
-                Find Your Doctor
-              </h1>
-              <p className="text-teal-100 mt-1">
-                Browse our network of experienced healthcare professionals
-              </p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Link to="/">
-                <Button
-                  variant="outline"
-                  className="bg-white text-teal-600 border-white hover:bg-teal-50"
-                >
-                  Back to Dashboard
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header> */}
       <header className="py-4 lg:px-8 bg-white shadow-sm relative overflow-hidden">
         <div className="mx-auto relative w-full">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">

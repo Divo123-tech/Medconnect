@@ -397,18 +397,6 @@ export default function DoctorProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
-      {/* <header className="bg-gradient-to-r from-teal-500 to-teal-600 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center">
-          <Link
-            to="/doctors"
-            className="flex items-center text-white hover:text-teal-100 mr-4"
-          >
-            <ArrowLeft size={20} className="mr-1" />
-            <span className="text-sm">Back to Doctors</span>
-          </Link>
-          <h1 className="text-xl font-semibold text-white">Doctor Profile</h1>
-        </div>
-      </header> */}
       <header className="py-4 lg:px-8 bg-white shadow-sm relative overflow-hidden">
         <div className="mx-auto relative w-full">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">

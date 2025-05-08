@@ -425,7 +425,7 @@ export default function PatientDetail() {
   const bmiInfo = getBMICategory(bmi);
 
   // Format conditions for display (split by newlines)
-  const conditionItems = patient.conditions.split("\n");
+  const conditionItems = patient?.conditions?.split("\n");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
@@ -435,7 +435,7 @@ export default function PatientDetail() {
           <Badge className="ml-auto bg-red-500  text-white py-1 px-1">
             Doctor View Only
           </Badge>
-          <Link to="/">
+          <Link to="/dashboard">
             <Button
               variant="outline"
               className="bg-white text-teal-600 border-white hover:bg-teal-100 cursor-pointer"
@@ -599,7 +599,7 @@ export default function PatientDetail() {
                         Medical Conditions
                       </h3>
                       <div className="space-y-3">
-                        {conditionItems.map((condition, index) => (
+                        {conditionItems?.map((condition, index) => (
                           <div key={index} className="flex items-start">
                             <div className="mt-0.5 mr-3 p-1 rounded-full bg-teal-100">
                               <Activity className="h-4 w-4 text-teal-600" />

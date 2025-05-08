@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Button } from "@/Components/ui/button";
 import { Calendar, CheckCircle, Clock, User, Video } from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
+import { Link } from "react-router";
 type Props = {
   appointment: Appointment;
 };
@@ -88,13 +89,15 @@ const CompletedAppointment = ({ appointment }: Props) => {
         <CardFooter className="pt-2">
           <div className="flex justify-between w-full">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                variant="outline"
-                className="border-gray-200 hover:bg-gray-50"
-              >
-                <User className="mr-2 h-4 w-4" />
-                View Patient Info
-              </Button>
+              <Link to={`/patient/${appointment.patientId}`}>
+                <Button
+                  variant="outline"
+                  className="border-gray-200 hover:bg-gray-50"
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  View Patient Info
+                </Button>
+              </Link>
             </motion.div>
           </div>
         </CardFooter>
