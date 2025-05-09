@@ -1,5 +1,6 @@
 package com.backend.server.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,7 +24,9 @@ public class MedicalDocument {
 
     private LocalDate uploadedAt;
 
+    @ToString.Exclude
     @ManyToOne(optional = false)
     @JoinColumn(name = "patient_id")
+    @JsonBackReference
     private Patient patient;
 }

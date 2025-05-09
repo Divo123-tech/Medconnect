@@ -1,5 +1,6 @@
 package com.backend.server.DTO;
 
+import com.backend.server.entities.MedicalDocument;
 import com.backend.server.entities.Patient;
 import com.backend.server.entities.User.Role;
 import jakarta.persistence.Column;
@@ -8,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class UserDTO {
     @Data
@@ -36,6 +38,7 @@ public class UserDTO {
         private Patient.BloodType bloodType;
         private String conditions;
         private String profilePictureURL;
+        private List<MedicalDocument> medicalDocuments;
 
     }
 

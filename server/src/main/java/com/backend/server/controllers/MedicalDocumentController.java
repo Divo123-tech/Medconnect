@@ -38,7 +38,6 @@ public class MedicalDocumentController {
     @PreAuthorize("hasRole('DOCTOR') or #patientId == authentication.principal.id")
     public ResponseEntity<List<MedicalDocumentDTO>> getDocuments(@PathVariable Integer patientId) {
         List<MedicalDocument> documents = documentService.getDocumentsByPatientId(patientId);
-
         List<MedicalDocumentDTO> dtoList = documents.stream()
                 .map(this::mapToDTO)
                 .toList();

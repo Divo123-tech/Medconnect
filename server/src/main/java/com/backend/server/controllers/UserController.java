@@ -43,7 +43,8 @@ public class UserController {
                     patient.getWeight(),
                     patient.getBloodType(),
                     patient.getConditions(),
-                    patient.getProfilePictureUrl()
+                    patient.getProfilePictureUrl(),
+                    patient.getMedicalDocuments()
             ));
         }
         else if(user.getRole() == User.Role.DOCTOR){
@@ -89,7 +90,8 @@ public class UserController {
                     patient.getWeight(),
                     patient.getBloodType(),
                     patient.getConditions(),
-                    patient.getProfilePictureUrl()
+                    patient.getProfilePictureUrl(),
+                    patient.getMedicalDocuments()
             ));
         }
         else if (updatedUser instanceof Doctor doctor){
