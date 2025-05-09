@@ -65,28 +65,14 @@ export default function LandingPage() {
       description:
         "Book appointments with just a few clicks, 24/7 from anywhere.",
     },
-    // {
-    //   icon: <MessageSquare className="h-6 w-6 text-teal-500" />,
-    //   title: "Secure Messaging",
-    //   description:
-    //     "Communicate with your healthcare provider through our encrypted platform.",
-    // },
-    // {
-    //   icon: <FileText className="h-6 w-6 text-teal-500" />,
-    //   title: "Digital Records",
-    //   description: "Access your medical history and prescriptions anytime.",
-    // },
+
     {
       icon: <Users className="h-6 w-6 text-teal-500" />,
       title: "Find Specialists",
       description:
         "Connect with the right healthcare professional for your specific needs.",
     },
-    // {
-    //   icon: <Clock className="h-6 w-6 text-teal-500" />,
-    //   title: "Reminders",
-    //   description: "Never miss an appointment with automated notifications.",
-    // },
+
     {
       icon: <Shield className="h-6 w-6 text-teal-500" />,
       title: "HIPAA Compliant",
@@ -99,9 +85,9 @@ export default function LandingPage() {
     {
       quote:
         "MedConnect has transformed how I manage my practice. I can focus more on patient care and less on administrative tasks.",
-      author: "Dr. Sarah Johnson",
+      author: "Dr. Bob Johnson",
       role: "Cardiologist",
-      avatar: "/placeholder.svg?height=80&width=80",
+      avatar: "https://randomuser.me/api/portraits/women/65.jpg",
       rating: 5,
     },
     {
@@ -109,7 +95,7 @@ export default function LandingPage() {
         "As someone with a chronic condition, having easy access to my doctors has been life-changing. I feel more in control of my health.",
       author: "Michael Chen",
       role: "Patient",
-      avatar: "/placeholder.svg?height=80&width=80",
+      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
       rating: 5,
     },
     {
@@ -117,10 +103,11 @@ export default function LandingPage() {
         "The platform is intuitive and makes scheduling appointments so simple. I love being able to message my doctor directly with questions.",
       author: "Emily Rodriguez",
       role: "Patient",
-      avatar: "/placeholder.svg?height=80&width=80",
-      rating: 4,
+      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+      rating: 5,
     },
   ];
+
   const doctors = [
     {
       id: 1,
@@ -129,7 +116,7 @@ export default function LandingPage() {
       rating: 5,
       experience: "12 yrs",
       available: "Today",
-      image: "/placeholder.svg?height=60&width=60",
+      image: "https://randomuser.me/api/portraits/women/62.jpg",
       bgColor: "bg-teal-100",
       textColor: "text-teal-600",
     },
@@ -140,7 +127,7 @@ export default function LandingPage() {
       rating: 4.9,
       experience: "8 yrs",
       available: "Tomorrow",
-      image: "/placeholder.svg?height=60&width=60",
+      image: "https://randomuser.me/api/portraits/men/62.jpg",
       bgColor: "bg-blue-100",
       textColor: "text-blue-600",
     },
@@ -151,7 +138,7 @@ export default function LandingPage() {
       rating: 4.8,
       experience: "15 yrs",
       available: "Today",
-      image: "/placeholder.svg?height=60&width=60",
+      image: "https://randomuser.me/api/portraits/women/60.jpg",
       bgColor: "bg-purple-100",
       textColor: "text-purple-600",
     },
@@ -423,7 +410,7 @@ export default function LandingPage() {
                         className="w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-teal-100"
                       >
                         <img
-                          src={`/placeholder.svg?height=32&width=32&text=${i}`}
+                          src={`https://randomuser.me/api/portraits/women/${i}.jpg`}
                           alt="User"
                           width={32}
                           height={32}
@@ -650,7 +637,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Trusted By Section */}
+        {/* Trusted By Section
         <section className="py-12 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8">
@@ -659,14 +646,20 @@ export default function LandingPage() {
               </h2>
             </div>
             <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8">
-              {[1, 2, 3, 4, 5].map((i) => (
+              {[
+                "https://www.svgrepo.com/show/62007/hospital.svg",
+                "https://www.svgrepo.com/show/3136/hospital.svg",
+                "https://uxwing.com/wp-content/themes/uxwing/download/healthcare-and-medical/hospital-icon.svg",
+                "https://cdn-icons-png.flaticon.com/512/2965/2965567.png",
+                "https://cdn-icons-png.flaticon.com/512/2965/2965568.png",
+              ].map((src, i) => (
                 <div
                   key={i}
                   className="grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all"
                 >
                   <img
-                    src={`/placeholder.svg?height=40&width=120&text=Partner${i}`}
-                    alt={`Partner ${i}`}
+                    src={src}
+                    alt={`Partner ${i + 1}`}
                     width={120}
                     height={40}
                   />
@@ -674,7 +667,7 @@ export default function LandingPage() {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* For Patients & Doctors Tabs */}
         <section className="py-20 bg-white" id="how-it-works">

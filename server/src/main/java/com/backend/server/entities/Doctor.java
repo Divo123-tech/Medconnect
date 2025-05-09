@@ -30,6 +30,7 @@ public class Doctor extends User {
 
     private String education;
 
+    @Column(columnDefinition = "TEXT")
     private String bio;
 
     @OneToMany(mappedBy = "doctor")

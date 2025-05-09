@@ -8,7 +8,7 @@ import {
 } from "@/Components/ui/card";
 import { updateMyProfile } from "@/services/myProfileService";
 import { useAuthStore } from "@/store/authStore";
-import { BloodType, Patient } from "@/utils/types";
+import { BloodType, MedicalDocument, Patient } from "@/utils/types";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import {
@@ -39,7 +39,10 @@ import { Textarea } from "@/Components/ui/textarea";
 import FileUpload, {
   FileWithPreview,
 } from "@/Components/FileUpload/FileUpload";
-import { uploadMedicalDocument } from "@/services/fileService";
+import {
+  deleteMedicalDocument,
+  uploadMedicalDocument,
+} from "@/services/fileService";
 type Props = {
   user: Patient;
 };
@@ -58,52 +61,16 @@ const PatientProfile = ({ user }: Props) => {
   const [phoneValue, setPhoneValue] = useState<string>(
     patient.phoneNumber || ""
   );
+
+  // useEffect(() => {
+
+  // })
   const fileInputRef = useRef<HTMLInputElement>(null);
-  // Create mock file objects for the example
-  const createMockFile = (name: string, type: string, size: number): File => {
-    const file = new File(["mock content"], name, { type });
-    Object.defineProperty(file, "size", { value: size });
-    return file;
-  };
+
   // Create example medical documents
-  const [medicalDocuments, setMedicalDocuments] = useState<FileWithPreview[]>([
-    {
-      id: "1",
-      file: createMockFile(
-        "Blood_Test_Results.pdf",
-        "application/pdf",
-        2.5 * 1024 * 1024
-      ),
-      preview: "",
-      progress: 100,
-      uploaded: true,
-    },
-    {
-      id: "2",
-      file: createMockFile("X-Ray_Chest.jpg", "image/jpeg", 3.8 * 1024 * 1024),
-      preview: "/placeholder.svg?height=300&width=400",
-      progress: 100,
-      uploaded: true,
-    },
-    {
-      id: "3",
-      file: createMockFile(
-        "Prescription_2023.pdf",
-        "application/pdf",
-        1.2 * 1024 * 1024
-      ),
-      preview: "",
-      progress: 100,
-      uploaded: true,
-    },
-    {
-      id: "4",
-      file: createMockFile("Allergy_Test.png", "image/png", 2.1 * 1024 * 1024),
-      preview: "/placeholder.svg?height=400&width=300",
-      progress: 100,
-      uploaded: true,
-    },
-  ]);
+  const [medicalDocuments, setMedicalDocuments] = useState<MedicalDocument[]>(
+    user.medicalDocuments
+  );
   const bloodTypes = [
     { type: "A+", value: "A_POS" },
     { type: "A-", value: "A_NEG" },
@@ -201,38 +168,32 @@ const PatientProfile = ({ user }: Props) => {
   };
 
   const handleFilesAdded = async (newFiles: FileWithPreview[]) => {
-    console.log(newFiles);
-    setMedicalDocuments((prevFiles) => {
-      // For files that already exist, keep the existing file but update its properties
-      const updatedExistingFiles = prevFiles.map((prevFile) => {
-        const matchingNewFile = newFiles.find(
-          (newFile) => newFile.id === prevFile.id
-        );
-        return matchingNewFile || prevFile;
-      });
+    if (!newFiles.length || !patient?.id) return;
 
-      // Add new files that don't exist in the previous files
-      const brandNewFiles = newFiles.filter(
-        (newFile) => !prevFiles.some((prevFile) => prevFile.id === newFile.id)
-      );
-      (async () => {
-        try {
-          const formData = new FormData();
-          formData.append("file", newFiles[0].file);
-          formData.append("patientId", String(patient?.id));
-          await uploadMedicalDocument(token, formData);
-        } catch (err) {
-          console.log(err);
-        }
-      })();
+    try {
+      const formData = new FormData();
+      formData.append("file", newFiles[0].file);
+      formData.append("patientId", String(patient.id));
 
-      return [...updatedExistingFiles, ...brandNewFiles];
-    });
+      const uploadedDocument = await uploadMedicalDocument(token, formData);
+
+      // ✅ Properly update state after upload
+      setMedicalDocuments((prevFiles) => [...prevFiles, uploadedDocument]);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleFileRemove = (fileId: string) => {
+  const handleFileRemove = async (fileId: string) => {
+    try {
+      await deleteMedicalDocument(token, fileId);
+    } catch (err) {
+      console.log(err);
+    }
     setMedicalDocuments((prevFiles) => {
-      const updatedFiles = prevFiles.filter((file) => file.id !== fileId);
+      const updatedFiles = prevFiles.filter(
+        (file) => String(file.id) !== fileId
+      );
       return updatedFiles;
     });
   };
@@ -268,7 +229,7 @@ const PatientProfile = ({ user }: Props) => {
                             `http://localhost:8080${patient.profilePictureURL}`
                           }
                           alt="Profile"
-                          className="object-cover"
+                          className="object-cover w-full h-full"
                         />
                       </div>
                       <div className="flex flex-col space-y-3">

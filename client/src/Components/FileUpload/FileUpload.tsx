@@ -5,26 +5,21 @@ import {
   FileText,
   X,
   Upload,
-  File,
   ImageIcon,
   AlertCircle,
   CheckCircle,
 } from "lucide-react";
 
 import { Button } from "@/Components/ui/button";
-import { Progress } from "@/Components/ui/progress";
+import { MedicalDocument } from "@/utils/types";
 
 export type FileWithPreview = {
-  id: string;
   file: File;
   preview: string;
-  progress: number;
-  error?: string;
-  uploaded?: boolean;
 };
 
 type FileUploadProps = {
-  files: FileWithPreview[];
+  files: MedicalDocument[];
   onFilesAdded: (files: FileWithPreview[]) => void;
   onFileRemove: (fileId: string) => void;
   maxFiles?: number;
@@ -42,6 +37,11 @@ export default function FileUpload({
 }: FileUploadProps) {
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const getOriginalFileName = (fileName: string): string => {
+    return fileName.includes("_")
+      ? fileName.substring(fileName.indexOf("_") + 1)
+      : fileName;
+  };
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -73,11 +73,8 @@ export default function FileUpload({
 
         // Simulate upload progress
         const newFile: FileWithPreview = {
-          id: "123",
           file,
           preview,
-          progress: 100,
-          uploaded: true,
         };
 
         // Simulate upload progress
@@ -96,34 +93,6 @@ export default function FileUpload({
     [files.length, maxFiles, maxSize, onFilesAdded]
   );
 
-  const simulateFileUpload = (file: FileWithPreview) => {
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.floor(Math.random() * 10) + 5;
-      if (progress >= 100) {
-        clearInterval(interval);
-        progress = 100;
-
-        // Update the file with completed status
-        onFilesAdded([
-          {
-            ...file,
-            progress: 100,
-            uploaded: true,
-          },
-        ]);
-      } else {
-        // Update progress
-        onFilesAdded([
-          {
-            ...file,
-            progress,
-          },
-        ]);
-      }
-    }, 300);
-  };
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: acceptedFileTypes.reduce((acc, type) => {
@@ -139,34 +108,18 @@ export default function FileUpload({
     setDragActive(isDragActive);
   }, [isDragActive]);
 
-  const getFileIcon = (fileType: string) => {
-    if (fileType.startsWith("image/")) {
-      return <ImageIcon className="h-6 w-6 text-blue-500" />;
-    } else if (fileType === "application/pdf") {
+  const getFileIcon = (fileName: string) => {
+    const extension = fileName.split(".").pop()?.toLowerCase();
+    if (extension == "pdf") {
       return <FileText className="h-6 w-6 text-red-500" />;
     } else {
-      return <File className="h-6 w-6 text-gray-500" />;
+      return <ImageIcon className="h-6 w-6 text-blue-500" />;
     }
   };
 
-  const getFileTypeLabel = (fileType: string) => {
-    if (fileType.startsWith("image/")) {
-      return fileType.split("/")[1].toUpperCase();
-    } else if (fileType === "application/pdf") {
-      return "PDF";
-    } else {
-      return "FILE";
-    }
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) {
-      return bytes + " B";
-    } else if (bytes < 1024 * 1024) {
-      return (bytes / 1024).toFixed(1) + " KB";
-    } else {
-      return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-    }
+  const getFileTypeLabel = (fileName: string) => {
+    const extension = fileName.split(".").pop()?.toLowerCase();
+    return extension?.toUpperCase();
   };
 
   return (
@@ -251,50 +204,31 @@ export default function FileUpload({
                 className="bg-white rounded-md border border-teal-200 p-3 shadow-sm"
               >
                 <div className="flex items-center">
-                  <div className="mr-3 flex-shrink-0">
-                    {getFileIcon(file.file.type)}
-                  </div>
+                  <div className="mr-3 flex-shrink-0">{getFileIcon("pdf")}</div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between">
                       <p className="truncate text-sm font-medium text-teal-900">
-                        {file.file.name}
+                        {getOriginalFileName(file.fileName)}
                       </p>
                       <button
-                        onClick={() => onFileRemove(file.id)}
+                        onClick={() => onFileRemove(String(file.id))}
                         className="ml-2 flex-shrink-0 text-teal-500 hover:text-teal-700"
                         aria-label="Remove file"
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-4 w-4 cursor-pointer" />
                       </button>
                     </div>
                     <div className="flex items-center justify-between mt-1">
                       <div className="flex items-center space-x-2">
                         <span className="text-xs text-teal-500 bg-teal-50 px-2 py-0.5 rounded">
-                          {getFileTypeLabel(file.file.type)}
-                        </span>
-                        <span className="text-xs text-teal-500">
-                          {formatFileSize(file.file.size)}
+                          {getFileTypeLabel("pdf")}
                         </span>
                       </div>
-                      {file.uploaded && (
-                        <span className="flex items-center text-xs text-emerald-600">
-                          <CheckCircle className="h-3 w-3 mr-1" />
-                          Uploaded
-                        </span>
-                      )}
+                      <span className="flex items-center text-xs text-emerald-600">
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        Uploaded
+                      </span>
                     </div>
-                    {file.progress < 100 && (
-                      <div className="mt-2">
-                        <Progress
-                          value={file.progress}
-                          className="h-1.5 bg-teal-100"
-                          indicatorClassName="bg-teal-500"
-                        />
-                        <span className="text-xs text-teal-600 mt-1">
-                          {file.progress}% uploaded
-                        </span>
-                      </div>
-                    )}
                   </div>
                 </div>
               </motion.div>

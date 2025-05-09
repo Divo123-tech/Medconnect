@@ -8,11 +8,11 @@ import {
   Ruler,
   Weight,
   Droplet,
-  FileText,
   Lock,
-  AlertCircle,
   ClipboardList,
   Heart,
+  FileUp,
+  FilePlus,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { useParams } from "react-router";
@@ -28,22 +28,12 @@ import { Badge } from "@/Components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { getPatient } from "@/services/patientService";
 import { useAuthStore } from "@/store/authStore";
-import { BloodType } from "@/utils/types";
-
-// Using the exact Patient type as provided
-export type Patient = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: string;
-  phoneNumber: string;
-  height: number;
-  weight: number;
-  bloodType: string;
-  conditions: string;
-  profilePictureURL: string;
-};
+import { BloodType, MedicalDocument, Patient } from "@/utils/types";
+import FileUpload, { FileWithPreview } from "../FileUpload/FileUpload";
+import {
+  deleteMedicalDocument,
+  uploadMedicalDocument,
+} from "@/services/fileService";
 
 export default function PatientDetail() {
   const params = useParams();
@@ -52,6 +42,10 @@ export default function PatientDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDoctor, setIsDoctor] = useState(false); // In a real app, this would be determined by authentication
+  // Create example medical documents
+  const [medicalDocuments, setMedicalDocuments] = useState<MedicalDocument[]>(
+    patient?.medicalDocuments || []
+  );
   const { token, user } = useAuthStore();
   useEffect(() => {
     const fetchPatient = async () => {
@@ -63,6 +57,7 @@ export default function PatientDetail() {
         // For demo purposes, we'll simulate an API call with a timeout
         const patient = await getPatient(token, params.id);
         setPatient(patient);
+        setMedicalDocuments(patient.medicalDocuments)
         // Mock data for the patient
       } catch (err) {
         console.error("Error fetching patient:", err);
@@ -101,7 +96,36 @@ export default function PatientDetail() {
       },
     },
   };
+  const handleFilesAdded = async (newFiles: FileWithPreview[]) => {
+    if (!newFiles.length || !patient?.id) return;
 
+    try {
+      const formData = new FormData();
+      formData.append("file", newFiles[0].file);
+      formData.append("patientId", String(patient.id));
+
+      const uploadedDocument = await uploadMedicalDocument(token, formData);
+
+      // ✅ Properly update state after upload
+      setMedicalDocuments((prevFiles) => [...prevFiles, uploadedDocument]);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleFileRemove = async (fileId: string) => {
+    try {
+      await deleteMedicalDocument(token, fileId);
+    } catch (err) {
+      console.log(err);
+    }
+    setMedicalDocuments((prevFiles) => {
+      const updatedFiles = prevFiles.filter(
+        (file) => String(file.id) !== fileId
+      );
+      return updatedFiles;
+    });
+  };
   const bloodTypesMap: Record<BloodType, string> = {
     A_POS: "A+",
     A_NEG: "A-",
@@ -425,7 +449,7 @@ export default function PatientDetail() {
   const bmiInfo = getBMICategory(bmi);
 
   // Format conditions for display (split by newlines)
-  const conditionItems = patient?.conditions?.split("\n");
+  const conditionItems = patient?.conditions?.split(",");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
@@ -517,11 +541,11 @@ export default function PatientDetail() {
                   Medical Information
                 </TabsTrigger>
                 <TabsTrigger
-                  value="notes"
+                  value="documents"
                   className="data-[state=active]:bg-white data-[state=active]:text-teal-800 data-[state=active]:shadow-md text-teal-700"
                 >
-                  <FileText className="mr-2 h-4 w-4" />
-                  Doctor Notes
+                  <FileUp className="mr-2 h-4 w-4" />
+                  Medical Documents
                 </TabsTrigger>
               </TabsList>
 
@@ -615,76 +639,40 @@ export default function PatientDetail() {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="notes" className="mt-4">
-                {/* Doctor's Notes Section */}
-                <Card className="border-teal-100 shadow-md bg-white">
+              <TabsContent value="documents" className="mt-4">
+                {/* Medical Documents Section */}
+                <Card className="border-teal-100 shadow-md">
                   <CardHeader>
                     <CardTitle className="text-teal-800 flex items-center">
-                      <FileText className="mr-2 h-5 w-5 text-teal-600" />
-                      Doctor's Notes
+                      <FileUp className="mr-2 h-5 w-5 text-teal-600" />
+                      Medical Documents
                     </CardTitle>
                     <CardDescription>
-                      Private notes for medical staff only
+                      Upload and manage patient medical records and documents
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
-                      <div className="flex">
-                        <div className="flex-shrink-0">
-                          <AlertCircle className="h-5 w-5 text-yellow-400" />
-                        </div>
-                        <div className="ml-3">
-                          <p className="text-sm text-yellow-700">
-                            Patient has expressed anxiety about blood pressure
-                            medication side effects. Take time to address
-                            concerns during next visit.
-                          </p>
-                        </div>
+                    <div className="space-y-6">
+                      {/* File Upload Component */}
+                      <div className="bg-white p-6 rounded-lg border border-teal-100 shadow-sm">
+                        <h3 className="text-lg font-medium text-teal-800 mb-4 flex items-center">
+                          <FilePlus className="mr-2 h-5 w-5 text-teal-600" />
+                          Upload Medical Documents
+                        </h3>
+                        <FileUpload
+                          files={medicalDocuments}
+                          onFilesAdded={handleFilesAdded}
+                          onFileRemove={handleFileRemove}
+                          maxFiles={10}
+                          maxSize={10}
+                          acceptedFileTypes={[
+                            "application/pdf",
+                            "image/jpeg",
+                            "image/png",
+                            "image/jpg",
+                          ]}
+                        />
                       </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="bg-gray-100 p-4 rounded-lg border border-gray-200">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-medium text-gray-800">
-                            Dr. Sarah Johnson
-                          </h4>
-                          <span className="text-sm text-gray-500">
-                            2 weeks ago
-                          </span>
-                        </div>
-                        <p className="text-gray-600 text-sm">
-                          Patient reports occasional headaches, possibly related
-                          to stress or hypertension. Recommended lifestyle
-                          modifications including reduced sodium intake and
-                          regular exercise. Blood work shows slightly elevated
-                          cholesterol levels. Will reassess in 3 months.
-                        </p>
-                      </div>
-
-                      <div className="bg-gray-100 p-4 rounded-lg border border-gray-200">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-medium text-gray-800">
-                            Dr. Michael Chen
-                          </h4>
-                          <span className="text-sm text-gray-500">
-                            3 months ago
-                          </span>
-                        </div>
-                        <p className="text-gray-600 text-sm">
-                          Patient experiencing seasonal allergy symptoms.
-                          Prescribed antihistamine and nasal spray. Asthma
-                          appears well-controlled with current medication
-                          regimen. No changes to treatment plan at this time.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-6">
-                      <Button className="w-full bg-teal-600 hover:bg-teal-700 text-white">
-                        <FileText className="mr-2 h-4 w-4" />
-                        Add New Note
-                      </Button>
                     </div>
                   </CardContent>
                 </Card>

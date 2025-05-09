@@ -98,12 +98,12 @@ const DoctorCard = ({ doctor }: Props) => {
             )}
           </div>
 
-          <p className="mt-4 text-gray-600 text-sm line-clamp-2">
+          <p className="mt-4 text-gray-600 text-sm line-clamp-3">
             {doctor.bio}
           </p>
         </div>
 
-        <div className="px-6 pb-6 pt-2 mt-auto flex justify-between items-center">
+        <div className="px-6 flex justify-between items-center">
           <Button
             variant="outline"
             className="border-teal-200 text-teal-700 hover:bg-teal-50"

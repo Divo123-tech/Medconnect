@@ -58,6 +58,7 @@ export type Patient = {
   bloodType: BloodType;
   conditions: string;
   profilePictureURL: string;
+  medicalDocuments: MedicalDocument[];
 };
 
 export type Doctor = {
@@ -123,4 +124,11 @@ export type Appointment = {
   reason: string;
 
   status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"; // or use enum if you have it
+};
+
+export type MedicalDocument = {
+  id: number;
+  fileName: string;
+  fileUrl: string;
+  uploadedAt: string;
 };
