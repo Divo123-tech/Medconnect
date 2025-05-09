@@ -362,9 +362,7 @@ export default function BookAppointment() {
                         <div className="flex items-center">
                           <Avatar className="h-12 w-12 mr-4">
                             <img
-                              src={
-                                doctor.profilePictureURL || "/placeholder.svg"
-                              }
+                              src={`http://localhost:8080${doctor.profilePictureURL}`}
                               alt={doctor.firstName + " " + doctor.lastName}
                             />
                           </Avatar>
@@ -418,9 +416,7 @@ export default function BookAppointment() {
                   >
                     <Avatar className="h-10 w-10 mr-3">
                       <img
-                        src={
-                          selectedDoctor.profilePictureURL || "/placeholder.svg"
-                        }
+                        src={`http://localhost:8080${selectedDoctor.profilePictureURL}`}
                         alt={
                           selectedDoctor.firstName +
                           " " +
