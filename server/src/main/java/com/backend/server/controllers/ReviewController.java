@@ -2,10 +2,12 @@ package com.backend.server.controllers;
 
 import com.backend.server.DTO.ReviewDTO;
 import com.backend.server.entities.Review;
+import com.backend.server.entities.User;
 import com.backend.server.services.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,20 +19,23 @@ public class ReviewController {
 
     @PostMapping
     @PreAuthorize("hasRole('PATIENT')")
-    public ResponseEntity<?> createReview(@RequestBody ReviewDTO reviewDTO) {
-        return ResponseEntity.ok(reviewService.createReview(reviewDTO));
+    public ResponseEntity<?> createReview(@RequestBody ReviewDTO reviewDTO, Authentication auth) {
+        User userRequesting = (User) auth.getPrincipal(); // this is safe
+        return ResponseEntity.ok(reviewService.createReview(reviewDTO, userRequesting.getId()));
     }
 
-    @PutMapping("/{reviewId}")
+    @PatchMapping("/{reviewId}")
     @PreAuthorize("hasRole('PATIENT')")
-    public ResponseEntity<?> updateReview(@PathVariable Long reviewId, @RequestBody ReviewDTO reviewDTO) {
-        return ResponseEntity.ok(reviewService.updateReview(reviewId, reviewDTO));
+    public ResponseEntity<?> updateReview(@PathVariable Long reviewId, @RequestBody ReviewDTO reviewDTO, Authentication auth) {
+        User userRequesting = (User) auth.getPrincipal(); // this is safe
+        return ResponseEntity.ok(reviewService.updateReview(reviewId, reviewDTO, userRequesting.getId()));
     }
 
     @DeleteMapping("/{reviewId}")
     @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN')")
-    public ResponseEntity<?> deleteReview(@PathVariable Long reviewId) {
-        reviewService.deleteReview(reviewId);
+    public ResponseEntity<?> deleteReview(@PathVariable Long reviewId, Authentication auth) {
+        User userRequesting = (User) auth.getPrincipal(); // this is safe) {
+        reviewService.deleteReview(reviewId, userRequesting.getId());
         return ResponseEntity.ok("Review deleted successfully");
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -22,10 +23,10 @@ public class ReviewService {
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
 
-    public ReviewDTO createReview(ReviewDTO dto) {
+    public ReviewDTO createReview(ReviewDTO dto, Integer patientId) {
         Doctor doctor = doctorRepository.findById(dto.getDoctorId())
                 .orElseThrow(() -> new EntityNotFoundException("Doctor not found"));
-        Patient patient = patientRepository.findById(dto.getPatientId())
+        Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new EntityNotFoundException("Patient not found"));
 
         Review review = Review.builder()
@@ -41,10 +42,12 @@ public class ReviewService {
         return mapToDTO(saved);
     }
 
-    public ReviewDTO updateReview(Long reviewId, ReviewDTO dto) {
+    public ReviewDTO updateReview(Long reviewId, ReviewDTO dto, Integer patientId) {
         Review existing = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new EntityNotFoundException("Review not found"));
-
+        if (Objects.equals(existing.getPatient().getId(), patientId)){
+            throw new EntityNotFoundException("Only the author can edit their reviews!");
+        }
         existing.setRating(dto.getRating());
         existing.setTitle(dto.getTitle());
         existing.setBody(dto.getBody());
@@ -54,9 +57,11 @@ public class ReviewService {
         return mapToDTO(updated);
     }
 
-    public void deleteReview(Long reviewId) {
-        if (!reviewRepository.existsById(reviewId)) {
-            throw new EntityNotFoundException("Review not found");
+    public void deleteReview(Long reviewId, Integer patientId) {
+        Review existing = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new EntityNotFoundException("Review not found"));
+        if (Objects.equals(existing.getPatient().getId(), patientId)){
+            throw new EntityNotFoundException("Only the author can edit their reviews!");
         }
         reviewRepository.deleteById(reviewId);
     }
@@ -66,6 +71,10 @@ public class ReviewService {
                 .id(review.getId())
                 .doctorId(review.getDoctor().getId())
                 .patientId(review.getPatient().getId())
+                .patientFirstName(review.getPatient().getFirstName())
+                .patientLastName(review.getPatient().getLastName())
+                .patientEmail(review.getPatient().getEmail())
+                .patientProfilePicture(review.getPatient().getProfilePictureUrl())
                 .createdAt(review.getCreatedAt())
                 .rating(review.getRating())
                 .title(review.getTitle())
