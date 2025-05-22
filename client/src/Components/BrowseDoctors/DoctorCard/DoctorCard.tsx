@@ -4,7 +4,7 @@ import { Card } from "@/Components/ui/card";
 import { Doctor } from "@/utils/types";
 import { motion } from "framer-motion";
 import { Award, BookOpen, Calendar } from "lucide-react";
-import { useNavigate } from "react-router";
+import { Link} from "react-router";
 
 type Props = {
   doctor: Doctor;
@@ -17,7 +17,6 @@ const DoctorCard = ({ doctor }: Props) => {
     const now = new Date();
     return now.getFullYear() - start.getFullYear();
   };
-  const navigate = useNavigate();
   const yearsExperience = calculateYearsExperience(doctor.startedPracticingAt);
   return (
     <motion.div
@@ -27,7 +26,6 @@ const DoctorCard = ({ doctor }: Props) => {
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.3 }}
       layout
-      onClick={() => navigate(`/doctor/${doctor.id}`)}
     >
       <Card className="bg-white overflow-hidden cursor-pointer border-teal-100 hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
         <div className="p-6 flex-1">
@@ -104,15 +102,19 @@ const DoctorCard = ({ doctor }: Props) => {
         </div>
 
         <div className="px-6 flex justify-between items-center">
-          <Button
-            variant="outline"
-            className="border-teal-200 text-teal-700 hover:bg-teal-50"
-          >
-            View Profile
-          </Button>
-          <Button className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white">
-            Book Appointment
-          </Button>
+          <Link to={`/doctor/${doctor.id}`}>
+            <Button
+              variant="outline"
+              className="border-teal-200 text-teal-700 hover:bg-teal-50"
+            >
+              View Profile
+            </Button>
+          </Link>
+          <Link to={"/book-appointment"}>
+            <Button className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white">
+              Book Appointment
+            </Button>
+          </Link>
         </div>
       </Card>
     </motion.div>

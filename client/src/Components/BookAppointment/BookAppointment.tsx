@@ -577,10 +577,7 @@ export default function BookAppointment() {
                     <div className="flex items-center mb-3">
                       <Avatar className="h-12 w-12 mr-4">
                         <img
-                          src={
-                            selectedDoctor.profilePictureURL ||
-                            "/placeholder.svg"
-                          }
+                          src={`http://localhost:8080${selectedDoctor.profilePictureURL}`}
                           alt={
                             selectedDoctor.firstName +
                             " " +
