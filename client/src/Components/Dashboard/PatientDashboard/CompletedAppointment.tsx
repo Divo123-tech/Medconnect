@@ -8,7 +8,7 @@ import {
 } from "@/Components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Button } from "@/Components/ui/button";
-import { Calendar, CheckCircle, Clock, Video } from "lucide-react";
+import { Calendar, CheckCircle, Clock, Pen, Video } from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
 import { Appointment } from "@/utils/types";
 import { Link } from "react-router";
@@ -79,7 +79,15 @@ const CompletedAppointments = ({ appointment }: Props) => {
         </CardContent>
         <CardFooter className="pt-2">
           <div className="flex justify-between w-full">
-            <div></div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="outline"
+                className="text-gray-600 border-gray-300 hover:bg-gray-100 cursor-pointer"
+              >
+                <Pen className="mr-2 h-4 w-4" />
+                Leave a Review!
+              </Button>
+            </motion.div>
             <div className="flex gap-2">
               <motion.div
                 whileHover={{ scale: 1.05 }}
