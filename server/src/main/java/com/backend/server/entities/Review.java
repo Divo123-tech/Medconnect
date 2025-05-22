@@ -1,7 +1,10 @@
 package com.backend.server.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+
+import javax.print.Doc;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,9 +33,10 @@ public class Review {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "doctor_id")
-    private User doctor;
+    @JsonBackReference
+    private Doctor doctor;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "patient_id")
-    private User patient;
+    private Patient patient;
 }

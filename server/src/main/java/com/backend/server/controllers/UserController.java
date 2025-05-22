@@ -1,8 +1,10 @@
 package com.backend.server.controllers;
 
+import com.backend.server.DTO.ReviewDTO;
 import com.backend.server.DTO.UserDTO;
 import com.backend.server.entities.Doctor;
 import com.backend.server.entities.Patient;
+import com.backend.server.entities.Review;
 import com.backend.server.entities.User;
 import com.backend.server.services.DoctorService;
 import com.backend.server.services.PatientService;
@@ -59,7 +61,8 @@ public class UserController {
                     doctor.getStartedPracticingAt(),
                     doctor.getEducation(),
                     doctor.getBio(),
-                    doctor.getProfilePictureUrl()
+                    doctor.getProfilePictureUrl(),
+                    doctor.getReviews().stream().map(this::mapToReviewDTO).toList()
             ));
         }
 
@@ -105,7 +108,8 @@ public class UserController {
                     doctor.getStartedPracticingAt(),
                     doctor.getEducation(),
                     doctor.getBio(),
-                    doctor.getProfilePictureUrl()
+                    doctor.getProfilePictureUrl(),
+                    doctor.getReviews().stream().map(this::mapToReviewDTO).toList()
             ));
         }
         return ResponseEntity.ok(new UserDTO.UserGetProfileDTO(
@@ -128,6 +132,20 @@ public class UserController {
                     .body("User with email " + principal.getName() + " not found.");
         }
     }
-
+    private ReviewDTO mapToReviewDTO(Review review) {
+        return ReviewDTO.builder()
+                .id(review.getId())
+                .doctorId(review.getDoctor().getId())
+                .patientId(review.getPatient().getId())
+                .patientFirstName(review.getPatient().getFirstName())
+                .patientLastName(review.getPatient().getLastName())
+                .patientEmail(review.getPatient().getEmail())
+                .patientProfilePicture(review.getPatient().getProfilePictureUrl())
+                .createdAt(review.getCreatedAt())
+                .rating(review.getRating())
+                .title(review.getTitle())
+                .body(review.getBody())
+                .build();
+    }
 
 }

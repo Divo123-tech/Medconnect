@@ -1,7 +1,9 @@
 package com.backend.server.controllers;
 
+import com.backend.server.DTO.ReviewDTO;
 import com.backend.server.DTO.UserDTO;
 import com.backend.server.entities.Doctor;
+import com.backend.server.entities.Review;
 import com.backend.server.services.DoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,8 @@ public class DoctorController {
                 doctor.getStartedPracticingAt(),
                 doctor.getEducation(),
                 doctor.getBio(),
-                doctor.getProfilePictureUrl()
+                doctor.getProfilePictureUrl(),
+                doctor.getReviews().stream().map(this::mapToReviewDTO).toList()
         ));
 
         return ResponseEntity.ok(dtoPage);
@@ -55,7 +58,23 @@ public class DoctorController {
                 doctor.getStartedPracticingAt(),
                 doctor.getEducation(),
                 doctor.getBio(),
-                doctor.getProfilePictureUrl()
+                doctor.getProfilePictureUrl(),
+                doctor.getReviews().stream().map(this::mapToReviewDTO).toList()
         ));
+    }
+    private ReviewDTO mapToReviewDTO(Review review) {
+        return ReviewDTO.builder()
+                .id(review.getId())
+                .doctorId(review.getDoctor().getId())
+                .patientId(review.getPatient().getId())
+                .patientFirstName(review.getPatient().getFirstName())
+                .patientLastName(review.getPatient().getLastName())
+                .patientEmail(review.getPatient().getEmail())
+                .patientProfilePicture(review.getPatient().getProfilePictureUrl())
+                .createdAt(review.getCreatedAt())
+                .rating(review.getRating())
+                .title(review.getTitle())
+                .body(review.getBody())
+                .build();
     }
 }

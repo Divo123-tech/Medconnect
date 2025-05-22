@@ -2,6 +2,7 @@ package com.backend.server.DTO;
 
 import com.backend.server.entities.MedicalDocument;
 import com.backend.server.entities.Patient;
+import com.backend.server.entities.Review;
 import com.backend.server.entities.User.Role;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
@@ -75,6 +76,7 @@ public class UserDTO {
         private String education;
         private String bio;
         private String profilePictureURL;
+        private List<ReviewDTO> reviews;
     }
 
 }
