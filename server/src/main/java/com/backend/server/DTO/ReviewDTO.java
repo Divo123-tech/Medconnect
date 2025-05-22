@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 public class ReviewDTO {
 
     private Long id;
+    private Integer doctorId;
+    private Integer patientId;
 
     private Integer rating;         // 1 to 5
     private String title;
