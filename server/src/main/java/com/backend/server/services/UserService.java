@@ -53,6 +53,14 @@ public class UserService {
             user.setLastName(request.getLastName());
         }
 
+        if(request.getDateOfBirth() != null){
+            user.setDateOfBirth(request.getDateOfBirth());
+        }
+
+        if(request.getSex() != null){
+            user.setSex(request.getSex());
+        }
+
         if (request.getPassword() != null) {
             user.setPassword(request.getPassword());
         }
