@@ -13,6 +13,8 @@ import {
   Heart,
   FileUp,
   FilePlus,
+  CalendarDays,
+  VenusAndMars,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { useParams } from "react-router";
@@ -58,8 +60,6 @@ export default function PatientDetail() {
       setError(null);
 
       try {
-        // In a real app, this would be an API call with proper authentication
-        // For demo purposes, we'll simulate an API call with a timeout
         const patient = await getPatient(token, params.id);
         setPatient(patient);
         setMedicalDocuments(patient.medicalDocuments);
@@ -448,7 +448,7 @@ export default function PatientDetail() {
                 <div className="flex flex-col items-center text-center mb-6">
                   <div className="relative w-48 h-48 rounded-full overflow-hidden bg-gradient-to-br from-teal-100 to-blue-100 border-4 border-teal-300 shadow-md mb-4">
                     <img
-                      src={patient.profilePictureURL || "/placeholder.svg"}
+                      src={`http://localhost:8080${patient.profilePictureURL}`}
                       alt={`${patient.firstName} ${patient.lastName}`}
                       className="object-cover w-full h-full"
                     />
@@ -486,6 +486,20 @@ export default function PatientDetail() {
                     <div>
                       <p className="text-gray-700 font-medium">Phone</p>
                       <p className="text-gray-600">{patient.phoneNumber}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <CalendarDays className="h-5 w-5 text-teal-500 mr-3" />
+                    <div>
+                      <p className="text-gray-700 font-medium">Date of Birth</p>
+                      <p className="text-gray-600">{patient.dateOfBirth}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <VenusAndMars className="h-5 w-5 text-teal-500 mr-3" />
+                    <div>
+                      <p className="text-gray-700 font-medium">Sex</p>
+                      <p className="text-gray-600">{patient.sex}</p>
                     </div>
                   </div>
                 </div>

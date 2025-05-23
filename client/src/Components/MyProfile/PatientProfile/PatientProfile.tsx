@@ -375,7 +375,52 @@ const PatientProfile = ({ user }: Props) => {
                             />
                           </div>
                         </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="firstName"
+                              className="text-teal-800"
+                            >
+                              Date of Birth
+                            </Label>
+                            <Input
+                              id="firstName"
+                              type="date"
+                              value={patient.dateOfBirth}
+                              onChange={(e) =>
+                                setPatient({
+                                  ...patient,
+                                  dateOfBirth: e.target.value,
+                                })
+                              }
+                              required
+                              className="border-teal-200 focus:border-teal-400 focus:ring-teal-300"
+                            />
+                          </div>
 
+                          <div className="space-y-2">
+                            <Label htmlFor="sex" className="text-teal-800">
+                              Sex
+                            </Label>
+                            <select
+                              id="sex"
+                              value={patient.sex}
+                              onChange={(e) =>
+                                setPatient({
+                                  ...patient,
+                                  sex: e.target.value,
+                                })
+                              }
+                              required
+                              className="w-full border shadow-sm border-teal-200 focus:border-teal-400 focus:ring-teal-300 rounded-md p-2"
+                            >
+                              <option value="">Select sex</option>
+                              <option value="Male">Male</option>
+                              <option value="Female">Female</option>
+                              <option value="Other">Other</option>
+                            </select>
+                          </div>
+                        </div>
                         <div className="space-y-2">
                           <Label htmlFor="email" className="text-teal-800">
                             Email
