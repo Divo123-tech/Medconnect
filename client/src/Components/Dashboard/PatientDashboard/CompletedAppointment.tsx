@@ -11,6 +11,7 @@ import { Button } from "@/Components/ui/button";
 import {
   Calendar,
   CheckCircle,
+  CheckCircle2,
   Clock,
   Star,
   StarIcon,
@@ -32,6 +33,8 @@ import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
+import { createReview } from "@/services/reviewService";
+import { useAuthStore } from "@/store/authStore";
 type Props = {
   appointment: Appointment;
 };
@@ -41,6 +44,8 @@ const CompletedAppointments = ({ appointment }: Props) => {
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewTitle, setReviewTitle] = useState("");
   const [reviewBody, setReviewBody] = useState("");
+  const [reviewSuccess, setReviewSuccess] = useState<boolean | null>(null);
+  const { token } = useAuthStore();
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -53,13 +58,25 @@ const CompletedAppointments = ({ appointment }: Props) => {
     },
   };
 
-  const handleSubmitReview = () => {
-    // Here you would typically send the review data to your backend
+  const handleSubmitReview = async () => {
     console.log({
       rating,
       reviewTitle,
       reviewBody,
     });
+    try {
+      await createReview(
+        token,
+        appointment.doctorId,
+        rating,
+        reviewTitle,
+        reviewBody
+      );
+      setReviewSuccess(true);
+    } catch (err) {
+      setReviewSuccess(false);
+      return err;
+    }
 
     // Reset form and close modal
     setRating(0);
@@ -156,7 +173,42 @@ const CompletedAppointments = ({ appointment }: Props) => {
                     others make informed decisions.
                   </DialogDescription>
                 </DialogHeader>
-
+                {reviewSuccess && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="p-3 mb-4 bg-emerald-50 border border-emerald-300 rounded-lg text-emerald-600"
+                  >
+                    <div className="flex items-start">
+                      <CheckCircle2 className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                      <span>Thank you for leaving a review!</span>
+                    </div>
+                  </motion.div>
+                )}
+                {reviewSuccess == false && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-3 mb-4 bg-red-50 border border-red-300 rounded-lg text-red-600"
+                  >
+                    <div className="flex items-start">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <span>Something went wrong!</span>
+                    </div>
+                  </motion.div>
+                )}
                 {/* Star Rating */}
                 <div className="flex items-center justify-center gap-2 flex-col">
                   <div className="flex space-x-1">
@@ -228,15 +280,15 @@ const CompletedAppointments = ({ appointment }: Props) => {
                   <DialogClose asChild>
                     <Button variant="outline">Cancel</Button>
                   </DialogClose>
-                  <DialogClose asChild>
-                    <Button
-                      onClick={handleSubmitReview}
-                      disabled={!rating || !reviewTitle || !reviewBody}
-                      className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
-                    >
-                      Submit Review
-                    </Button>
-                  </DialogClose>
+                  {/* <DialogClose asChild> */}
+                  <Button
+                    onClick={handleSubmitReview}
+                    disabled={!rating || !reviewTitle || !reviewBody}
+                    className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+                  >
+                    Submit Review
+                  </Button>
+                  {/* </DialogClose> */}
                 </DialogFooter>
               </DialogContent>
             </Dialog>

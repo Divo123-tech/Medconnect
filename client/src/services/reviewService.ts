@@ -5,17 +5,15 @@ export const createReview = async (
   doctorId: number | undefined,
   rating: number,
   title: string | null,
-  body: string,
-  createdAt: string | undefined
+  body: string
 ) => {
   const res = await axios.post(
-    `http://localhost:8080/api/v1/appointments`,
+    `http://localhost:8080/api/v1/reviews`,
     {
       doctorId,
       rating,
       title,
       body,
-      createdAt,
     },
     {
       headers: {
