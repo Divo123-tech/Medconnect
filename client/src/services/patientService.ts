@@ -32,3 +32,21 @@ export const getPatientsByDoctor = async (
 
   return res.data;
 };
+
+export const deletePatientByDoctor = async (
+  token: string | null,
+  doctorId: number | undefined,
+  patientId: number | undefined
+) => {
+  const res = await axios.delete(
+    `http://localhost:8080/api/v1/doctor-patients/delete?doctorId=${doctorId}&patientId=${patientId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
+};

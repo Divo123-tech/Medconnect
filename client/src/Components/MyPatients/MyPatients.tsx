@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Users, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -35,27 +35,25 @@ export default function MyPatientsPage() {
   };
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
+  const fetchPatients = useCallback(async () => {
+    setIsLoading(true);
+    setPatients(null);
+    try {
+      const result = await getPatientsByDoctor(token, user?.id, searchTerm);
+      setPatients(result.content);
+      setTotalPages(result.totalPages);
+      setTotalPatients(result.totalElements);
+    } catch (err) {
+      console.error("Failed to fetch patients:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [searchTerm, token, user?.id]);
   useEffect(() => {
-    const fetchPatients = async () => {
-      setIsLoading(true);
-      setPatients(null);
-      try {
-        const result = await getPatientsByDoctor(token, user?.id, searchTerm);
-        setPatients(result.content);
-        setTotalPages(result.totalPages);
-        setTotalPatients(result.totalElements);
-      } catch (err) {
-        console.error("Failed to fetch patients:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     if (token && user?.id) {
       fetchPatients();
     }
-  }, [searchTerm, token, user?.id]);
+  }, [fetchPatients, searchTerm, token, user?.id]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
@@ -184,7 +182,11 @@ export default function MyPatientsPage() {
         >
           <AnimatePresence>
             {patients?.map((patient) => (
-              <PatientCard patient={patient} key={patient.id} />
+              <PatientCard
+                patient={patient}
+                key={patient.id}
+                fetchPatients={fetchPatients}
+              />
             ))}
           </AnimatePresence>
         </motion.div>

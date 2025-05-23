@@ -9,11 +9,13 @@ import { useAuthStore } from "@/store/authStore";
 import { Link } from "react-router";
 import { bloodTypesMap, calculateBMI } from "@/utils/converters";
 import { Button } from "../ui/button";
+import { deletePatientByDoctor } from "@/services/patientService";
 type Props = {
   patient: Patient;
+  fetchPatients: () => void;
 };
 
-const PatientCard = ({ patient }: Props) => {
+const PatientCard = ({ patient, fetchPatients }: Props) => {
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -25,6 +27,16 @@ const PatientCard = ({ patient }: Props) => {
       },
     },
   };
+  const { token, user } = useAuthStore();
+  const handleDelete = async () => {
+    try {
+      await deletePatientByDoctor(token, user?.id, patient.id);
+      fetchPatients();
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  };
   return (
     <motion.div key={patient.id} variants={itemVariants} layout>
       <Card className="hover:shadow-lg transition-all duration-300 overflow-hidden bg-white border-teal-400 border">
@@ -33,7 +45,7 @@ const PatientCard = ({ patient }: Props) => {
             <Link to={`/patient/${patient.id}`} className="flex items-center">
               <Avatar className="h-16 w-16 mr-4 border-2 border-teal-100">
                 <AvatarImage
-                  src={patient.profilePictureURL || "/placeholder.svg"}
+                  src={patient.profilePictureURL}
                   alt={`${patient.firstName} ${patient.lastName}`}
                 />
                 <AvatarFallback>{patient.firstName.charAt(0)}</AvatarFallback>
@@ -48,7 +60,10 @@ const PatientCard = ({ patient }: Props) => {
                 </p>
               </div>
             </Link>
-            <Button className="text-red-500 border-red-500 border cursor-pointer">
+            <Button
+              className="text-red-500 border-red-500 border cursor-pointer"
+              onClick={handleDelete}
+            >
               <Trash2 />
             </Button>
           </div>
