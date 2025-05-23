@@ -72,6 +72,7 @@ export type Doctor = {
   education: string;
   bio: string;
   profilePictureURL: string;
+  reviews: Review[];
 };
 
 type Pageable = {
@@ -131,4 +132,18 @@ export type MedicalDocument = {
   fileName: string;
   fileUrl: string;
   uploadedAt: string;
+};
+
+export type Review = {
+  id: number;
+  doctorId: number;
+  patientId: number;
+  rating: number;
+  title: string;
+  body: string;
+  createdAt: string;
+  patientFirstName: string;
+  patientLastName: string;
+  patientEmail: string;
+  patientProfilePicture: string;
 };

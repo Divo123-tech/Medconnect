@@ -22,4 +22,4 @@ public class ReviewDTO {
     private String patientLastName;
     private String patientEmail;
     private String patientProfilePicture;
-}
+    }

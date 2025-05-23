@@ -16,7 +16,15 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { useParams } from "react-router";
-
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import {
   Card,
@@ -29,19 +37,9 @@ import { Badge } from "@/Components/ui/badge";
 import { getSingleDoctor } from "@/services/doctorService";
 import ProfileBadge from "../ProfileBadge";
 import { useAuthStore } from "@/store/authStore";
-
-// Using the exact Doctor type as provided
-export type Doctor = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  role: string;
-  specialization: string;
-  startedPracticingAt: string; // ISO date string like "2020-04-25"
-  education: string;
-  bio: string;
-  profilePictureURL: string;
-};
+import { Doctor } from "@/utils/types";
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 export default function DoctorProfilePage() {
   const params = useParams();
@@ -481,7 +479,7 @@ export default function DoctorProfilePage() {
                   </p>
 
                   <Link to="/book-appointment" className="mt-6 w-full">
-                    <Button className="w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-medium py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+                    <Button className="w-full cursor-pointer bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-medium py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
                       <Calendar className="mr-2 h-5 w-5" />
                       Book Appointment
                     </Button>
@@ -675,14 +673,117 @@ export default function DoctorProfilePage() {
                         - Jennifer T.
                       </p>
                     </div>
-                  </div>
+                    <Dialog>
+                      <DialogTrigger className="w-full">
+                        <Button
+                          variant="outline"
+                          className="w-full border-teal-200 text-teal-700 hover:bg-teal-50"
+                        >
+                          View All Reviews
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[600px] max-h-[90vh] bg-white">
+                        <DialogHeader>
+                          <DialogTitle className="text-teal-800 flex items-center">
+                            <ThumbsUp className="mr-2 h-5 w-5 text-teal-600" />
+                            All Patient Reviews for Dr. {doctor.firstName}{" "}
+                            {doctor.lastName}
+                          </DialogTitle>
+                          <DialogDescription>
+                            <div className="flex items-center mt-2">
+                              <div className="flex items-center mr-4">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <Star
+                                    key={star}
+                                    className="h-5 w-5 text-yellow-400 fill-yellow-400"
+                                  />
+                                ))}
+                              </div>
+                              <span className="text-lg font-medium text-gray-700">
+                                5.0
+                              </span>
+                              <span className="text-gray-500 ml-2">
+                                ({doctor.reviews.length} reviews)
+                              </span>
+                            </div>
+                          </DialogDescription>
+                        </DialogHeader>
 
-                  <Button
-                    variant="outline"
-                    className="w-full border-teal-200 text-teal-700 hover:bg-teal-50"
-                  >
-                    View All Reviews
-                  </Button>
+                        {/* Fixed height scrollable container for reviews */}
+                        <div
+                          className="overflow-y-auto pr-1"
+                          style={{ maxHeight: "60vh" }}
+                        >
+                          <div className="space-y-4">
+                            {doctor.reviews.map((review) => (
+                              <div
+                                key={review.id}
+                                className="bg-gray-50 rounded-lg p-4 border border-gray-100"
+                              >
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center">
+                                    <div className="flex items-center mr-2">
+                                      {[1, 2, 3, 4, 5].map((star) => (
+                                        <Star
+                                          key={star}
+                                          className={`h-4 w-4 ${
+                                            star <= review.rating
+                                              ? "text-yellow-400 fill-yellow-400"
+                                              : "text-gray-300"
+                                          }`}
+                                        />
+                                      ))}
+                                    </div>
+                                    <span className="text-sm text-gray-500 ml-2">
+                                      {review.createdAt.substring(0, 10)}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <h4 className="text-lg font-medium text-teal-800 mb-2">
+                                  {review.title}
+                                </h4>
+                                <p className="text-gray-700">{review.body}</p>
+
+                                <div className="flex items-center mt-3">
+                                  <Avatar className="h-8 w-8 mr-2 border border-teal-100">
+                                    <AvatarImage
+                                      src={
+                                        review.patientProfilePicture ||
+                                        "/placeholder.svg"
+                                      }
+                                      alt={review.patientFirstName}
+                                    />
+                                    <AvatarFallback className="bg-teal-100 text-teal-800">
+                                      {review.patientFirstName
+                                        .split(" ")
+                                        .map((name) => name[0])
+                                        .join("")}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <p className="text-gray-600 text-sm">
+                                    - {review.patientFirstName}{" "}
+                                    {review.patientLastName}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <DialogFooter className="mt-4">
+                          <DialogClose>
+                            <Button
+                              variant="outline"
+                              className="border-teal-200 text-teal-700 hover:bg-teal-50 cursor-pointer"
+                            >
+                              Close
+                            </Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 </div>
               </CardContent>
             </Card>
