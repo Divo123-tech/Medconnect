@@ -250,13 +250,15 @@ export default function DoctorDashboard({
             whileTap={{ scale: 0.97 }}
             className="relative overflow-hidden"
           >
-            <Button
-              size="lg"
-              className="text-white w-full h-20 text-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-none shadow-md"
-            >
-              <Files className="mr-2 h-5 w-5" />
-              My Patients
-            </Button>
+            <Link to="/dashboard/my-patients">
+              <Button
+                size="lg"
+                className="text-white w-full h-20 text-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-none shadow-md"
+              >
+                <Files className="mr-2 h-5 w-5" />
+                My Patients
+              </Button>
+            </Link>
             <motion.div
               className="absolute -top-6 -right-6 w-12 h-12 bg-white/10 rounded-full"
               animate={{

@@ -105,6 +105,25 @@ export type GetAllDoctorsResponse = {
   };
   empty: boolean;
 };
+
+export type GetAllPatientsByDoctorsResponse = {
+  content: Patient[];
+  pageable: Pageable;
+  last: boolean;
+  totalPages: number;
+  totalElements: number;
+  numberOfElements: number;
+  first: boolean;
+  size: number;
+  number: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  empty: boolean;
+};
+
 export type Appointment = {
   id: number;
   doctorId: number;

@@ -15,6 +15,7 @@ import LandingPage from "./Components/LandingPage";
 import Dashboard from "./Components/Dashboard/Dashboard";
 import BookAppointment from "./Components/BookAppointment";
 import EditAppointment from "./Components/EditAppointment/EditAppointment";
+import MyPatientsPage from "./Components/MyPatients";
 
 function App() {
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -73,6 +74,10 @@ function App() {
           element={<ProtectedRoute element={<EditAppointment />} />}
         />
         <Route path="/" Component={LandingPage} />
+        <Route
+          path="/dashboard/my-patients"
+          element={<ProtectedRoute element={<MyPatientsPage />} />}
+        />
       </Routes>
     </BrowserRouter>
   );
