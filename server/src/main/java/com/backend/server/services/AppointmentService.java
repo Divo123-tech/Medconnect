@@ -25,6 +25,7 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
+    private final DoctorPatientService doctorPatientService;
 
     /**
      * Get doctor's appointments for a specific date
@@ -120,10 +121,14 @@ public class AppointmentService {
         if (dto.getStatus() != null) {
             if(user.getRole() == User.Role.DOCTOR){
                 appointment.setStatus(dto.getStatus());
+                if(dto.getStatus() == Appointment.Status.CONFIRMED){
+                    doctorPatientService.addDoctorPatient(user.getId(), appointment.getPatient().getId());
+                }
             }
             else if(dto.getStatus() == Appointment.Status.CANCELLED){
                 appointment.setStatus(dto.getStatus());
             }
+
         }
         Appointment updated = appointmentRepository.save(appointment);
         return mapToDTO(updated);
