@@ -33,10 +33,13 @@ public class DoctorPatientController {
     }
 
     @PreAuthorize("hasRole('DOCTOR')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAssignment(@PathVariable Long id) {
-        doctorPatientService.deleteDoctorPatient(id);
-        return ResponseEntity.ok("Assignment deleted successfully");
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteDoctorPatient(
+            @RequestParam Long doctorId,
+            @RequestParam Long patientId
+    ) {
+        doctorPatientService.deleteDoctorPatient(doctorId, patientId);
+        return ResponseEntity.ok("Doctor-Patient relationship deleted successfully.");
     }
     private UserDTO.PatientGetProfileDTO mapToPatientDTO(Patient patient) {
         return new UserDTO.PatientGetProfileDTO(

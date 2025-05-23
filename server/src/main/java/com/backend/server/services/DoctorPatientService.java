@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class DoctorPatientService {
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
 
-    public DoctorPatient addDoctorPatient(Integer doctorId, Integer patientId) {
+    public void addDoctorPatient(Integer doctorId, Integer patientId) {
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
@@ -30,7 +31,7 @@ public class DoctorPatientService {
         doctorPatient.setDoctor(doctor);
         doctorPatient.setPatient(patient);
 
-        return doctorPatientRepository.save(doctorPatient);
+        doctorPatientRepository.save(doctorPatient);
     }
 
     public Page<DoctorPatient> searchPatientsByDoctor(Integer doctorId, String search, int page, int size) {
@@ -41,8 +42,9 @@ public class DoctorPatientService {
                 .findByDoctorAndPatient_FirstNameContainingIgnoreCaseOrDoctorAndPatient_LastNameContainingIgnoreCase(
                         doctor, search, doctor, search, PageRequest.of(page, size));
     }
-
-    public void deleteDoctorPatient(Long id) {
-        doctorPatientRepository.deleteById(id);
+    @Transactional
+    public void deleteDoctorPatient(Long doctorId, Long patientId) {
+        doctorPatientRepository.deleteByDoctor_IdAndPatient_Id(doctorId, patientId);
     }
+
 }

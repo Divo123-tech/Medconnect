@@ -13,4 +13,5 @@ public interface DoctorPatientRepository extends JpaRepository<DoctorPatient, Lo
             Doctor doctor2, String lastName,
             Pageable pageable
     );
+    void deleteByDoctor_IdAndPatient_Id(Long doctorId, Long patientId);
 }
