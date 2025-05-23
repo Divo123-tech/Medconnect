@@ -34,20 +34,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { updateMyProfile } from "@/services/myProfileService";
 import { useAuthStore } from "@/store/authStore";
-
-// Define the Doctor type
-type Doctor = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: string;
-  specialization: string;
-  startedPracticingAt: string; // Using string for date handling in form
-  education: string;
-  bio: string;
-  profilePictureURL: string;
-};
+import { Doctor } from "@/utils/types";
 
 type Props = {
   user: Doctor;
@@ -349,6 +336,52 @@ export default function DoctorProfile({ user }: Props) {
                               required
                               className="border-teal-200 focus:border-teal-400 focus:ring-teal-300"
                             />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="firstName"
+                              className="text-teal-800"
+                            >
+                              Date of Birth
+                            </Label>
+                            <Input
+                              id="firstName"
+                              type="date"
+                              value={doctor.dateOfBirth}
+                              onChange={(e) =>
+                                setDoctor({
+                                  ...doctor,
+                                  dateOfBirth: e.target.value,
+                                })
+                              }
+                              required
+                              className="border-teal-200 focus:border-teal-400 focus:ring-teal-300"
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="sex" className="text-teal-800">
+                              Sex
+                            </Label>
+                            <select
+                              id="sex"
+                              value={doctor.sex}
+                              onChange={(e) =>
+                                setDoctor({
+                                  ...doctor,
+                                  sex: e.target.value,
+                                })
+                              }
+                              required
+                              className="w-full border shadow-sm border-teal-200 focus:border-teal-400 focus:ring-teal-300 rounded-md p-2"
+                            >
+                              <option value="">Select sex</option>
+                              <option value="Male">Male</option>
+                              <option value="Female">Female</option>
+                              <option value="Other">Other</option>
+                            </select>
                           </div>
                         </div>
                         <div className="space-y-2">

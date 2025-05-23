@@ -198,29 +198,6 @@ export default function PatientDetail() {
                     <Heart className="h-12 w-12 text-red-500" />
                   </div>
                 </motion.div>
-
-                {/* Animated pulse rings */}
-                {/* <motion.div
-                  initial={{ scale: 0.8, opacity: 0.8 }}
-                  animate={{ scale: 1.5, opacity: 0 }}
-                  transition={{
-                    duration: 2,
-                    repeat: Number.POSITIVE_INFINITY,
-                    ease: "easeOut",
-                  }}
-                  className="absolute inset-0 rounded-full border-4 border-red-300"
-                /> */}
-                {/* <motion.div
-                  initial={{ scale: 0.8, opacity: 0.8 }}
-                  animate={{ scale: 1.8, opacity: 0 }}
-                  transition={{
-                    duration: 2,
-                    repeat: Number.POSITIVE_INFINITY,
-                    ease: "easeOut",
-                    delay: 0.5,
-                  }}
-                  className="absolute inset-0 rounded-full border-4 border-red-200"
-                /> */}
               </div>
 
               {/* Heartbeat line */}

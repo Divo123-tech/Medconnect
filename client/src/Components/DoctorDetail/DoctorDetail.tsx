@@ -6,13 +6,14 @@ import {
   Award,
   BookOpen,
   Calendar,
+  CalendarDays,
   Clock,
-  MapPin,
   Phone,
   Star,
   Stethoscope,
   ThumbsUp,
   User,
+  VenusAndMars,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { useParams } from "react-router";
@@ -541,18 +542,17 @@ export default function DoctorProfilePage() {
                   </div>
 
                   <div className="flex items-center">
-                    <Phone className="h-5 w-5 text-teal-500 mr-3" />
+                    <CalendarDays className="h-5 w-5 text-teal-500 mr-3" />
                     <div>
-                      <p className="text-gray-700 font-medium">Contact</p>
-                      <p className="text-gray-600">(555) 123-4567</p>
+                      <p className="text-gray-700 font-medium">Date of Birth</p>
+                      <p className="text-gray-600">{doctor.dateOfBirth}</p>
                     </div>
                   </div>
-
                   <div className="flex items-center">
-                    <MapPin className="h-5 w-5 text-teal-500 mr-3" />
+                    <VenusAndMars className="h-5 w-5 text-teal-500 mr-3" />
                     <div>
-                      <p className="text-gray-700 font-medium">Location</p>
-                      <p className="text-gray-600">Medical Center, Suite 302</p>
+                      <p className="text-gray-700 font-medium">Sex</p>
+                      <p className="text-gray-600">{doctor.sex}</p>
                     </div>
                   </div>
                 </div>

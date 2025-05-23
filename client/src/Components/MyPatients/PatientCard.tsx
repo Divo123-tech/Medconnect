@@ -55,7 +55,7 @@ const PatientCard = ({ patient, fetchPatients }: Props) => {
                   {patient.firstName} {patient.lastName}
                 </CardTitle>
                 <p className="text-sm text-gray-500">
-                  {patient.age} years • {patient.sex} •
+                  DOB: {patient.dateOfBirth} • {patient.sex} • Blood Type:{" "}
                   {bloodTypesMap[patient.bloodType as BloodType]}
                 </p>
               </div>
