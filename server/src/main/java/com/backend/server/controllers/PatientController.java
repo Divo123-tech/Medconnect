@@ -1,6 +1,5 @@
 package com.backend.server.controllers;
 
-import com.backend.server.DTO.UserDTO;
 import com.backend.server.entities.Patient;
 import com.backend.server.entities.User;
 import com.backend.server.services.PatientService;
@@ -11,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
+import static com.backend.server.DTO.ToDTOMaps.mapToPatientDTO;
 
 
 @RestController
@@ -34,20 +33,7 @@ public class PatientController {
 
         Patient patient = patientService.getPatientById(id);
 
-        return ResponseEntity.ok(new UserDTO.PatientGetProfileDTO(
-                patient.getId(),
-                patient.getFirstName(),
-                patient.getLastName(),
-                patient.getEmail(),
-                patient.getRole(),
-                patient.getPhoneNumber(),
-                patient.getHeight(),
-                patient.getWeight(),
-                patient.getBloodType(),
-                patient.getConditions(),
-                patient.getProfilePictureUrl(),
-                patient.getMedicalDocuments()
-        ));
+        return ResponseEntity.ok(mapToPatientDTO(patient));
     }
 }
 

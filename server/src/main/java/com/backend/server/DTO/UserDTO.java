@@ -40,6 +40,8 @@ public class UserDTO {
         private String conditions;
         private String profilePictureURL;
         private List<MedicalDocument> medicalDocuments;
+        private LocalDate dateOfBirth;
+        private String sex;
 
     }
 
@@ -59,6 +61,8 @@ public class UserDTO {
         private String education;
         private String bio;
         private String profilePictureURL;
+        private LocalDate dateOfBirth;
+        private String sex;
 
     }
 
@@ -77,6 +81,8 @@ public class UserDTO {
         private String bio;
         private String profilePictureURL;
         private List<ReviewDTO> reviews;
+        private LocalDate dateOfBirth;
+        private String sex;
     }
 
 }

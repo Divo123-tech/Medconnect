@@ -59,6 +59,8 @@ export type Patient = {
   conditions: string;
   profilePictureURL: string;
   medicalDocuments: MedicalDocument[];
+  dateOfBirth: string;
+  sex: string;
 };
 
 export type Doctor = {
@@ -73,6 +75,8 @@ export type Doctor = {
   bio: string;
   profilePictureURL: string;
   reviews: Review[];
+  dateOfBirth: string;
+  sex: string;
 };
 
 type Pageable = {

@@ -1,6 +1,7 @@
 package com.backend.server.controllers;
 
 import com.backend.server.DTO.ReviewDTO;
+import com.backend.server.DTO.ToDTOMaps;
 import com.backend.server.DTO.UserDTO;
 import com.backend.server.entities.Doctor;
 import com.backend.server.entities.Patient;
@@ -20,6 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.Principal;
 
+import static com.backend.server.DTO.ToDTOMaps.mapToDoctorDTO;
+import static com.backend.server.DTO.ToDTOMaps.mapToPatientDTO;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/my-profile")
@@ -34,36 +38,11 @@ public class UserController {
         if (user.getRole() == User.Role.PATIENT) {
             Patient patient = patientService.getPatientById(user.getId());
 
-            return ResponseEntity.ok(new UserDTO.PatientGetProfileDTO(
-                    user.getId(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    user.getEmail(),
-                    user.getRole(),
-                    patient.getPhoneNumber(),
-                    patient.getHeight(),
-                    patient.getWeight(),
-                    patient.getBloodType(),
-                    patient.getConditions(),
-                    patient.getProfilePictureUrl(),
-                    patient.getMedicalDocuments()
-            ));
+            return ResponseEntity.ok(mapToPatientDTO(patient));
         }
         else if(user.getRole() == User.Role.DOCTOR){
             Doctor doctor = doctorService.getDoctorById(user.getId());
-            return ResponseEntity.ok(new UserDTO.DoctorGetProfileDTO(
-                    doctor.getId(),
-                    doctor.getFirstName(),
-                    doctor.getLastName(),
-                    doctor.getEmail(),
-                    doctor.getRole(),
-                    doctor.getSpecialization(),
-                    doctor.getStartedPracticingAt(),
-                    doctor.getEducation(),
-                    doctor.getBio(),
-                    doctor.getProfilePictureUrl(),
-                    doctor.getReviews().stream().map(this::mapToReviewDTO).toList()
-            ));
+            return ResponseEntity.ok(mapToDoctorDTO(doctor));
         }
 
         return ResponseEntity.ok(new UserDTO.UserGetProfileDTO(
@@ -82,35 +61,10 @@ public class UserController {
                                          @RequestPart(value = "profilePicture", required = false) MultipartFile profilePicture) throws IOException {
         User updatedUser = userService.updateUser(principal.getName(), request, profilePicture);
         if (updatedUser instanceof Patient patient) {
-            return ResponseEntity.ok(new UserDTO.PatientGetProfileDTO(
-                    updatedUser.getId(),
-                    updatedUser.getFirstName(),
-                    updatedUser.getLastName(),
-                    updatedUser.getEmail(),
-                    updatedUser.getRole(),
-                    patient.getPhoneNumber(),
-                    patient.getHeight(),
-                    patient.getWeight(),
-                    patient.getBloodType(),
-                    patient.getConditions(),
-                    patient.getProfilePictureUrl(),
-                    patient.getMedicalDocuments()
-            ));
+            return ResponseEntity.ok(mapToPatientDTO(patient));
         }
         else if (updatedUser instanceof Doctor doctor){
-            return ResponseEntity.ok(new UserDTO.DoctorGetProfileDTO(
-                    doctor.getId(),
-                    doctor.getFirstName(),
-                    doctor.getLastName(),
-                    doctor.getEmail(),
-                    doctor.getRole(),
-                    doctor.getSpecialization(),
-                    doctor.getStartedPracticingAt(),
-                    doctor.getEducation(),
-                    doctor.getBio(),
-                    doctor.getProfilePictureUrl(),
-                    doctor.getReviews().stream().map(this::mapToReviewDTO).toList()
-            ));
+            return ResponseEntity.ok(mapToDoctorDTO(doctor));
         }
         return ResponseEntity.ok(new UserDTO.UserGetProfileDTO(
                 updatedUser.getId(),

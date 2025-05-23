@@ -1,15 +1,16 @@
 package com.backend.server.controllers;
 
-import com.backend.server.DTO.ReviewDTO;
+import com.backend.server.DTO.ToDTOMaps;
 import com.backend.server.DTO.UserDTO;
 import com.backend.server.entities.Doctor;
-import com.backend.server.entities.Review;
 import com.backend.server.services.DoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.backend.server.DTO.ToDTOMaps.mapToDoctorDTO;
 
 @RestController
 @RequestMapping("/api/v1/doctors")
@@ -29,52 +30,13 @@ public class DoctorController {
     ) {
         Page<Doctor> doctorsPage = doctorService.findAllDoctors(name, specialization, page, size, sortBy);
 
-        Page<UserDTO.DoctorGetProfileDTO> dtoPage = doctorsPage.map(doctor -> new UserDTO.DoctorGetProfileDTO(
-                doctor.getId(),
-                doctor.getFirstName(),
-                doctor.getLastName(),
-                doctor.getEmail(),
-                doctor.getRole(),
-                doctor.getSpecialization(),
-                doctor.getStartedPracticingAt(),
-                doctor.getEducation(),
-                doctor.getBio(),
-                doctor.getProfilePictureUrl(),
-                doctor.getReviews().stream().map(this::mapToReviewDTO).toList()
-        ));
+        Page<UserDTO.DoctorGetProfileDTO> dtoPage = doctorsPage.map(ToDTOMaps::mapToDoctorDTO);
 
         return ResponseEntity.ok(dtoPage);
     }
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO.DoctorGetProfileDTO> getDoctorById(@PathVariable int id) {
         Doctor doctor = doctorService.getDoctorById(id);
-        return ResponseEntity.ok(new UserDTO.DoctorGetProfileDTO(
-                doctor.getId(),
-                doctor.getFirstName(),
-                doctor.getLastName(),
-                doctor.getEmail(),
-                doctor.getRole(),
-                doctor.getSpecialization(),
-                doctor.getStartedPracticingAt(),
-                doctor.getEducation(),
-                doctor.getBio(),
-                doctor.getProfilePictureUrl(),
-                doctor.getReviews().stream().map(this::mapToReviewDTO).toList()
-        ));
-    }
-    private ReviewDTO mapToReviewDTO(Review review) {
-        return ReviewDTO.builder()
-                .id(review.getId())
-                .doctorId(review.getDoctor().getId())
-                .patientId(review.getPatient().getId())
-                .patientFirstName(review.getPatient().getFirstName())
-                .patientLastName(review.getPatient().getLastName())
-                .patientEmail(review.getPatient().getEmail())
-                .patientProfilePicture(review.getPatient().getProfilePictureUrl())
-                .createdAt(review.getCreatedAt())
-                .rating(review.getRating())
-                .title(review.getTitle())
-                .body(review.getBody())
-                .build();
+        return ResponseEntity.ok(mapToDoctorDTO(doctor));
     }
 }
