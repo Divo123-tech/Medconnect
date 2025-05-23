@@ -37,9 +37,10 @@ import { Badge } from "@/Components/ui/badge";
 import { getSingleDoctor } from "@/services/doctorService";
 import ProfileBadge from "../ProfileBadge";
 import { useAuthStore } from "@/store/authStore";
-import { Doctor } from "@/utils/types";
+import { Doctor, Review } from "@/utils/types";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import DoctorReview from "./DoctorReview";
+import { RatingStars } from "./RatingStars";
 
 export default function DoctorProfilePage() {
   const params = useParams();
@@ -58,6 +59,14 @@ export default function DoctorProfilePage() {
     setUser(null);
     setToken(null);
   };
+  const getAverageRating = (reviews: Review[]): number => {
+    return reviews.reduce(
+      (sum: number, r: Review, _index: number, arr: Review[]) =>
+        sum + r.rating / arr.length,
+      0
+    );
+  };
+
   useEffect(() => {
     const fetchDoctor = async () => {
       setIsLoading(true);
@@ -612,15 +621,10 @@ export default function DoctorProfilePage() {
                 <div className="space-y-6">
                   <div className="flex items-center mb-4">
                     <div className="flex items-center mr-4">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className="h-5 w-5 text-yellow-400 fill-yellow-400"
-                        />
-                      ))}
+                      <RatingStars rating={getAverageRating(doctor.reviews)} />
                     </div>
                     <span className="text-lg font-medium text-gray-700">
-                      5.0
+                      {getAverageRating(doctor.reviews).toFixed(1)}
                     </span>
                     <span className="text-gray-500 ml-2">
                       ({doctor.reviews.length} reviews)
