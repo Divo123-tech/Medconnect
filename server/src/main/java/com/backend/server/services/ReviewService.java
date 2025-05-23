@@ -67,7 +67,7 @@ public class ReviewService {
     public void deleteReview(Long reviewId, Integer patientId) {
         Review existing = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new EntityNotFoundException("Review not found"));
-        if (Objects.equals(existing.getPatient().getId(), patientId)){
+        if (!Objects.equals(existing.getPatient().getId(), patientId)){
             throw new EntityNotFoundException("Only the author can edit their reviews!");
         }
         reviewRepository.deleteById(reviewId);

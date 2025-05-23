@@ -636,12 +636,14 @@ export default function DoctorProfilePage() {
                     )}
                     {doctor.reviews.length > 0 && (
                       <DoctorReview
+                        setDoctor={setDoctor}
                         review={doctor.reviews[0]}
                         key={doctor.reviews[0].id}
                       />
                     )}
                     {doctor.reviews.length > 1 && (
                       <DoctorReview
+                        setDoctor={setDoctor}
                         review={doctor.reviews[1]}
                         key={doctor.reviews[1].id}
                       />
@@ -690,7 +692,11 @@ export default function DoctorProfilePage() {
                           >
                             <div className="space-y-4">
                               {doctor.reviews.map((review) => (
-                                <DoctorReview review={review} key={review.id} />
+                                <DoctorReview
+                                  setDoctor={setDoctor}
+                                  review={review}
+                                  key={review.id}
+                                />
                               ))}
                             </div>
                           </div>
