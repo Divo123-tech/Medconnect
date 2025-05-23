@@ -105,13 +105,13 @@ const DoctorCard = ({ doctor }: Props) => {
           <Link to={`/doctor/${doctor.id}`}>
             <Button
               variant="outline"
-              className="border-teal-200 text-teal-700 hover:bg-teal-50"
+              className="border-teal-200 cursor-pointer text-teal-700 hover:bg-teal-50"
             >
               View Profile
             </Button>
           </Link>
           <Link to={"/book-appointment"}>
-            <Button className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white">
+            <Button className="cursor-pointer bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white">
               Book Appointment
             </Button>
           </Link>

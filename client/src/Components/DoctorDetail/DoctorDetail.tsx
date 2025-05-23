@@ -622,117 +622,92 @@ export default function DoctorProfilePage() {
                     <span className="text-lg font-medium text-gray-700">
                       5.0
                     </span>
-                    <span className="text-gray-500 ml-2">(48 reviews)</span>
+                    <span className="text-gray-500 ml-2">
+                      ({doctor.reviews.length} reviews)
+                    </span>
                   </div>
 
                   {/* Sample reviews */}
                   <div className="space-y-4">
-                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
-                      <div className="flex items-center mb-2">
-                        <div className="flex items-center mr-2">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className="h-4 w-4 text-yellow-400 fill-yellow-400"
-                            />
-                          ))}
-                        </div>
-                        <span className="text-sm text-gray-500">
-                          1 month ago
-                        </span>
-                      </div>
-                      <p className="text-gray-700">
-                        "Dr. Johnson is an exceptional cardiologist. She took
-                        the time to explain my condition thoroughly and created
-                        a treatment plan that worked perfectly for me. Highly
-                        recommend!"
-                      </p>
-                      <p className="text-gray-600 text-sm mt-2">- Michael R.</p>
-                    </div>
-
-                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
-                      <div className="flex items-center mb-2">
-                        <div className="flex items-center mr-2">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className="h-4 w-4 text-yellow-400 fill-yellow-400"
-                            />
-                          ))}
-                        </div>
-                        <span className="text-sm text-gray-500">
-                          3 months ago
-                        </span>
-                      </div>
-                      <p className="text-gray-700">
-                        "Very knowledgeable and caring doctor. She made me feel
-                        comfortable and addressed all my concerns. The office
-                        staff is also very friendly and efficient."
-                      </p>
-                      <p className="text-gray-600 text-sm mt-2">
-                        - Jennifer T.
-                      </p>
-                    </div>
-                    <Dialog>
-                      <DialogTrigger className="w-full">
-                        <Button
-                          variant="outline"
-                          className="w-full border-teal-200 text-teal-700 hover:bg-teal-50"
-                        >
-                          View All Reviews
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-[600px] max-h-[90vh] bg-white">
-                        <DialogHeader>
-                          <DialogTitle className="text-teal-800 flex items-center">
-                            <ThumbsUp className="mr-2 h-5 w-5 text-teal-600" />
-                            All Patient Reviews for Dr. {doctor.firstName}{" "}
-                            {doctor.lastName}
-                          </DialogTitle>
-                          <DialogDescription>
-                            <div className="flex items-center mt-2">
-                              <div className="flex items-center mr-4">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <Star
-                                    key={star}
-                                    className="h-5 w-5 text-yellow-400 fill-yellow-400"
-                                  />
-                                ))}
+                    {doctor.reviews.length == 0 && (
+                      <h1 className="text-xl text-center font-semibold text-teal-600">
+                        No Reviews Yet!
+                      </h1>
+                    )}
+                    {doctor.reviews.length > 0 && (
+                      <DoctorReview
+                        review={doctor.reviews[0]}
+                        key={doctor.reviews[0].id}
+                      />
+                    )}
+                    {doctor.reviews.length > 1 && (
+                      <DoctorReview
+                        review={doctor.reviews[1]}
+                        key={doctor.reviews[1].id}
+                      />
+                    )}
+                    {doctor.reviews.length > 0 && (
+                      <Dialog>
+                        <DialogTrigger className="w-full">
+                          <Button
+                            variant="outline"
+                            className="w-full border-teal-200 text-teal-700 hover:bg-teal-50"
+                          >
+                            View All Reviews
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[600px] max-h-[90vh] bg-white">
+                          <DialogHeader>
+                            <DialogTitle className="text-teal-800 flex items-center">
+                              <ThumbsUp className="mr-2 h-5 w-5 text-teal-600" />
+                              All Patient Reviews for Dr. {doctor.firstName}{" "}
+                              {doctor.lastName}
+                            </DialogTitle>
+                            <DialogDescription>
+                              <div className="flex items-center mt-2">
+                                <div className="flex items-center mr-4">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star
+                                      key={star}
+                                      className="h-5 w-5 text-yellow-400 fill-yellow-400"
+                                    />
+                                  ))}
+                                </div>
+                                <span className="text-lg font-medium text-gray-700">
+                                  5.0
+                                </span>
+                                <span className="text-gray-500 ml-2">
+                                  ({doctor.reviews.length} reviews)
+                                </span>
                               </div>
-                              <span className="text-lg font-medium text-gray-700">
-                                5.0
-                              </span>
-                              <span className="text-gray-500 ml-2">
-                                ({doctor.reviews.length} reviews)
-                              </span>
+                            </DialogDescription>
+                          </DialogHeader>
+
+                          {/* Fixed height scrollable container for reviews */}
+                          <div
+                            className="overflow-y-auto pr-1"
+                            style={{ maxHeight: "60vh" }}
+                          >
+                            <div className="space-y-4">
+                              {doctor.reviews.map((review) => (
+                                <DoctorReview review={review} key={review.id} />
+                              ))}
                             </div>
-                          </DialogDescription>
-                        </DialogHeader>
-
-                        {/* Fixed height scrollable container for reviews */}
-                        <div
-                          className="overflow-y-auto pr-1"
-                          style={{ maxHeight: "60vh" }}
-                        >
-                          <div className="space-y-4">
-                            {doctor.reviews.map((review) => (
-                              <DoctorReview review={review} key={review.id} />
-                            ))}
                           </div>
-                        </div>
 
-                        <DialogFooter className="mt-4">
-                          <DialogClose>
-                            <Button
-                              variant="outline"
-                              className="border-teal-200 text-teal-700 hover:bg-teal-50 cursor-pointer"
-                            >
-                              Close
-                            </Button>
-                          </DialogClose>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
+                          <DialogFooter className="mt-4">
+                            <DialogClose>
+                              <Button
+                                variant="outline"
+                                className="border-teal-200 text-teal-700 hover:bg-teal-50 cursor-pointer"
+                              >
+                                Close
+                              </Button>
+                            </DialogClose>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    )}
                   </div>
                 </div>
               </CardContent>

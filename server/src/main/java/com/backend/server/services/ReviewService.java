@@ -48,9 +48,16 @@ public class ReviewService {
         if (Objects.equals(existing.getPatient().getId(), patientId)){
             throw new EntityNotFoundException("Only the author can edit their reviews!");
         }
-        existing.setRating(dto.getRating());
-        existing.setTitle(dto.getTitle());
-        existing.setBody(dto.getBody());
+        if(dto.getRating() != null){
+            existing.setRating(dto.getRating());
+        }
+        if(dto.getTitle() != null){
+            existing.setTitle(dto.getTitle());
+        }
+        if(dto.getBody() != null){
+            existing.setBody(dto.getBody());
+        }
+
         // Keep date as original or update to now based on your preference
 
         Review updated = reviewRepository.save(existing);
