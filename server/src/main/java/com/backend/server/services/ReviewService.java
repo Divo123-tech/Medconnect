@@ -45,7 +45,7 @@ public class ReviewService {
     public ReviewDTO updateReview(Long reviewId, ReviewDTO dto, Integer patientId) {
         Review existing = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new EntityNotFoundException("Review not found"));
-        if (Objects.equals(existing.getPatient().getId(), patientId)){
+        if (!Objects.equals(existing.getPatient().getId(), patientId)){
             throw new EntityNotFoundException("Only the author can edit their reviews!");
         }
         if(dto.getRating() != null){
