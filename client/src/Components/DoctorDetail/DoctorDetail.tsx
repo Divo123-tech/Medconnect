@@ -8,7 +8,6 @@ import {
   Calendar,
   CalendarDays,
   Clock,
-  Phone,
   Star,
   Stethoscope,
   ThumbsUp,
