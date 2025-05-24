@@ -12,6 +12,10 @@ export const getMyProfile = async (token: string | null) => {
   return res.data;
 };
 
+
+
+
+
 export const updateMyProfile = async (
   token: string | null,
   formData: FormData

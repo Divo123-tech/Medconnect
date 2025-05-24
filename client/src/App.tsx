@@ -16,6 +16,7 @@ import Dashboard from "./Components/Dashboard/Dashboard";
 import BookAppointment from "./Components/BookAppointment";
 import EditAppointment from "./Components/EditAppointment/EditAppointment";
 import MyPatientsPage from "./Components/MyPatients";
+import OAuthSuccess from "./Components/OAuthSuccess";
 
 function App() {
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -48,6 +49,7 @@ function App() {
         />
         <Route path="/doctors" element={<BrowseDoctors />} />
         <Route path="/doctor/:id" element={<DoctorDetail />} />
+        <Route path="oauth-success" element={<OAuthSuccess />} />
         <Route
           path="/patient/:id"
           element={<ProtectedRoute element={<PatientDetail />} />}

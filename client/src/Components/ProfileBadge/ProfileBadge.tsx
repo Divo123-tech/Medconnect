@@ -21,11 +21,11 @@ const ProfileBadge = () => {
         <Avatar className="h-10 w-10 border-2 border-teal-200">
           <AvatarImage
             src="/placeholder.svg?height=40&width=40"
-            alt={user.firstName.charAt(0) + user.lastName.charAt(0)}
+            alt={user.firstName?.charAt(0) + user.lastName?.charAt(0)}
           />
           <AvatarFallback>
-            {user.firstName.charAt(0)}
-            {user.lastName.charAt(0)}
+            {user.firstName?.charAt(0)}
+            {user.lastName?.charAt(0)}
           </AvatarFallback>
         </Avatar>
         <motion.div
