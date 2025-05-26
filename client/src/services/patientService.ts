@@ -5,12 +5,16 @@ export const getPatient = async (
   token: string | null,
   id: string | undefined
 ) => {
-  const res = await axios.get(`http://localhost:8080/api/v1/patients/${id}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const res = await axios.get(
+    `${import.meta.env.VITE_BACKENDURL}
+/api/v1/patients/${id}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   return res.data;
 };
@@ -21,7 +25,8 @@ export const getPatientsByDoctor = async (
   searchTerm: string
 ): Promise<GetAllPatientsByDoctorsResponse> => {
   const res = await axios.get(
-    `http://localhost:8080/api/v1/doctor-patients/${doctorId}?search=${searchTerm}`,
+    `${import.meta.env.VITE_BACKENDURL}
+/api/v1/doctor-patients/${doctorId}?search=${searchTerm}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -39,7 +44,8 @@ export const deletePatientByDoctor = async (
   patientId: number | undefined
 ) => {
   const res = await axios.delete(
-    `http://localhost:8080/api/v1/doctor-patients/delete?doctorId=${doctorId}&patientId=${patientId}`,
+    `${import.meta.env.VITE_BACKENDURL}
+/api/v1/doctor-patients/delete?doctorId=${doctorId}&patientId=${patientId}`,
     {
       headers: {
         "Content-Type": "application/json",

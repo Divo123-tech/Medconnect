@@ -8,7 +8,8 @@ export const createReview = async (
   body: string
 ) => {
   const res = await axios.post(
-    `http://localhost:8080/api/v1/reviews`,
+    `${import.meta.env.VITE_BACKENDURL}
+/api/v1/reviews`,
     {
       doctorId,
       rating,
@@ -33,7 +34,8 @@ export const updateReview = async (
   body?: string
 ) => {
   const res = await axios.patch(
-    `http://localhost:8080/api/v1/reviews/${reviewId}`,
+    `${import.meta.env.VITE_BACKENDURL}
+/api/v1/reviews/${reviewId}`,
     {
       rating,
       title,
@@ -55,7 +57,8 @@ export const deleteReview = async (
   reviewId: number | undefined
 ) => {
   const res = await axios.delete(
-    `http://localhost:8080/api/v1/reviews/${reviewId}`,
+    `${import.meta.env.VITE_BACKENDURL}
+/api/v1/reviews/${reviewId}`,
     {
       headers: {
         "Content-Type": "application/json",
