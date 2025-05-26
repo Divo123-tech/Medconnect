@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,11 +31,10 @@ public class AppointmentService {
     /**
      * Get doctor's appointments for a specific date
      */
-    public Page<AppointmentDTO.GetAppointmentDTO> getDoctorAppointmentsByDate(Doctor doctor, LocalDate date, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return appointmentRepository.findByDoctorAndDate(doctor, date, pageable)
-                .map(this::mapToDTO);
+    public List<LocalTime> getDoctorAppointmentTimesByDate(Doctor doctor, LocalDate date) {
+        return appointmentRepository.findByDoctorAndDate(doctor, date).stream().map(Appointment::getTime).toList();
     }
+
 
     /**
      * Check for appointment conflicts

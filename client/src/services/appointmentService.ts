@@ -8,23 +8,28 @@ export const createAppointment = async (
   time: string | null,
   reason: string
 ) => {
-  const res = await axios.post(
-    `http://localhost:8080/api/v1/appointments`,
-    {
-      doctorId,
-      date,
-      time,
-      reason,
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+  try {
+    const res = await axios.post(
+      `http://localhost:8080/api/v1/appointments`,
+      {
+        doctorId,
+        date,
+        time,
+        reason,
       },
-    }
-  );
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-  return res.data;
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
 };
 
 export const getAppointments = async (token: string | null, status: string) => {
@@ -114,4 +119,26 @@ export const updateAppointment = async (
   );
 
   return res.data;
+};
+
+export const getTakenTimeSlots = async (
+  token: string | null,
+  doctorId: number | undefined,
+  date: string | undefined
+): Promise<string[]> => {
+  try {
+    const res = await axios.get(
+      `http://localhost:8080/api/v1/appointments/doctor/${doctorId}/date/${date}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
 };

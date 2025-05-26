@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
     // Find all appointments for a doctor on a specific date
-    Page<Appointment> findByDoctorAndDate(Doctor doctor, LocalDate date, Pageable pageable);
+    List<Appointment> findByDoctorAndDate(Doctor doctor, LocalDate date);
 
     // Find a specific appointment for conflict checking
     Optional<Appointment> findByDoctorAndDateAndTime(Doctor doctor, LocalDate date, LocalTime time);

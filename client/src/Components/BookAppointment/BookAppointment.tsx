@@ -20,24 +20,16 @@ import { format } from "date-fns";
 import { Calendar as CalendarComponent } from "@/Components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/Components/ui/button";
-import { Doctor } from "@/utils/types";
+import { ApiErrorResponse, Doctor } from "@/utils/types";
 import { getDoctors } from "@/services/doctorService";
-import { createAppointment } from "@/services/appointmentService";
+import {
+  createAppointment,
+  getTakenTimeSlots,
+} from "@/services/appointmentService";
 import { useAuthStore } from "@/store/authStore";
 import { useNavigate } from "react-router";
 
 // Generate time slots from 9am to 5pm in 30-minute intervals
-const generateTimeSlots = () => {
-  const slots = [];
-  for (let hour = 9; hour < 17; hour++) {
-    const hourStr = hour.toString().padStart(2, "0");
-    slots.push(`${hourStr}:00`);
-    slots.push(`${hourStr}:30`);
-  }
-  return slots;
-};
-
-const timeSlots = generateTimeSlots();
 
 export default function BookAppointment() {
   const [step, setStep] = useState(1);
@@ -52,6 +44,7 @@ export default function BookAppointment() {
   const [searchTerm, setSearchTerm] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
   const { token } = useAuthStore();
   const navigate = useNavigate();
   useEffect(() => {
@@ -74,6 +67,51 @@ export default function BookAppointment() {
     fetchDoctorsData();
   }, [currentPage, searchTerm]);
 
+  useEffect(() => {
+    if (selectedDoctor && selectedDate)
+      (async () => {
+        // Get taken time slots and store in a Set for fast O(1) lookups
+        const takenTimeSlots = new Set(
+          await getTakenTimeSlots(
+            token,
+            selectedDoctor?.id,
+            selectedDate.toISOString().split("T")[0] // Format: YYYY-MM-DD
+          )
+        );
+
+        // Generate all half-hour slots from 09:00 to 16:30
+        const slots: string[] = [];
+        const now = new Date();
+        const isToday = selectedDate.toDateString() === now.toDateString();
+
+        for (let hour = 9; hour < 17; hour++) {
+          const hourStr = hour.toString().padStart(2, "0");
+
+          ["00", "30"].forEach((minute) => {
+            const fullTime = `${hourStr}:${minute}:00`;
+            const displayTime = `${hourStr}:${minute}`;
+
+            // Create a Date object for the slot to compare with current time
+            const slotDateTime = new Date(selectedDate);
+            slotDateTime.setHours(hour, parseInt(minute), 0, 0);
+
+            // Skip if slot is taken OR slot is in the past (if today)
+            if (
+              !takenTimeSlots.has(fullTime) &&
+              (!isToday || slotDateTime > now)
+            ) {
+              slots.push(displayTime);
+            }
+          });
+        }
+
+        // Update state and debug logs
+        setAvailableTimeSlots(slots);
+        console.log("Available Slots:", slots);
+        console.log("Taken Time Slots:", takenTimeSlots);
+      })();
+  }, [selectedDate, selectedDoctor, selectedDoctor?.firstName, token, step]);
+
   const handleNext = async () => {
     if (step < 4) {
       setStep(step + 1);
@@ -92,18 +130,14 @@ export default function BookAppointment() {
         setTimeout(() => {
           navigate("/dashboard");
         }, 2000);
-      } catch (err) {
-        setIsSubmitting(false);
-        console.log(err);
-      }
+      } catch (err: unknown) {
+        const apiError = err as ApiErrorResponse;
 
-      //   setTimeout(() => {
-      //     setIsSubmitting(false);
-      //     setIsComplete(true);
-      //     setTimeout(() => {
-      //       window.location.href = "/dashboard";
-      //     }, 2000);
-      //   }, 1500);
+        setStep(3);
+        setSelectedTime(null);
+        setIsSubmitting(false);
+        console.log(apiError);
+      }
     }
     console.log("doctor", selectedDoctor);
     console.log("date", selectedDate);
@@ -113,6 +147,8 @@ export default function BookAppointment() {
   const handleBack = () => {
     if (step > 1) {
       setStep(step - 1);
+    } else {
+      navigate("/dashboard");
     }
   };
 
@@ -530,7 +566,7 @@ export default function BookAppointment() {
                   variants={itemVariants}
                   className="grid grid-cols-3 gap-3 sm:grid-cols-4"
                 >
-                  {timeSlots.map((time) => (
+                  {availableTimeSlots.map((time) => (
                     <motion.button
                       key={time}
                       whileHover={{ scale: 1.05 }}
@@ -668,10 +704,11 @@ export default function BookAppointment() {
           <Button
             variant="outline"
             onClick={handleBack}
-            disabled={step === 1 || isSubmitting}
+            disabled={isSubmitting}
             className="flex items-center cursor-pointer hover:opacity-50"
           >
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back{" "}
+            {step === 1 && "to Dashboard"}
           </Button>
 
           <Button

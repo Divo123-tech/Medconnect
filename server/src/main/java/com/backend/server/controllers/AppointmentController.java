@@ -12,9 +12,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.time.LocalDate;
@@ -36,15 +38,14 @@ public class AppointmentController {
      * Get doctor's appointments for a specific date
      */
     @GetMapping("/doctor/{doctorId}/date/{date}")
-    public ResponseEntity<Page<AppointmentDTO.GetAppointmentDTO>> getDoctorAppointmentsByDate(
+    public ResponseEntity<List<LocalTime>> getDoctorAppointmentsByDate(
             @PathVariable int doctorId,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+            ) {
 
         Doctor doctor = doctorService.getDoctorById(doctorId);
 
-        Page<AppointmentDTO.GetAppointmentDTO> appointments = appointmentService.getDoctorAppointmentsByDate(doctor, date, page, size);
+        List<LocalTime> appointments = appointmentService.getDoctorAppointmentTimesByDate(doctor, date);
         return ResponseEntity.ok(appointments);
     }
 
@@ -109,7 +110,14 @@ public class AppointmentController {
     @PostMapping
     public ResponseEntity<AppointmentDTO.GetAppointmentDTO> createAppointment(@RequestBody AppointmentDTO.GetAppointmentDTO appointmentDTO, Authentication auth) {
         User userRequesting = (User) auth.getPrincipal(); // this is safe
+        Doctor doctor = doctorService.getDoctorById(appointmentDTO.getDoctorId());
+
+        boolean isAvailable = appointmentService.isAppointmentAvailable(doctor, appointmentDTO.getDate(), appointmentDTO.getTime());
+        if (!isAvailable) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "time not available");
+        }
         return ResponseEntity.ok(appointmentService.createAppointment(appointmentDTO, userRequesting.getId()));
+
     }
 
     @PatchMapping("/{id}")
