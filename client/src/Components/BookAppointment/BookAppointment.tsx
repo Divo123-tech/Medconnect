@@ -28,7 +28,8 @@ import {
 } from "@/services/appointmentService";
 import { useAuthStore } from "@/store/authStore";
 import { useNavigate } from "react-router";
-
+import { toast } from "sonner";
+import { Toaster } from "@/Components/ui/sonner";
 // Generate time slots from 9am to 5pm in 30-minute intervals
 
 export default function BookAppointment() {
@@ -132,10 +133,13 @@ export default function BookAppointment() {
         }, 2000);
       } catch (err: unknown) {
         const apiError = err as ApiErrorResponse;
-
+        toast.error("Sorry, your appointment booking went wrong!", {
+          description: "Someone might've just taken the timeslot you chose.",
+        });
         setStep(3);
         setSelectedTime(null);
         setIsSubmitting(false);
+
         console.log(apiError);
       }
     }
@@ -733,6 +737,7 @@ export default function BookAppointment() {
           </Button>
         </div>
       </div>
+      <Toaster richColors />
     </div>
   );
 }
