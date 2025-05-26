@@ -6,9 +6,13 @@ import { JSX } from "react";
 
 interface ProtectedRouteProps {
   element: JSX.Element;
+  checkDoctor?: boolean;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  element,
+  checkDoctor = false,
+}) => {
   const { token, setUser, setToken } = useAuthStore();
   const [isVerifying, setIsVerifying] = useState(true);
   const [isValid, setIsValid] = useState<boolean | null>(null);
@@ -24,7 +28,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
       try {
         const user = await getMyProfile(token);
         setUser(user);
-        setIsValid(true);
+        if (checkDoctor) {
+          if (user.role == "DOCTOR") {
+            setIsValid(true);
+          } else {
+            setIsValid(false);
+          }
+        }
       } catch (err) {
         console.error("Token verification failed:", err);
         setToken(null);
@@ -36,7 +46,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
     };
 
     verifyToken();
-  }, [token, setUser, setToken]);
+  }, [token, setUser, setToken, checkDoctor]);
 
   if (isVerifying) return null; // Or a loading spinner
 

@@ -6,7 +6,7 @@ import AnswerVideo from "./Components/VideoConference/AnswerVideo";
 import Home from "./Components/Home";
 import Register from "./Components/Auth/Register";
 import LoginPage from "./Components/Auth/Login";
-import ProfilePage from "./Components/MyProfile";
+import MyProfile from "./Components/MyProfile";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import BrowseDoctors from "./Components/BrowseDoctors";
 import DoctorDetail from "./Components/DoctorDetail";
@@ -45,14 +45,16 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route
           path="/my-profile"
-          element={<ProtectedRoute element={<ProfilePage />} />}
+          element={<ProtectedRoute element={<MyProfile />} />}
         />
         <Route path="/doctors" element={<BrowseDoctors />} />
         <Route path="/doctor/:id" element={<DoctorDetail />} />
         <Route path="oauth-success" element={<OAuthSuccess />} />
         <Route
           path="/patient/:id"
-          element={<ProtectedRoute element={<PatientDetail />} />}
+          element={
+            <ProtectedRoute element={<PatientDetail />} checkDoctor={true} />
+          }
         />
         <Route
           path="/dashboard"

@@ -5,6 +5,7 @@ import DoctorDashboard from "./DoctorDashboard/DoctorDashboard";
 import ProfileBadge from "../ProfileBadge";
 import { Button } from "../ui/button";
 import { Stethoscope } from "lucide-react";
+import ProtectedRoute from "../ProtectedRoute";
 type Props = {
   remoteStream: MediaStream | null;
   setRemoteStream: React.Dispatch<React.SetStateAction<MediaStream | null>>;
@@ -48,15 +49,24 @@ const Dashboard = ({ remoteStream, setRemoteStream }: Props) => {
         </div>
       </header>
       {user?.role == "PATIENT" && isPatient(user) && (
-        <PatientDashboard
-          remoteStream={remoteStream}
-          setRemoteStream={setRemoteStream}
+        <ProtectedRoute
+          element={
+            <PatientDashboard
+              remoteStream={remoteStream}
+              setRemoteStream={setRemoteStream}
+            />
+          }
         />
       )}
       {user?.role == "DOCTOR" && isDoctor(user) && (
-        <DoctorDashboard
-          remoteStream={remoteStream}
-          setRemoteStream={setRemoteStream}
+        <ProtectedRoute
+          element={
+            <DoctorDashboard
+              remoteStream={remoteStream}
+              setRemoteStream={setRemoteStream}
+            />
+          }
+          checkDoctor={true}
         />
       )}
     </>

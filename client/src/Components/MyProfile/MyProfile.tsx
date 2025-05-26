@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store/authStore";
 import PatientProfile from "./PatientProfile";
 import DoctorProfile from "./DoctorProfile";
 import { isDoctor, isPatient } from "@/utils/typeGuards";
+import ProtectedRoute from "../ProtectedRoute";
 
 export default function ProfilePage() {
   const { user } = useAuthStore();
@@ -21,10 +22,13 @@ export default function ProfilePage() {
       </div>
 
       {user?.role == "PATIENT" && isPatient(user) && (
-        <PatientProfile user={user} />
+        <ProtectedRoute element={<PatientProfile user={user} />} />
       )}
       {user?.role == "DOCTOR" && isDoctor(user) && (
-        <DoctorProfile user={user} />
+        <ProtectedRoute
+          element={<DoctorProfile user={user} />}
+          checkDoctor={true}
+        />
       )}
     </div>
   );
