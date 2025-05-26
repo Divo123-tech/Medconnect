@@ -4,10 +4,8 @@ export const uploadMedicalDocument = async (
   token: string | null,
   formData: FormData
 ) => {
-  console.log(token);
-
   const res = await axios.post(
-    "http://localhost:8080/api/v1/documents/upload",
+    `${import.meta.env.VITE_BACKEND_URL}/api/v1/documents/upload`,
     formData,
     {
       headers: {
@@ -26,11 +24,14 @@ export const getMedicalDocuments = async (
 ) => {
   console.log(token);
 
-  const res = await axios.post(`http://localhost:8080/api/v1/documents/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const res = await axios.post(
+    `${import.meta.env.VITE_BACKEND_URL}/api/v1/documents/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   console.log(res.data);
   return res.data;
 };
@@ -42,7 +43,7 @@ export const deleteMedicalDocument = async (
   console.log(token);
 
   const res = await axios.delete(
-    `http://localhost:8080/api/v1/documents/${id}`,
+    `${import.meta.env.VITE_BACKEND_URL}/api/v1/documents/${id}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
