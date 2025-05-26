@@ -10,7 +10,7 @@ export const createAppointment = async (
 ) => {
   try {
     const res = await axios.post(
-      `http://localhost:8080/api/v1/appointments`,
+      `${import.meta.env.VITE_BACKENDURL}/api/v1/appointments`,
       {
         doctorId,
         date,
@@ -34,7 +34,7 @@ export const createAppointment = async (
 
 export const getAppointments = async (token: string | null, status: string) => {
   const res = await axios.get(
-    `http://localhost:8080/api/v1/appointments?status=${status}`,
+    `${import.meta.env.VITE_BACKENDURL}/api/v1/appointments?status=${status}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +50,7 @@ export const getAppointmentById = async (
   id: string
 ): Promise<Appointment> => {
   const res = await axios.get(
-    `http://localhost:8080/api/v1/appointments/${id}`,
+    `${import.meta.env.VITE_BACKENDURL}/api/v1/appointments/${id}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -66,7 +66,9 @@ export const getAppointmentsForDoctor = async (
   status: string
 ) => {
   const res = await axios.get(
-    `http://localhost:8080/api/v1/appointments/doctor?status=${status}`,
+    `${
+      import.meta.env.VITE_BACKENDURL
+    }/api/v1/appointments/doctor?status=${status}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -84,7 +86,7 @@ export const updateAppointmentStatus = async (
   status: string
 ) => {
   const res = await axios.patch(
-    `http://localhost:8080/api/v1/appointments/${id}`,
+    `${import.meta.env.VITE_BACKENDURL}/api/v1/appointments/${id}`,
     { status },
     {
       headers: {
@@ -108,7 +110,7 @@ export const updateAppointment = async (
   }
 ) => {
   const res = await axios.patch(
-    `http://localhost:8080/api/v1/appointments/${id}`,
+    `${import.meta.env.VITE_BACKENDURL}/api/v1/appointments/${id}`,
     updatedAppointment,
     {
       headers: {
@@ -128,7 +130,9 @@ export const getTakenTimeSlots = async (
 ): Promise<string[]> => {
   try {
     const res = await axios.get(
-      `http://localhost:8080/api/v1/appointments/doctor/${doctorId}/date/${date}`,
+      `${
+        import.meta.env.VITE_BACKENDURL
+      }/api/v1/appointments/doctor/${doctorId}/date/${date}`,
       {
         headers: {
           "Content-Type": "application/json",

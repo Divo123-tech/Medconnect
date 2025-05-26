@@ -15,6 +15,7 @@ import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { RegisterRequest } from "@/utils/types";
 import { register } from "@/services/authService";
+import { handleGoogleLogin } from "@/utils/shared";
 
 const Register = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,9 +31,6 @@ const Register = () => {
     email: "",
     password: "",
   });
-  const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
-  };
   const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

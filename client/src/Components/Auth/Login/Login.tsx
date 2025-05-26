@@ -14,7 +14,7 @@ import { LoginRequest } from "@/utils/types";
 import { login } from "@/services/authService";
 import { useAuthStore } from "@/store/authStore";
 import { getMyProfile } from "@/services/myProfileService";
-
+import { handleGoogleLogin } from "@/utils/shared";
 export default function LoginPage() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,6 +25,7 @@ export default function LoginPage() {
     email: "",
     password: "",
   });
+
   // Animation states
   const [checkmarkAnimationComplete, setCheckmarkAnimationComplete] =
     useState(false);
@@ -39,9 +40,7 @@ export default function LoginPage() {
       return () => clearTimeout(timer);
     }
   }, [checkmarkAnimationComplete, navigate]);
-  const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
-  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
