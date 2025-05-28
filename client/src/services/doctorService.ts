@@ -16,7 +16,7 @@ export const getDoctors = async ({
 }) => {
   try {
     const res = await axios.get<GetAllDoctorsResponse>(
-      `${import.meta.env.VITE_BACKEND_URL}/api/v1/doctors`,
+      `${import.meta.env.VITE_BACKENDURL}/api/v1/doctors`,
       {
         params: {
           name,
@@ -37,7 +37,7 @@ export const getDoctors = async ({
 export const getSingleDoctor = async (id: number | string | undefined) => {
   try {
     const res = await axios.get<Doctor>(
-      `${import.meta.env.VITE_BACKEND_URL}/api/v1/doctors/${id}`
+      `${import.meta.env.VITE_BACKENDURL}/api/v1/doctors/${id}`
     );
     console.log(res);
     return res.data;

@@ -5,7 +5,7 @@ export const uploadMedicalDocument = async (
   formData: FormData
 ) => {
   const res = await axios.post(
-    `${import.meta.env.VITE_BACKEND_URL}/api/v1/documents/upload`,
+    `${import.meta.env.VITE_BACKENDURL}/api/v1/documents/upload`,
     formData,
     {
       headers: {
@@ -25,7 +25,7 @@ export const getMedicalDocuments = async (
   console.log(token);
 
   const res = await axios.post(
-    `${import.meta.env.VITE_BACKEND_URL}/api/v1/documents/${id}`,
+    `${import.meta.env.VITE_BACKENDURL}/api/v1/documents/${id}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -43,7 +43,7 @@ export const deleteMedicalDocument = async (
   console.log(token);
 
   const res = await axios.delete(
-    `${import.meta.env.VITE_BACKEND_URL}/api/v1/documents/${id}`,
+    `${import.meta.env.VITE_BACKENDURL}/api/v1/documents/${id}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

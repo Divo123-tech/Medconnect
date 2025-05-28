@@ -25,6 +25,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     Page<Appointment> findByPatientAndStatus(Patient patient, Appointment.Status status, Pageable pageable);
 
     // Optional: Find all appointments of a doctor (not limited by date)
-    Page<Appointment> findByDoctorAndStatus(Doctor doctor, Appointment.Status status, Pageable pageable);
+    List<Appointment> findByDoctorAndStatus(Doctor doctor, Appointment.Status status);
 
 }

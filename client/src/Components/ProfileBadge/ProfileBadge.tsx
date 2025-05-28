@@ -20,8 +20,9 @@ const ProfileBadge = () => {
       >
         <Avatar className="h-10 w-10 border-2 border-teal-200">
           <AvatarImage
-            src="/placeholder.svg?height=40&width=40"
+            // src={`${import.meta.env.VITE_BACKENDURL}${user.profilePictureURL}`}
             alt={user.firstName?.charAt(0) + user.lastName?.charAt(0)}
+            // className="object-fill w-full h-full"
           />
           <AvatarFallback>
             {user.firstName?.charAt(0)}

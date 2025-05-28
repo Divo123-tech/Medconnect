@@ -69,9 +69,9 @@ export default function DoctorDashboard({
         getAppointmentsForDoctor(token, "COMPLETED"),
       ]);
 
-      setPendingAppointments(pending.content);
-      setConfirmedAppointments(confirmed.content);
-      setCompletedAppointments(completed.content);
+      setPendingAppointments(pending);
+      setConfirmedAppointments(confirmed);
+      setCompletedAppointments(completed);
     } catch (err) {
       console.error("Failed to fetch appointments:", err);
     }
@@ -125,6 +125,13 @@ export default function DoctorDashboard({
     typeOfCall,
     user?.email,
   ]);
+  // Get today's date in ISO string (yyyy-mm-dd)
+  const today = new Date().toISOString().split("T")[0];
+
+  // Assuming each appointment has a `date` string like '2025-05-26'
+  const todayAppointments = confirmedAppointments.filter(
+    (a) => a.date === today
+  );
 
   //We know which type of client this is and have PC.
   //Add socketlisteners
@@ -298,7 +305,9 @@ export default function DoctorDashboard({
                 <Users className="h-5 w-5" />
               </div>
               <div className="mt-2 flex items-baseline">
-                <span className="text-3xl font-bold">4</span>
+                <span className="text-3xl font-bold">
+                  {todayAppointments.length}
+                </span>
                 <span className="ml-1 text-sm opacity-80">appointments</span>
               </div>
               <div className="mt-2">

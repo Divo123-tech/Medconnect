@@ -9,7 +9,7 @@ export const register = async ({
 }: RegisterRequest) => {
   try {
     const response = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/register`,
+      `${import.meta.env.VITE_BACKENDURL}/api/v1/auth/register`,
       {
         firstName,
         lastName,
@@ -36,7 +36,7 @@ export const register = async ({
 export const login = async ({ email, password }: LoginRequest) => {
   try {
     const response = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/login`,
+      `${import.meta.env.VITE_BACKENDURL}/api/v1/auth/login`,
       {
         email,
         password,

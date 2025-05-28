@@ -88,16 +88,16 @@ public class AppointmentController {
      * Get all appointments for a doctor
      */
     @GetMapping("/doctor")
-    public ResponseEntity<Page<AppointmentDTO.GetAppointmentDTO>> getDoctorAppointments(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+    public ResponseEntity<List<AppointmentDTO.GetAppointmentDTO>> getDoctorAppointments(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "CONFIRMED") String status,
             Authentication auth) {
         User user = (User) auth.getPrincipal(); // this is safe
 
         Doctor doctor = doctorService.getDoctorById(user.getId());
 
-        Page<AppointmentDTO.GetAppointmentDTO> appointments = appointmentService.getDoctorAppointments(doctor, Appointment.Status.valueOf(status), page, size);
+        List<AppointmentDTO.GetAppointmentDTO> appointments = appointmentService.getDoctorAppointments(doctor, Appointment.Status.valueOf(status));
         return ResponseEntity.ok(appointments);
     }
 

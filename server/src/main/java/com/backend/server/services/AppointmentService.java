@@ -56,10 +56,10 @@ public class AppointmentService {
     /**
      * Get all appointments for a doctor
      */
-    public Page<AppointmentDTO.GetAppointmentDTO> getDoctorAppointments(Doctor doctor,  Appointment.Status status, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return appointmentRepository.findByDoctorAndStatus(doctor, status, pageable)
-                .map(this::mapToDTO);
+    public List<AppointmentDTO.GetAppointmentDTO> getDoctorAppointments(Doctor doctor,  Appointment.Status status) {
+//        Pageable pageable = PageRequest.of(page, size);
+        return appointmentRepository.findByDoctorAndStatus(doctor, status).stream()
+                .map(this::mapToDTO).toList();
 
     }
 
