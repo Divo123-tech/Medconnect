@@ -226,7 +226,9 @@ const PatientProfile = ({ user }: Props) => {
                         <img
                           src={
                             tempProfilePicture ||
-                            `http://localhost:8080${patient.profilePictureURL}`
+                            `${import.meta.env.VITE_BACKENDURL}${
+                              patient.profilePictureURL
+                            }`
                           }
                           alt="Profile"
                           className="object-cover w-full h-full"

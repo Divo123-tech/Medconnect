@@ -20,7 +20,7 @@ import { format } from "date-fns";
 import { Calendar as CalendarComponent } from "@/Components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/Components/ui/button";
-import { ApiErrorResponse, Doctor } from "@/utils/types";
+import { Doctor } from "@/utils/types";
 import { getDoctors } from "@/services/doctorService";
 import {
   createAppointment,
@@ -132,15 +132,13 @@ export default function BookAppointment() {
           navigate("/dashboard");
         }, 2000);
       } catch (err: unknown) {
-        const apiError = err as ApiErrorResponse;
         toast.error("Sorry, your appointment booking went wrong!", {
           description: "Someone might've just taken the timeslot you chose.",
         });
         setStep(3);
         setSelectedTime(null);
         setIsSubmitting(false);
-
-        console.log(apiError);
+        console.log(err)
       }
     }
     console.log("doctor", selectedDoctor);
@@ -402,7 +400,9 @@ export default function BookAppointment() {
                         <div className="flex items-center">
                           <Avatar className="h-12 w-12 mr-4">
                             <img
-                              src={`http://localhost:8080${doctor.profilePictureURL}`}
+                              src={`${import.meta.env.VITE_BACKENDURL}${
+                                doctor.profilePictureURL
+                              }`}
                               alt={doctor.firstName + " " + doctor.lastName}
                             />
                           </Avatar>
@@ -456,7 +456,9 @@ export default function BookAppointment() {
                   >
                     <Avatar className="h-10 w-10 mr-3">
                       <img
-                        src={`http://localhost:8080${selectedDoctor.profilePictureURL}`}
+                        src={`${import.meta.env.VITE_BACKENDURL}${
+                          selectedDoctor.profilePictureURL
+                        }`}
                         alt={
                           selectedDoctor.firstName +
                           " " +
@@ -541,7 +543,9 @@ export default function BookAppointment() {
                     <div className="flex items-center mb-2">
                       <Avatar className="h-10 w-10 mr-3">
                         <img
-                          src={`http://localhost:8080${selectedDoctor.profilePictureURL}`}
+                          src={`${import.meta.env.VITE_BACKENDURL}${
+                            selectedDoctor.profilePictureURL
+                          }`}
                           alt={
                             selectedDoctor.firstName +
                             " " +
@@ -614,7 +618,9 @@ export default function BookAppointment() {
                     <div className="flex items-center mb-3">
                       <Avatar className="h-12 w-12 mr-4">
                         <img
-                          src={`http://localhost:8080${selectedDoctor.profilePictureURL}`}
+                          src={`${import.meta.env.VITE_BACKENDURL}${
+                            selectedDoctor.profilePictureURL
+                          }`}
                           alt={
                             selectedDoctor.firstName +
                             " " +
