@@ -147,7 +147,7 @@ export type Appointment = {
 
   reason: string;
 
-  status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"; // or use enum if you have it
+  status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED";
 };
 
 export type MedicalDocument = {
@@ -169,12 +169,4 @@ export type Review = {
   patientLastName: string;
   patientEmail: string;
   patientProfilePicture: string;
-};
-
-export type ApiErrorResponse = {
-  timestamp: string; // ISO string
-  status: number; // HTTP status code
-  error: string; // HTTP status text (e.g., "Conflict")
-  message: string; // Custom error message (e.g., "time not available")
-  path: string; // The URL path of the request
 };

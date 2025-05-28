@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/store/authStore";
 import PatientDashboard from "./PatientDashboard";
 import { isDoctor, isPatient } from "@/utils/typeGuards";
-import DoctorDashboard from "./DoctorDashboard/DoctorDashboard";
+import DoctorDashboard from "./DoctorDashboard";
 import ProfileBadge from "../ProfileBadge";
 import { Button } from "../ui/button";
 import { Stethoscope } from "lucide-react";
@@ -49,14 +49,6 @@ const Dashboard = ({ remoteStream, setRemoteStream }: Props) => {
         </div>
       </header>
       {user?.role == "PATIENT" && isPatient(user) && (
-        // <ProtectedRoute
-        //   element={
-        //     <PatientDashboard
-        //       remoteStream={remoteStream}
-        //       setRemoteStream={setRemoteStream}
-        //     />
-        //   }
-        // />
         <PatientDashboard
           remoteStream={remoteStream}
           setRemoteStream={setRemoteStream}

@@ -123,6 +123,23 @@ export const updateAppointment = async (
   return res.data;
 };
 
+export const deleteAppointment = async (
+  token: string | null,
+  id: number | undefined
+) => {
+  const res = await axios.delete(
+    `${import.meta.env.VITE_BACKENDURL}/api/v1/appointments/${id}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
+};
+
 export const getTakenTimeSlots = async (
   token: string | null,
   doctorId: number | undefined,

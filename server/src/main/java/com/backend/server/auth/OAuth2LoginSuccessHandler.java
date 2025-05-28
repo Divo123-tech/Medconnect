@@ -53,7 +53,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                     .firstName(firstName)
                     .lastName(lastName)
                     .email(email)
-                    .password(passwordEncoder.encode("Nigger"))
                     .role(User.Role.PATIENT)
                     .build();
 

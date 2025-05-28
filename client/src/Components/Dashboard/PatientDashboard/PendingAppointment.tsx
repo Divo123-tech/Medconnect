@@ -22,7 +22,7 @@ import {
   DialogDescription,
 } from "@/Components/ui/dialog";
 import { useState } from "react";
-import { updateAppointmentStatus } from "@/services/appointmentService";
+import { deleteAppointment } from "@/services/appointmentService";
 import { useAuthStore } from "@/store/authStore";
 
 type Props = {
@@ -44,11 +44,15 @@ const PendingAppointments = ({ appointment, onStatusChange }: Props) => {
   };
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { token } = useAuthStore();
+
   const cancelAppointment = async () => {
-    await updateAppointmentStatus(token, appointment.id, "CANCELLED");
-    console.log(appointment?.id);
-    onStatusChange();
-    setIsDialogOpen(false);
+    try {
+      await deleteAppointment(token, appointment.id);
+      onStatusChange();
+      setIsDialogOpen(false);
+    } catch (err) {
+      console.log(err);
+    }
   };
   return (
     <motion.div

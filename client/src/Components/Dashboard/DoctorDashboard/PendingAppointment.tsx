@@ -18,7 +18,10 @@ import {
 } from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
 import { Appointment } from "@/utils/types";
-import { updateAppointmentStatus } from "@/services/appointmentService";
+import {
+  deleteAppointment,
+  updateAppointmentStatus,
+} from "@/services/appointmentService";
 import { useAuthStore } from "@/store/authStore";
 type Props = {
   appointment: Appointment;
@@ -42,6 +45,15 @@ const PendingAppointments = ({ appointment, onStatusChange }: Props) => {
   const confirmAppointment = async () => {
     try {
       await updateAppointmentStatus(token, appointment.id, "CONFIRMED");
+      onStatusChange();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const removeAppointment = async () => {
+    try {
+      await deleteAppointment(token, appointment.id);
       onStatusChange();
     } catch (err) {
       console.log(err);
@@ -114,6 +126,7 @@ const PendingAppointments = ({ appointment, onStatusChange }: Props) => {
               <Button
                 variant="outline"
                 className="text-red-600 border-red-200 hover:bg-red-50"
+                onClick={removeAppointment}
               >
                 <XCircle className="mr-2 h-4 w-4" />
                 Decline
