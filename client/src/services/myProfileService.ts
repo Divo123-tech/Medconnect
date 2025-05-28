@@ -1,7 +1,6 @@
 import axios from "axios";
 
 export const getMyProfile = async (token: string | null) => {
-  console.log(token);
   const res = await axios.get(
     `${import.meta.env.VITE_BACKENDURL}/api/v1/my-profile`,
     {
@@ -11,7 +10,6 @@ export const getMyProfile = async (token: string | null) => {
       },
     }
   );
-  console.log(res.data);
   return res.data;
 };
 export const updateMyProfile = async (

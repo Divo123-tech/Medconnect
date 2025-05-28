@@ -28,6 +28,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       try {
         const user = await getMyProfile(token);
         setUser(user);
+        setIsValid(true);
         if (checkDoctor) {
           if (user.role == "DOCTOR") {
             setIsValid(true);

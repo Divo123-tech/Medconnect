@@ -49,13 +49,17 @@ const Dashboard = ({ remoteStream, setRemoteStream }: Props) => {
         </div>
       </header>
       {user?.role == "PATIENT" && isPatient(user) && (
-        <ProtectedRoute
-          element={
-            <PatientDashboard
-              remoteStream={remoteStream}
-              setRemoteStream={setRemoteStream}
-            />
-          }
+        // <ProtectedRoute
+        //   element={
+        //     <PatientDashboard
+        //       remoteStream={remoteStream}
+        //       setRemoteStream={setRemoteStream}
+        //     />
+        //   }
+        // />
+        <PatientDashboard
+          remoteStream={remoteStream}
+          setRemoteStream={setRemoteStream}
         />
       )}
       {user?.role == "DOCTOR" && isDoctor(user) && (

@@ -5,20 +5,17 @@ import com.backend.server.entities.User;
 import com.backend.server.repositories.PatientRepository;
 import com.backend.server.repositories.UserRepository;
 import com.backend.server.services.JwtService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Collections;
 
 @Component
 @RequiredArgsConstructor
@@ -27,6 +24,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    @Value("${FRONTEND_URL}")
+    private String frontEndUrl;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
@@ -64,7 +63,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         var jwtToken = jwtService.generateToken(user);
 
         // Redirect to frontend with token
-        response.sendRedirect("http://localhost:5173/oauth-success?token="+ jwtToken);
-
+        response.sendRedirect(frontEndUrl + "/oauth-success?token=" + jwtToken);
     }
 }
