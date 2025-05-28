@@ -22,7 +22,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     Optional<Appointment> findByDoctorAndDateAndTime(Doctor doctor, LocalDate date, LocalTime time);
 
     // Find all appointments of a patient with a specific status
-    Page<Appointment> findByPatientAndStatus(Patient patient, Appointment.Status status, Pageable pageable);
+    List<Appointment> findByPatientAndStatus(Patient patient, Appointment.Status status);
 
     // Optional: Find all appointments of a doctor (not limited by date)
     List<Appointment> findByDoctorAndStatus(Doctor doctor, Appointment.Status status);

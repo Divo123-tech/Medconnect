@@ -48,10 +48,9 @@ public class AppointmentService {
     /**
      * Get all appointments for a patient with the specified status
      */
-    public Page<AppointmentDTO.GetAppointmentDTO> getPatientAppointmentsByStatus(Patient patient, Appointment.Status status, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return appointmentRepository.findByPatientAndStatus(patient, status, pageable)
-                .map(this::mapToDTO);
+    public List<AppointmentDTO.GetAppointmentDTO> getPatientAppointmentsByStatus(Patient patient, Appointment.Status status) {
+        return appointmentRepository.findByPatientAndStatus(patient, status).stream()
+                .map(this::mapToDTO).toList();
     }
     /**
      * Get all appointments for a doctor

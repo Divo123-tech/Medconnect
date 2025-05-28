@@ -56,9 +56,9 @@ export default function PatientDashboard({
         getAppointments(token, "COMPLETED"),
       ]);
 
-      setPendingAppointments(pending.content);
-      setConfirmedAppointments(confirmed.content);
-      setCompletedAppointments(completed.content);
+      setPendingAppointments(pending);
+      setConfirmedAppointments(confirmed);
+      setCompletedAppointments(completed);
 
       console.log({ pending, confirmed, completed });
     } catch (err) {

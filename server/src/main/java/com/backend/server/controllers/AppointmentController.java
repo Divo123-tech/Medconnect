@@ -72,16 +72,13 @@ public class AppointmentController {
      * Get all appointments for a patient with specific status
      */
     @GetMapping()
-    public ResponseEntity<Page<AppointmentDTO.GetAppointmentDTO>> getPatientAppointmentsByStatus(
-//            @PathVariable Appointment.Status status,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+    public ResponseEntity<List<AppointmentDTO.GetAppointmentDTO>> getPatientAppointmentsByStatus(
             @RequestParam(defaultValue = "CONFIRMED") String status,
             Authentication auth) {
         User user = (User) auth.getPrincipal(); // this is safe
         Patient patient = patientService.getPatientById(user.getId());
 
-        Page<AppointmentDTO.GetAppointmentDTO> appointments = appointmentService.getPatientAppointmentsByStatus(patient, Appointment.Status.valueOf(status), page, size);
+        List<AppointmentDTO.GetAppointmentDTO> appointments = appointmentService.getPatientAppointmentsByStatus(patient, Appointment.Status.valueOf(status));
         return ResponseEntity.ok(appointments);
     }
     /**
