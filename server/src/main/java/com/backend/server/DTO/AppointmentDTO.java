@@ -36,5 +36,7 @@ public class AppointmentDTO {
         private String reason;
 
         private Appointment.Status status;
+
+
     }
 }
