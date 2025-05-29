@@ -46,22 +46,4 @@ class JwtServiceTest {
         assertThat(extracted).isEqualTo("claimuser");
     }
 
-//    @Test
-//    void shouldReturnFalseForExpiredToken() {
-//        String SECRET_KEY = "AbnKH5JNyL3LGqinUzHWnUmvYZzCcbsxyBxDvrtOJPlm+W8B+ymyAiLiXzC257LB";
-//        Key key = Keys.hmacShaKeyFor(io.jsonwebtoken.io.Decoders.BASE64.decode(SECRET_KEY));
-//
-//        // Generate expired token
-//        String expiredToken = Jwts.builder()
-//                .setSubject("expireduser")
-//                .setIssuedAt(new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 2)) // 2 hours ago
-//                .setExpiration(new Date(System.currentTimeMillis() - 1000 * 60)) // 1 minute ago
-//                .signWith(key)
-//                .compact();
-//
-//        User userDetails = new User("expireduser", "password", Collections.emptyList());
-//
-//        boolean isValid = jwtService.isTokenValid(expiredToken, userDetails);
-//        assertThat(isValid).isFalse();
-//    }
 }
