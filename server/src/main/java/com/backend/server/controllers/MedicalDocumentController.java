@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @RestController
@@ -27,33 +28,43 @@ public class MedicalDocumentController {
     ) {
         try {
             MedicalDocument doc = documentService.uploadDocument(file, patientId);
-
             return ResponseEntity.ok(mapToDTO(doc));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Upload failed");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Upload failed: " + e.getMessage());
         }
     }
 
     @GetMapping("/{patientId}")
     @PreAuthorize("hasRole('DOCTOR') or #patientId == authentication.principal.id")
-    public ResponseEntity<List<MedicalDocumentDTO>> getDocuments(@PathVariable Integer patientId) {
-        List<MedicalDocument> documents = documentService.getDocumentsByPatientId(patientId);
-        List<MedicalDocumentDTO> dtoList = documents.stream()
-                .map(this::mapToDTO)
-                .toList();
-
-        return ResponseEntity.ok(dtoList);
+    public ResponseEntity<?> getDocuments(@PathVariable Integer patientId) {
+        try {
+            List<MedicalDocument> documents = documentService.getDocumentsByPatientId(patientId);
+            List<MedicalDocumentDTO> dtoList = documents.stream()
+                    .map(this::mapToDTO)
+                    .toList();
+            return ResponseEntity.ok(dtoList);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch documents: " + e.getMessage());
+        }
     }
+
     @DeleteMapping("/{documentId}")
     @PreAuthorize("hasRole('DOCTOR') or @authUtil.isOwnerOfDocument(authentication, #documentId)")
     public ResponseEntity<?> deleteDocument(@PathVariable Integer documentId) {
         try {
             documentService.deleteDocument(documentId);
             return ResponseEntity.ok("Document deleted successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Deletion failed");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Deletion failed: " + e.getMessage());
         }
     }
+
     private MedicalDocumentDTO mapToDTO(MedicalDocument doc) {
         String fileName = doc.getFileName();
         String originalFileName = fileName.contains("_")
@@ -62,11 +73,9 @@ public class MedicalDocumentController {
 
         return new MedicalDocumentDTO(
                 doc.getId(),
-                originalFileName,           // clean name shown to users
+                originalFileName,
                 doc.getFileUrl(),
                 doc.getUploadedAt()
         );
     }
-
 }
-
