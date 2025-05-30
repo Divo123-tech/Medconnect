@@ -1,4 +1,3 @@
-import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import CallerVideo from "./Components/VideoConference/CallerVideo";
@@ -17,6 +16,7 @@ import BookAppointment from "./Components/BookAppointment";
 import EditAppointment from "./Components/EditAppointment/EditAppointment";
 import MyPatientsPage from "./Components/MyPatients";
 import OAuthSuccess from "./Components/OAuthSuccess";
+import AdminPage from "./Components/Admin";
 
 function App() {
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -82,6 +82,7 @@ function App() {
           path="/dashboard/my-patients"
           element={<ProtectedRoute element={<MyPatientsPage />} />}
         />
+        <Route path="/admin" element={<AdminPage />} />
       </Routes>
     </BrowserRouter>
   );
