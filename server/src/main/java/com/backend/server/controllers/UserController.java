@@ -33,6 +33,9 @@ public class UserController {
     private final DoctorService doctorService;
     @GetMapping
     public ResponseEntity<?> getMyProfile(Authentication auth) {
+        if (auth == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
         User user = (User) auth.getPrincipal(); // this is safe
 
         if (user.getRole() == User.Role.PATIENT) {
@@ -55,25 +58,31 @@ public class UserController {
     }
 
     @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    //use Principal here instead of Authentication object because its more lightweight
-    public ResponseEntity<?> updateUser( Principal principal,
-                                         @RequestPart("user") UserDTO.UserUpdateProfileDTO request,
-                                         @RequestPart(value = "profilePicture", required = false) MultipartFile profilePicture) throws IOException {
-        User updatedUser = userService.updateUser(principal.getName(), request, profilePicture);
-        if (updatedUser instanceof Patient patient) {
-            return ResponseEntity.ok(mapToPatientDTO(patient));
+    public ResponseEntity<?> updateUser(Principal principal,
+                                        @RequestPart("user") UserDTO.UserUpdateProfileDTO request,
+                                        @RequestPart(value = "profilePicture", required = false) MultipartFile profilePicture) {
+        try {
+            User updatedUser = userService.updateUser(principal.getName(), request, profilePicture);
+
+            if (updatedUser instanceof Patient patient) {
+                return ResponseEntity.ok(mapToPatientDTO(patient));
+            } else if (updatedUser instanceof Doctor doctor) {
+                return ResponseEntity.ok(mapToDoctorDTO(doctor));
+            }
+
+            return ResponseEntity.ok(new UserDTO.UserGetProfileDTO(
+                    updatedUser.getId(),
+                    updatedUser.getFirstName(),
+                    updatedUser.getLastName(),
+                    updatedUser.getEmail(),
+                    updatedUser.getRole()
+            ));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request data: " + e.getMessage());
         }
-        else if (updatedUser instanceof Doctor doctor){
-            return ResponseEntity.ok(mapToDoctorDTO(doctor));
-        }
-        return ResponseEntity.ok(new UserDTO.UserGetProfileDTO(
-                updatedUser.getId(),
-                updatedUser.getFirstName(),
-                updatedUser.getLastName(),
-                updatedUser.getEmail(),
-                updatedUser.getRole()
-        ));
     }
+
 
     @DeleteMapping
     public ResponseEntity<?> deleteUser(Principal principal) {

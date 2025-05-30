@@ -35,6 +35,6 @@ public class Doctor extends User {
     @ToString.Exclude
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<Review> reviews;
+    private List<Review> reviews = new ArrayList<>();
 
 }
