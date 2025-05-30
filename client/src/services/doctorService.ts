@@ -1,4 +1,8 @@
-import { Doctor, GetAllDoctorsResponse } from "@/utils/types";
+import {
+  Doctor,
+  DoctorRegisterPayload,
+  GetAllDoctorsResponse,
+} from "@/utils/types";
 import axios from "axios";
 
 export const getDoctors = async ({
@@ -45,4 +49,22 @@ export const getSingleDoctor = async (id: number | string | undefined) => {
     console.log(err);
     throw new Error("Failed to fetch doctors");
   }
+};
+export const registerDoctor = async (
+  token: string | null,
+  payload: DoctorRegisterPayload
+) => {
+  const res = await axios.post(
+    `${import.meta.env.VITE_BACKENDURL}
+/api/v1/admin/register-doctor`,
+    payload,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
 };

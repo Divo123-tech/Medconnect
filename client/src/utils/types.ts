@@ -170,3 +170,19 @@ export type Review = {
   patientEmail: string;
   patientProfilePicture: string;
 };
+
+export type DoctorRegisterPayload = {
+  secretKey: string;
+  doctorInfo: DoctorInfo;
+};
+
+export type DoctorInfo = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  specialization: string;
+  startedPracticingAt: string; // or `Date` if you're handling it as a Date object
+  education: string;
+  bio: string;
+};

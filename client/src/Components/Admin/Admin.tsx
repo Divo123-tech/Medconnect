@@ -14,19 +14,11 @@ import {
 } from "@/Components/ui/card";
 import { Alert, AlertDescription } from "@/Components/ui/alert";
 import { Shield, UserPlus, CheckCircle, Eye, EyeOff } from "lucide-react";
+import { DoctorInfo } from "@/utils/types";
+import { registerDoctor } from "@/services/doctorService";
+import { useAuthStore } from "@/store/authStore";
 
-const SECRET_KEY = "admin123";
-
-interface DoctorFormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  specialization: string;
-  startedPracticingAt: string;
-  education: string;
-  bio: string;
-}
+const SECRET_KEY = import.meta.env.VITE_ADMIN_KEY;
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -35,8 +27,8 @@ export default function AdminPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
-  const [formData, setFormData] = useState<DoctorFormData>({
+  const { token } = useAuthStore();
+  const [formData, setFormData] = useState<DoctorInfo>({
     firstName: "",
     lastName: "",
     email: "",
@@ -78,9 +70,7 @@ export default function AdminPage() {
     setIsSubmitting(true);
 
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    console.log("New Doctor Registration:", formData);
+    await registerDoctor(token, { secretKey, doctorInfo: formData });
 
     setIsSubmitting(false);
     setShowSuccess(true);
@@ -137,14 +127,16 @@ export default function AdminPage() {
                 </div>
 
                 {authError && (
-                  <Alert variant="destructive">
-                    <AlertDescription>{authError}</AlertDescription>
+                  <Alert variant="destructive" className="border-red-500">
+                    <AlertDescription className=" text-red-500">
+                      {authError}
+                    </AlertDescription>
                   </Alert>
                 )}
 
                 <Button
                   type="submit"
-                  className="w-full bg-teal-600 hover:bg-teal-700"
+                  className="w-full bg-teal-600 hover:bg-teal-700 text-white"
                   disabled={!secretKey.trim()}
                 >
                   Access Admin Panel
