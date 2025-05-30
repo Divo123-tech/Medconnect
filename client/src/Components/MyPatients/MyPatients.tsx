@@ -1,6 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Users, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Search,
+  Users,
+  ChevronLeft,
+  ChevronRight,
+  ArrowLeft,
+} from "lucide-react";
 
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
@@ -8,6 +14,7 @@ import { Patient } from "@/utils/types";
 import { getPatientsByDoctor } from "@/services/patientService";
 import { useAuthStore } from "@/store/authStore";
 import PatientCard from "./PatientCard";
+import { Link } from "react-router";
 
 export default function MyPatientsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,7 +64,16 @@ export default function MyPatientsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50 to-white">
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <div className="flex items-center px-16 pt-2">
+        <Link
+          to="/dashboard"
+          className="flex items-center text-teal-800 mr-4 text-lg hover:border-b hover:opacity-80"
+        >
+          <ArrowLeft size={20} className="mr-1" />
+          <span>Back</span>
+        </Link>
+      </div>
+      <main className="max-w-7xl mx-auto px-6 ">
         {/* Title and Count */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

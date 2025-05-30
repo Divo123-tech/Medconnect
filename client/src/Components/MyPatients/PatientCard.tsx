@@ -39,16 +39,21 @@ const PatientCard = ({ patient, fetchPatients }: Props) => {
   };
   return (
     <motion.div key={patient.id} variants={itemVariants} layout>
-      <Card className="hover:shadow-lg transition-all duration-300 overflow-hidden bg-white border-teal-400 border">
+      <Card className="hover:shadow-lg transition-all duration-300 overflow-hidden bg-white border-teal-400 border cursor-pointer">
         <CardHeader>
           <div className="flex items-start justify-between">
             <Link to={`/patient/${patient.id}`} className="flex items-center">
               <Avatar className="h-16 w-16 mr-4 border-2 border-teal-100">
                 <AvatarImage
-                  src={patient.profilePictureURL}
+                  src={
+                    import.meta.env.VITE_BACKEND_URL + patient.profilePictureURL
+                  }
                   alt={`${patient.firstName} ${patient.lastName}`}
                 />
-                <AvatarFallback>{patient.firstName.charAt(0)}</AvatarFallback>
+                <AvatarFallback className="text-xl">
+                  {patient.firstName.charAt(0)}
+                  {patient.lastName.charAt(0)}
+                </AvatarFallback>
               </Avatar>
               <div>
                 <CardTitle className="text-lg">
