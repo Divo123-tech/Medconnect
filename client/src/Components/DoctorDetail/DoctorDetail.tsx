@@ -37,10 +37,11 @@ import { Badge } from "@/Components/ui/badge";
 import { getSingleDoctor } from "@/services/doctorService";
 import ProfileBadge from "../ProfileBadge";
 import { useAuthStore } from "@/store/authStore";
-import { Doctor, Review } from "@/utils/types";
+import { Doctor } from "@/utils/types";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import DoctorReview from "./DoctorReview";
 import { RatingStars } from "./RatingStars";
+import { getAverageRating } from "@/utils/converters";
 
 export default function DoctorProfilePage() {
   const params = useParams();
@@ -59,13 +60,7 @@ export default function DoctorProfilePage() {
     setUser(null);
     setToken(null);
   };
-  const getAverageRating = (reviews: Review[]): number => {
-    return reviews.reduce(
-      (sum: number, r: Review, _index: number, arr: Review[]) =>
-        sum + r.rating / arr.length,
-      0
-    );
-  };
+
 
   useEffect(() => {
     const fetchDoctor = async () => {

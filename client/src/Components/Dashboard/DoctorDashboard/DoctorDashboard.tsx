@@ -9,6 +9,7 @@ import {
   Files,
   CheckCircle,
   CalendarPlus,
+  ThumbsUp,
 } from "lucide-react";
 
 import { Button } from "@/Components/ui/button";
@@ -17,7 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { Link, useNavigate } from "react-router";
 import { useAuthStore } from "@/store/authStore";
 import { getAppointmentsForDoctor } from "@/services/appointmentService";
-import { Appointment, Offer } from "@/utils/types";
+import { Appointment, Doctor, Offer } from "@/utils/types";
 import PendingAppointment from "./PendingAppointment";
 import ConfirmedAppointment from "./ConfirmedAppointment";
 import CompletedAppointment from "./CompletedAppointment";
@@ -27,6 +28,18 @@ import createPeerConnection from "@/utils/webrtcUtilities/createPeerConn";
 import clientSocketListeners from "@/utils/webrtcUtilities/clientSocketListeners";
 import prepForCall from "@/utils/webrtcUtilities/prepForCall";
 import CallNotification from "./CallNotification";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/Components/ui/dialog";
+import DoctorReview from "@/Components/DoctorDetail/DoctorReview";
+import { getAverageRating } from "@/utils/converters";
 type Props = {
   remoteStream: MediaStream | null;
   setRemoteStream: React.Dispatch<React.SetStateAction<MediaStream | null>>;
@@ -238,6 +251,7 @@ export default function DoctorDashboard({
                 Edit Profile
               </Button>
             </Link>
+
             <motion.div
               className="absolute -top-6 -right-6 w-12 h-12 bg-white/10 rounded-full"
               animate={{
@@ -298,7 +312,7 @@ export default function DoctorDashboard({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <motion.div
               whileHover={{ y: -5 }}
-              className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl p-4 text-white shadow-lg"
+              className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl p-4 text-white shadow-lg cursor-pointer"
             >
               <div className="flex items-center justify-between">
                 <h3 className="font-medium">Today's Patients</h3>
@@ -315,40 +329,105 @@ export default function DoctorDashboard({
                   <motion.div
                     className="h-full bg-white"
                     initial={{ width: 0 }}
-                    animate={{ width: "50%" }}
+                    animate={{
+                      width: `${
+                        (todayAppointments.length /
+                          confirmedAppointments.length) *
+                        100
+                      }%`,
+                    }}
                     transition={{ duration: 1, delay: 0.5 }}
                   />
                 </div>
               </div>
             </motion.div>
 
-            <motion.div
-              whileHover={{ y: -5 }}
-              className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-lg"
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="font-medium">Patient Rating</h3>
-                <Star className="h-5 w-5" />
-              </div>
-              <div className="mt-2 flex items-baseline">
-                <span className="text-3xl font-bold">4.9</span>
-                <span className="ml-1 text-sm opacity-80">out of 5</span>
-              </div>
-              <div className="mt-2">
-                <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-white"
-                    initial={{ width: 0 }}
-                    animate={{ width: "95%" }}
-                    transition={{ duration: 1, delay: 0.7 }}
-                  />
-                </div>
-              </div>
-            </motion.div>
+            <Dialog>
+              <DialogTrigger className="w-full border-teal-200 text-teal-700 hover:bg-teal-50">
+                <motion.div
+                  whileHover={{ y: -5 }}
+                  className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-lg cursor-pointer"
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-medium">Patient Rating</h3>
+                    <Star className="h-5 w-5" />
+                  </div>
+                  <div className="mt-2 flex items-baseline">
+                    <span className="text-3xl font-bold">
+                      {getAverageRating((user as Doctor)?.reviews).toFixed(1)}
+                    </span>
+                    <span className="ml-1 text-sm opacity-80">out of 5</span>
+                  </div>
+                  <div className="mt-2">
+                    <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-white"
+                        initial={{ width: 0 }}
+                        animate={{
+                          width: `${
+                            getAverageRating((user as Doctor)?.reviews) * 20
+                          }%`,
+                        }}
+                        transition={{ duration: 1, delay: 0.7 }}
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[600px] max-h-[90vh] bg-white">
+                <DialogHeader>
+                  <DialogTitle className="text-teal-800 flex items-center">
+                    <ThumbsUp className="mr-2 h-5 w-5 text-teal-600" />
+                    All Patient Reviews for Dr. {user?.firstName}{" "}
+                    {user?.lastName}
+                  </DialogTitle>
+                  <DialogDescription>
+                    <div className="flex items-center mt-2">
+                      <div className="flex items-center mr-4">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className="h-5 w-5 text-yellow-400 fill-yellow-400"
+                          />
+                        ))}
+                      </div>
+                      <span className="text-lg font-medium text-gray-700">
+                        5.0
+                      </span>
+                      <span className="text-gray-500 ml-2">
+                        ({(user as Doctor)?.reviews.length} reviews)
+                      </span>
+                    </div>
+                  </DialogDescription>
+                </DialogHeader>
 
+                {/* Fixed height scrollable container for reviews */}
+                <div
+                  className="overflow-y-auto pr-1"
+                  style={{ maxHeight: "60vh" }}
+                >
+                  <div className="space-y-4">
+                    {(user as Doctor)?.reviews.map((review) => (
+                      <DoctorReview review={review} key={review.id} />
+                    ))}
+                  </div>
+                </div>
+
+                <DialogFooter className="mt-4">
+                  <DialogClose>
+                    <Button
+                      variant="outline"
+                      className="border-teal-200 text-teal-700 hover:bg-teal-50 cursor-pointer"
+                    >
+                      Close
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             <motion.div
               whileHover={{ y: -5 }}
-              className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white shadow-lg"
+              className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-4 text-white shadow-lg cursor-pointer"
             >
               <div className="flex items-center justify-between">
                 <h3 className="font-medium">Pending Approvals</h3>
@@ -360,7 +439,7 @@ export default function DoctorDashboard({
                 </span>
                 <span className="ml-1 text-sm opacity-80">requests</span>
               </div>
-              <div className="mt-2">
+              {/* <div className="mt-2">
                 <div className="h-2 bg-white/20 rounded-full overflow-hidden">
                   <motion.div
                     className="h-full bg-white"
@@ -371,7 +450,7 @@ export default function DoctorDashboard({
                     transition={{ duration: 1, delay: 0.9 }}
                   />
                 </div>
-              </div>
+              </div> */}
             </motion.div>
           </div>
         </motion.div>
@@ -469,6 +548,7 @@ export default function DoctorDashboard({
                 {confirmedAppointments.length > 0 ? (
                   confirmedAppointments.map((appointment) => (
                     <ConfirmedAppointment
+                      onStatusChange={fetchAllAppointments}
                       appointment={appointment}
                       key={appointment.id}
                     />

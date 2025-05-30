@@ -9,14 +9,25 @@ import {
 } from "@/Components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Button } from "@/Components/ui/button";
-import { Calendar, CheckCircle, Clock, User, Video } from "lucide-react";
+import {
+  Calendar,
+  CheckCircle,
+  Clock,
+  User,
+  Video,
+  XCircle,
+} from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
 import { Link } from "react-router";
+import { deleteAppointment } from "@/services/appointmentService";
+import { useAuthStore } from "@/store/authStore";
 type Props = {
   appointment: Appointment;
+  onStatusChange: () => void;
 };
 
-const ConfirmedAppointments = ({ appointment }: Props) => {
+const ConfirmedAppointments = ({ appointment, onStatusChange }: Props) => {
+  const { token } = useAuthStore();
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -28,7 +39,14 @@ const ConfirmedAppointments = ({ appointment }: Props) => {
       },
     },
   };
-
+  const removeAppointment = async () => {
+    try {
+      await deleteAppointment(token, appointment.id);
+      onStatusChange();
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <motion.div
       key={appointment.id}
@@ -96,6 +114,16 @@ const ConfirmedAppointments = ({ appointment }: Props) => {
         </CardContent>
         <CardFooter className="pt-2">
           <div className="flex justify-between w-full">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="outline"
+                className="text-red-600 border-red-200 hover:bg-red-50"
+                onClick={removeAppointment}
+              >
+                <XCircle className="mr-2 h-4 w-4" />
+                Cancel
+              </Button>
+            </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link to={`/patient/${appointment.patientId}`}>
                 <Button

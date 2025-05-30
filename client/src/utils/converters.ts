@@ -1,4 +1,4 @@
-import { BloodType } from "./types";
+import { BloodType, Review } from "./types";
 
 export const bloodTypesMap: Record<BloodType, string> = {
   A_POS: "A+",
@@ -40,4 +40,12 @@ export const getBMICategory = (bmi: number) => {
     category: "Obese",
     color: "text-red-600 bg-red-50 border-red-200",
   };
+};
+
+export const getAverageRating = (reviews: Review[]): number => {
+  return reviews.reduce(
+    (sum: number, r: Review, _index: number, arr: Review[]) =>
+      sum + r.rating / arr.length,
+    0
+  );
 };

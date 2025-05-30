@@ -22,7 +22,7 @@ import { getSingleDoctor } from "@/services/doctorService";
 
 type Props = {
   review: Review;
-  setDoctor: React.Dispatch<React.SetStateAction<Doctor | null>>;
+  setDoctor?: React.Dispatch<React.SetStateAction<Doctor | null>>;
 };
 
 const DoctorReview = ({ review, setDoctor }: Props) => {
@@ -61,7 +61,7 @@ const DoctorReview = ({ review, setDoctor }: Props) => {
       setReviewSuccess(false);
       return err;
     }
-    setDoctor(await getSingleDoctor(review.doctorId));
+    if (setDoctor) setDoctor(await getSingleDoctor(review.doctorId));
   };
 
   const removeReview = async () => {
@@ -70,7 +70,7 @@ const DoctorReview = ({ review, setDoctor }: Props) => {
     } catch (err) {
       return err;
     }
-    setDoctor(await getSingleDoctor(review.doctorId));
+    if (setDoctor) setDoctor(await getSingleDoctor(review.doctorId));
   };
   return (
     <div
