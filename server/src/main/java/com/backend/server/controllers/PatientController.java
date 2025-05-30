@@ -23,9 +23,17 @@ public class PatientController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('DOCTOR')")
-    public ResponseEntity<UserDTO.PatientGetProfileDTO> getPatientById(@PathVariable int id) {
-        Patient patient = patientService.getPatientById(id);
-        return ResponseEntity.ok(mapToPatientDTO(patient));
+    public ResponseEntity<?> getPatientById(@PathVariable int id) {
+        try {
+            Patient patient = patientService.getPatientById(id);
+            if (patient == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient not found");
+            }
+            return ResponseEntity.ok(mapToPatientDTO(patient));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+        }
     }
+
 }
 
