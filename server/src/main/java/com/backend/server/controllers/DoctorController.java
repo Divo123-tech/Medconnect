@@ -18,8 +18,7 @@ import static com.backend.server.DTO.ToDTOMaps.mapToDoctorDTO;
 @RequiredArgsConstructor
 public class DoctorController {
 
-    @Autowired
-    private DoctorService doctorService;
+    private final DoctorService doctorService;
 
     @GetMapping
     public ResponseEntity<?> getDoctors(
