@@ -42,7 +42,7 @@ class DoctorServiceTest {
     @Test
     void shouldRegisterDoctorSuccessfully() {
         // Given
-        DoctorRegisterRequest request = DoctorRegisterRequest.builder()
+        DoctorRegisterRequest.DoctorInfo request = DoctorRegisterRequest.DoctorInfo.builder()
                 .firstName("Jane")
                 .lastName("Doe")
                 .email("jane@example.com")

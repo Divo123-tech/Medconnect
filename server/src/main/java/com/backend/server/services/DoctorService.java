@@ -28,7 +28,7 @@ public class DoctorService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public Doctor registerDoctor(DoctorRegisterRequest request) {
+    public Doctor registerDoctor(DoctorRegisterRequest.DoctorInfo request) {
         Doctor doctor = Doctor.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())

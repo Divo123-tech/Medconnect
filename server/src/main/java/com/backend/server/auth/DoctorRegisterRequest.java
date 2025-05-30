@@ -12,13 +12,22 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DoctorRegisterRequest {
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
-    private String specialization;
-    private LocalDate startedPracticingAt;
-    private String education;
-    private String bio;
-}
 
+    private DoctorInfo doctorInfo;
+    private String secretKey;
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DoctorInfo {
+        private String firstName;
+        private String lastName;
+        private String email;
+        private String password;
+        private String specialization;
+        private LocalDate startedPracticingAt;
+        private String education;
+        private String bio;
+    }
+}
