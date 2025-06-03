@@ -425,9 +425,7 @@ export default function PatientDetail() {
                 <div className="flex flex-col items-center text-center mb-6">
                   <div className="relative w-48 h-48 rounded-full overflow-hidden bg-gradient-to-br from-teal-100 to-blue-100 border-4 border-teal-300 shadow-md mb-4">
                     <img
-                      src={`${import.meta.env.VITE_BACKENDURL}${
-                        patient.profilePictureURL
-                      }`}
+                      src={`${patient.profilePictureURL}`}
                       alt={`${patient.firstName} ${patient.lastName}`}
                       className="object-cover w-full h-full"
                     />

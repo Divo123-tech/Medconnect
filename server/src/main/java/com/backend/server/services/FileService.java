@@ -8,10 +8,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
+import software.amazon.awssdk.core.exception.SdkClientException;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.core.exception.SdkClientException;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.core.sync.RequestBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
-import java.nio.file.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -19,54 +26,63 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class FileService {
+
+    private final S3Client s3Client;
     private final MedicalDocumentRepository documentRepository;
-    private final PatientRepository patientRepository; // If needed
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+    private final PatientRepository patientRepository;
+
+    private final String bucketName = "medconnect-server-static";
+
+
+
+    // Inside your FileService class
+    private static final Logger logger = LoggerFactory.getLogger(FileService.class);
 
     public String saveProfilePicture(MultipartFile file) throws IOException {
-        // Ensure the folder exists
-        String uploadDir = "uploads/profile-pictures/";
-        Path uploadPath = Paths.get(uploadDir);
-        if (Files.notExists(uploadPath)) {
-            Files.createDirectories(uploadPath);
+        String fileName = "profile-pictures/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+        try {
+            s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(fileName)
+                            .contentType(file.getContentType())
+                            .build(),
+                    RequestBody.fromBytes(file.getBytes())
+            );
+            return fileName;
+        } catch (S3Exception e) {
+            logger.error("S3 error while uploading profile picture: {}", e.awsErrorDetails().errorMessage(), e);
+            throw new IOException("Failed to upload profile picture to S3", e);
+        } catch (SdkClientException e) {
+            logger.error("AWS SDK client error while uploading profile picture", e);
+            throw new IOException("AWS SDK error while uploading profile picture", e);
+        } catch (IOException e) {
+            logger.error("IO error while reading profile picture file", e);
+            throw e; // Already IOException, no need to wrap
+        } catch (Exception e) {
+            logger.error("Unexpected error while uploading profile picture", e);
+            throw new IOException("Unexpected error during upload", e);
         }
-
-        // Generate a unique filename
-        String originalFilename = file.getOriginalFilename();
-        String extension = getFileExtension(originalFilename);
-        String filename = UUID.randomUUID() + (extension != null ? "." + extension : "");
-
-        // Save the file
-        Path filepath = uploadPath.resolve(filename);
-        Files.copy(file.getInputStream(), filepath, StandardCopyOption.REPLACE_EXISTING);
-
-        // Return the relative URL to be saved in DB
-        return "/uploads/profile-pictures/" + filename;
     }
-
-    private String getFileExtension(String filename) {
-        if (filename == null || !filename.contains(".")) {
-            return null;
-        }
-        return filename.substring(filename.lastIndexOf(".") + 1);
-    }
-
 
 
     public MedicalDocument uploadDocument(MultipartFile file, Integer patientId) throws IOException {
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
 
-        // Save file to filesystem or cloud here
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get("uploads/documents/" + fileName);
-        Files.createDirectories(filePath.getParent());
-        Files.write(filePath, file.getBytes());
+        String fileName = "documents/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+        s3Client.putObject(PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(fileName)
+                        .contentType(file.getContentType())
+                        .build(),
+                RequestBody.fromBytes(file.getBytes()));
 
         MedicalDocument document = MedicalDocument.builder()
                 .fileName(fileName)
-                .fileUrl("/uploads/documents/" + fileName)
+                .fileUrl(fileName) // or build pre-signed URL if private
                 .uploadedAt(LocalDate.now())
                 .patient(patient)
                 .build();
@@ -74,27 +90,19 @@ public class FileService {
         return documentRepository.save(document);
     }
 
-    public List<MedicalDocument> getDocumentsByPatientId(Integer patientId) {
-        return documentRepository.findByPatientId(patientId);
-    }
     public void deleteDocument(Integer documentId) {
         MedicalDocument doc = documentRepository.findById(Long.valueOf(documentId))
                 .orElseThrow(() -> new RuntimeException("Document not found"));
 
-        Path uploadPath = Paths.get(uploadDir).toAbsolutePath();
-        File file = new File(uploadPath.toFile(), doc.getFileName());
-
-        if (file.exists()) {
-            boolean deleted = file.delete();
-            if (!deleted) {
-                throw new RuntimeException("Failed to delete file: " + file.getPath());
-            }
-        }
+        s3Client.deleteObject(DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(doc.getFileName())
+                .build());
 
         documentRepository.deleteById(Long.valueOf(documentId));
     }
 
-
-
-
+    public List<MedicalDocument> getDocumentsByPatientId(Integer patientId) {
+        return documentRepository.findByPatientId(patientId);
+    }
 }

@@ -400,9 +400,7 @@ export default function BookAppointment() {
                         <div className="flex items-center">
                           <Avatar className="h-12 w-12 mr-4">
                             <img
-                              src={`${import.meta.env.VITE_BACKENDURL}${
-                                doctor.profilePictureURL
-                              }`}
+                              src={`${doctor.profilePictureURL}`}
                               alt={doctor.firstName + " " + doctor.lastName}
                             />
                           </Avatar>
@@ -456,9 +454,7 @@ export default function BookAppointment() {
                   >
                     <Avatar className="h-10 w-10 mr-3">
                       <img
-                        src={`${import.meta.env.VITE_BACKENDURL}${
-                          selectedDoctor.profilePictureURL
-                        }`}
+                        src={`${selectedDoctor.profilePictureURL}`}
                         alt={
                           selectedDoctor.firstName +
                           " " +
@@ -543,9 +539,7 @@ export default function BookAppointment() {
                     <div className="flex items-center mb-2">
                       <Avatar className="h-10 w-10 mr-3">
                         <img
-                          src={`${import.meta.env.VITE_BACKENDURL}${
-                            selectedDoctor.profilePictureURL
-                          }`}
+                          src={`${selectedDoctor.profilePictureURL}`}
                           alt={
                             selectedDoctor.firstName +
                             " " +
@@ -618,9 +612,7 @@ export default function BookAppointment() {
                     <div className="flex items-center mb-3">
                       <Avatar className="h-12 w-12 mr-4">
                         <img
-                          src={`${import.meta.env.VITE_BACKENDURL}${
-                            selectedDoctor.profilePictureURL
-                          }`}
+                          src={`${selectedDoctor.profilePictureURL}`}
                           alt={
                             selectedDoctor.firstName +
                             " " +

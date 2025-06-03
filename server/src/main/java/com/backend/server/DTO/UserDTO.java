@@ -39,7 +39,7 @@ public class UserDTO {
         private Patient.BloodType bloodType;
         private String conditions;
         private String profilePictureURL;
-        private List<MedicalDocument> medicalDocuments;
+        private List<MedicalDocumentDTO> medicalDocuments;
         private LocalDate dateOfBirth;
         private String sex;
 

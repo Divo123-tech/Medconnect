@@ -45,9 +45,7 @@ const PatientCard = ({ patient, fetchPatients }: Props) => {
             <Link to={`/patient/${patient.id}`} className="flex items-center">
               <Avatar className="h-16 w-16 mr-4 border-2 border-teal-100">
                 <AvatarImage
-                  src={
-                    import.meta.env.VITE_BACKEND_URL + patient.profilePictureURL
-                  }
+                  src={patient.profilePictureURL}
                   alt={`${patient.firstName} ${patient.lastName}`}
                 />
                 <AvatarFallback className="text-xl">

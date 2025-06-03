@@ -1,10 +1,11 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
 import { Card } from "@/Components/ui/card";
 import { Doctor } from "@/utils/types";
 import { motion } from "framer-motion";
 import { Award, BookOpen, Calendar } from "lucide-react";
-import { Link} from "react-router";
+import { Link } from "react-router";
 
 type Props = {
   doctor: Doctor;
@@ -30,13 +31,16 @@ const DoctorCard = ({ doctor }: Props) => {
       <Card className="bg-white overflow-hidden cursor-pointer border-teal-100 hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
         <div className="p-6 flex-1">
           <div className="flex items-start">
-            <div className="relative h-20 w-20 rounded-full overflow-hidden bg-gradient-to-br from-teal-100 to-blue-100 border-2 border-teal-200">
-              <img
-                src={`http://localhost:8080${doctor.profilePictureURL}`}
-                alt={`Dr. ${doctor.firstName} ${doctor.lastName}`}
-                className="object-cover w-full h-full"
+            <Avatar className="relative h-20 w-20 rounded-full overflow-hidden bg-gradient-to-br from-teal-100 to-blue-100 border-2 border-teal-200">
+              <AvatarImage
+                src={doctor.profilePictureURL}
+                alt={`${doctor.firstName} ${doctor.lastName}`}
               />
-            </div>
+              <AvatarFallback className="text-2xl">
+                {doctor.firstName.charAt(0)}
+                {doctor.lastName.charAt(0)}
+              </AvatarFallback>
+            </Avatar>
             <div className="ml-4">
               <h3 className="text-lg font-semibold text-gray-900">
                 Dr. {doctor.firstName} {doctor.lastName}

@@ -225,10 +225,7 @@ const PatientProfile = ({ user }: Props) => {
                       <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-teal-100 to-blue-100 border-4 border-teal-300 shadow-md">
                         <img
                           src={
-                            tempProfilePicture ||
-                            `${import.meta.env.VITE_BACKENDURL}${
-                              patient.profilePictureURL
-                            }`
+                            tempProfilePicture || `${patient.profilePictureURL}`
                           }
                           alt="Profile"
                           className="object-cover w-full h-full"
