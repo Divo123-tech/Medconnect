@@ -1,6 +1,4 @@
-import fs from "fs";
 import http from "http";
-import https from "https";
 import express from "express";
 import { Server as SocketIOServer } from "socket.io";
 import { Socket } from "socket.io";
@@ -17,12 +15,7 @@ const expressServer = http.createServer(app);
 
 const io = new SocketIOServer(expressServer, {
   cors: {
-    origin: [
-      "https://localhost:3000",
-      "https://localhost:3001",
-      "http://localhost:5173",
-      "https://192.168.1.44:3000",
-    ],
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
@@ -61,29 +54,20 @@ const offers: Offer[] = [];
 const connectedSockets: ConnectedSocket[] = [];
 
 io.on("connection", (socket: Socket) => {
-  const { userName, password } = socket.handshake.auth as {
+  const { userName } = socket.handshake.auth as {
     userName: string;
-    password: string;
   };
-
-  if (password !== "x") {
-    socket.disconnect(true);
-    return;
-  }
 
   const exists = connectedSockets.some((conn) => conn.username === userName);
   if (!exists) {
     connectedSockets.push({ username: userName, socketId: socket.id });
   }
 
-  console.log("Connected sockets:", connectedSockets);
-
   if (offers.length) {
     socket.emit("availableOffers", offers);
   }
   socket.on("registerInfo", (data) => {
     console.log("Extra user data received:", data);
-    // { firstName, lastName, time }
   });
 
   socket.on(

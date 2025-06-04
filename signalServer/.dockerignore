@@ -1,0 +1,34 @@
+# Node modules (installed in the container)
+node_modules
+
+# Logs
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+
+# IDE/editor configs
+.vscode/
+.idea/
+*.swp
+
+# Git
+.git
+.gitignore
+
+# Docker itself
+Dockerfile
+.dockerignore
+
+# Tests (if not needed in production)
+tests/
+__tests__/
+coverage/
+
+

@@ -1,0 +1,25 @@
+# Ignore IDE files
+.idea/
+*.iml
+#
+# Ignore Git-related stuff
+.git
+.gitignore
+#
+# Ignore Dockerfile and docker-related configs (if needed)
+Dockerfile
+.dockerignore
+#
+# Ignore OS-specific files
+*.DS_Store
+*.log
+#
+# Ignore test resources and settings
+**/test/
+**/tests/
+#
+# Maven or Gradle specific
+.mvn/
+.gradle/
+**/dependency-cache/
+**/wrapper/
