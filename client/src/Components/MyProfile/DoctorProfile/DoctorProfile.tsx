@@ -185,10 +185,7 @@ export default function DoctorProfile({ user }: Props) {
                     <div className="flex flex-col items-center sm:flex-row sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
                       <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-teal-100 to-blue-100 border-4 border-teal-300 shadow-md">
                         <img
-                          src={
-                            tempProfilePicture ||
-                            `http://localhost:8080${doctor.profilePictureURL}`
-                          }
+                          src={tempProfilePicture || doctor.profilePictureURL}
                           alt="Profile"
                           className="object-cover w-full h-full" // You can adjust the width and height as needed
                         />
